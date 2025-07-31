@@ -180,6 +180,16 @@ function dameFechaFormateadaSQL(fecha) {
 
     return  fec[2] + "-" + fec[1] + "-" + fec[0];
 }
+
+// Convierte una fecha en formato ISO (aaaa-mm-dd) a dd/mm/aaaa
+function formatearFechaDMA(fechaStr){
+    var f = new Date(fechaStr);
+    if(isNaN(f)) return fechaStr;
+    var dia = ('0' + f.getDate()).slice(-2);
+    var mes = ('0' + (f.getMonth() + 1)).slice(-2);
+    var anio = f.getFullYear();
+    return dia + '/' + mes + '/' + anio;
+}
 function dameFechaFormateada(fecha) {
     var mes = fecha.getMonth() + 1;
     var dia = fecha.getDate() + 1;
