@@ -245,6 +245,31 @@ INSERT INTO `productos` (`producto_id`, `nombre`, `descripcion`, `precio`, `tipo
 
 -- --------------------------------------------------------
 
+-- --------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `presupuestos_compra`
+--
+CREATE TABLE `presupuestos_compra` (
+  `id_presupuesto` int(11) NOT NULL,
+  `fecha` date NOT NULL,
+  `id_proveedor` int(11) NOT NULL,
+  `total_estimado` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `detalle_presupuesto`
+--
+CREATE TABLE `detalle_presupuesto` (
+  `id_detalle` int(11) NOT NULL,
+  `id_presupuesto` int(11) NOT NULL,
+  `id_producto` int(11) NOT NULL,
+  `cantidad` int(11) NOT NULL,
+  `precio_unitario` decimal(10,2) NOT NULL,
+  `subtotal` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
 --
 -- Estructura de tabla para la tabla `resenas`
 --
@@ -366,6 +391,16 @@ ALTER TABLE `producto`
 ALTER TABLE `productos`
   ADD PRIMARY KEY (`producto_id`);
 
+-- Indices de la tabla `presupuestos_compra`
+ALTER TABLE `presupuestos_compra`
+  ADD PRIMARY KEY (`id_presupuesto`),
+  ADD KEY `id_proveedor` (`id_proveedor`);
+
+-- Indices de la tabla `detalle_presupuesto`
+ALTER TABLE `detalle_presupuesto`
+  ADD PRIMARY KEY (`id_detalle`),
+  ADD KEY `id_presupuesto` (`id_presupuesto`),
+  ADD KEY `id_producto` (`id_producto`);
 --
 -- Indices de la tabla `proveedor`
 --
@@ -463,6 +498,13 @@ ALTER TABLE `proveedor`
 ALTER TABLE `cliente`
   MODIFY `id_cliente` int(11) NOT NULL AUTO_INCREMENT;
 
+-- AUTO_INCREMENT de la tabla `presupuestos_compra`
+ALTER TABLE `presupuestos_compra`
+  MODIFY `id_presupuesto` int(11) NOT NULL AUTO_INCREMENT;
+
+-- AUTO_INCREMENT de la tabla `detalle_presupuesto`
+ALTER TABLE `detalle_presupuesto`
+  MODIFY `id_detalle` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `resenas`
 --
@@ -497,6 +539,14 @@ ALTER TABLE `ciudad`
 ALTER TABLE `compras`
   ADD CONSTRAINT `compras_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarioss` (`usuario_id`);
 
+-- Filtros para la tabla `presupuestos_compra`
+ALTER TABLE `presupuestos_compra`
+  ADD CONSTRAINT `presupuestos_compra_ibfk_1` FOREIGN KEY (`id_proveedor`) REFERENCES `proveedor` (`id_proveedor`);
+
+-- Filtros para la tabla `detalle_presupuesto`
+ALTER TABLE `detalle_presupuesto`
+  ADD CONSTRAINT `detalle_presupuesto_ibfk_1` FOREIGN KEY (`id_presupuesto`) REFERENCES `presupuestos_compra` (`id_presupuesto`),
+  ADD CONSTRAINT `detalle_presupuesto_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `productos` (`producto_id`);
 --
 -- Filtros para la tabla `resenas`
 --
