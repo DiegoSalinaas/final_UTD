@@ -32,11 +32,11 @@ function guardarCliente(){
         return;
     }
     if($("#ruc_txt").val().trim().length===0){
-        alert("Debes ingresar el RUC");
+        mensaje_dialogo_info_ERROR("Debes ingresar el RUC", "ATENCION");
         return;
     }
     if($("#direccion_txt").val().trim().length===0){
-        alert("Debes ingresar la dirección");
+        mensaje_dialogo_info_ERROR("Debes ingresar la Direccion", "ATENCION");
         return;
     }
     if($("#telefono_txt").val().trim().length===0){
