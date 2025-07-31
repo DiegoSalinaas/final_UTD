@@ -33,14 +33,19 @@ if (isset($_POST['eliminar'])) {
 
 // LISTAR DETALLES
 if (isset($_POST['leer'])) {
-    $query = $cn->prepare(
+    $sql =
         "SELECT d.id_detalle, d.id_presupuesto, d.id_producto, p.nombre AS producto, " .
         "d.cantidad, d.precio_unitario, d.subtotal " .
         "FROM detalle_presupuesto d " .
-        "LEFT JOIN productos p ON d.id_producto = p.producto_id " .
-        "ORDER BY d.id_detalle DESC"
-    );
-    $query->execute();
+        "LEFT JOIN productos p ON d.id_producto = p.producto_id";
+    $params = [];
+    if (!empty($_POST['id_presupuesto'])) {
+        $sql .= " WHERE d.id_presupuesto = :id_presupuesto";
+        $params['id_presupuesto'] = $_POST['id_presupuesto'];
+    }
+    $sql .= " ORDER BY d.id_detalle DESC";
+    $query = $cn->prepare($sql);
+    $query->execute($params);
     echo $query->rowCount() ? json_encode($query->fetchAll(PDO::FETCH_OBJ)) : '0';
 }
 
@@ -57,15 +62,20 @@ if (isset($_POST['leer_id'])) {
 // BUSCAR
 if (isset($_POST['leer_descripcion'])) {
     $filtro = '%' . $_POST['leer_descripcion'] . '%';
-    $query = $cn->prepare(
+    $sql =
         "SELECT d.id_detalle, d.id_presupuesto, d.id_producto, p.nombre AS producto, " .
         "d.cantidad, d.precio_unitario, d.subtotal " .
         "FROM detalle_presupuesto d " .
         "LEFT JOIN productos p ON d.id_producto = p.producto_id " .
-        "WHERE CONCAT(d.id_detalle, p.nombre, d.id_presupuesto) LIKE :filtro " .
-        "ORDER BY d.id_detalle DESC"
-    );
-    $query->execute(['filtro' => $filtro]);
+        "WHERE CONCAT(d.id_detalle, p.nombre, d.id_presupuesto) LIKE :filtro";
+    $params = ['filtro' => $filtro];
+    if (!empty($_POST['id_presupuesto'])) {
+        $sql .= " AND d.id_presupuesto = :id_presupuesto";
+        $params['id_presupuesto'] = $_POST['id_presupuesto'];
+    }
+    $sql .= " ORDER BY d.id_detalle DESC";
+    $query = $cn->prepare($sql);
+    $query->execute($params);
     echo $query->rowCount() ? json_encode($query->fetchAll(PDO::FETCH_OBJ)) : '0';
 }
 ?>

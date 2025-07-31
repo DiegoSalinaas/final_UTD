@@ -1,4 +1,9 @@
-function mostrarListarDetallePresupuesto(){
+const PRESUPUESTO_KEY = 'presupuestoDetalle';
+
+function mostrarListarDetallePresupuesto(id = null){
+    if(id !== null){
+        sessionStorage.setItem(PRESUPUESTO_KEY, id);
+    }
     let contenido = dameContenido("paginas/referenciales/detalle_presupuesto/listar.php");
     $("#contenido-principal").html(contenido);
     cargarTablaDetallePresupuesto();
@@ -21,6 +26,10 @@ function cargarListaPresupuestos(){
         json.map(function(p){
             select.append(`<option value="${p.id_presupuesto}">${p.id_presupuesto} - ${p.proveedor}</option>`);
         });
+        const actual = sessionStorage.getItem(PRESUPUESTO_KEY);
+        if(actual){
+            select.val(actual);
+        }
     }
 }
 
@@ -63,7 +72,12 @@ function guardarDetallePresupuesto(){
 }
 
 function cargarTablaDetallePresupuesto(){
-    let datos = ejecutarAjax("controladores/detalle_presupuesto.php", "leer=1");
+    let params = "leer=1";
+    const id = sessionStorage.getItem(PRESUPUESTO_KEY);
+    if(id){
+        params += "&id_presupuesto=" + id;
+    }
+    let datos = ejecutarAjax("controladores/detalle_presupuesto.php", params);
     if(datos === "0"){
         $("#datos_tb").html("NO HAY REGISTROS");
     }else{
@@ -112,7 +126,12 @@ $(document).on("keyup", "#b_detalle_presupuesto", function(){
 });
 
 function buscarDetallePresupuesto(){
-    let datos = ejecutarAjax("controladores/detalle_presupuesto.php", "leer_descripcion="+$("#b_detalle_presupuesto").val());
+    let params = "leer_descripcion="+$("#b_detalle_presupuesto").val();
+    const id = sessionStorage.getItem(PRESUPUESTO_KEY);
+    if(id){
+        params += "&id_presupuesto=" + id;
+    }
+    let datos = ejecutarAjax("controladores/detalle_presupuesto.php", params);
     if(datos === "0"){
         $("#datos_tb").html("NO HAY REGISTROS");
     }else{
@@ -138,7 +157,8 @@ function buscarDetallePresupuesto(){
 
 function limpiarDetallePresupuesto(){
     $("#id_detalle").val("0");
-    $("#id_presupuesto_lst").val("");
+    const id = sessionStorage.getItem(PRESUPUESTO_KEY) || "";
+    $("#id_presupuesto_lst").val(id);
     $("#id_producto_lst").val("");
     $("#cantidad_txt").val("");
     $("#precio_unitario_txt").val("");
