@@ -1,7 +1,4 @@
-const PRESUPUESTO_KEY = 'presupuestoDetalle';
-
 function mostrarListarPresupuestos(){
-    sessionStorage.removeItem(PRESUPUESTO_KEY);
     let contenido = dameContenido("paginas/referenciales/presupuestos_compra/listar.php");
     $("#contenido-principal").html(contenido);
     cargarTablaPresupuesto();
@@ -117,7 +114,7 @@ $(document).on("click",".editar-presupuesto",function(){
 
 $(document).on("click",".ver-detalle",function(){
     let id = $(this).closest("tr").find("td:eq(0)").text();
-    mostrarListarDetallePresupuesto(id);
+    imprimirPresupuesto(id);
 });
 
 $(document).on("click",".eliminar-presupuesto",function(){
@@ -153,6 +150,44 @@ function buscarPresupuesto(){
                 </tr>`);
         });
     }
+}
+
+function imprimirPresupuesto(id){
+    let presupuestoData = ejecutarAjax("controladores/presupuestos_compra.php","leer_id="+id);
+    if(presupuestoData === "0"){ alert("No se encontró el presupuesto"); return; }
+    let presupuesto = JSON.parse(presupuestoData);
+    let detalleData = ejecutarAjax("controladores/detalle_presupuesto.php","leer=1&id_presupuesto="+id);
+    let filas = "";
+    if(detalleData !== "0"){ 
+        JSON.parse(detalleData).forEach(function(d){
+            filas += `<tr><td>${d.producto || d.id_producto}</td><td>${d.cantidad}</td><td>${d.precio_unitario}</td><td>${d.subtotal}</td></tr>`;
+        });
+    }
+    let win = window.open('', '', 'width=900,height=700');
+    win.document.write(`
+        <html>
+        <head>
+            <title>Presupuesto #${presupuesto.id_presupuesto}</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+            <style>body{padding:30px;font-size:14px;} table{width:100%;border-collapse:collapse;} th,td{padding:8px;border:1px solid #ccc;text-align:left;} th{background:#f8f9fa;}</style>
+        </head>
+        <body>
+            <h3 class="mb-4">Presupuesto #${presupuesto.id_presupuesto}</h3>
+            <p><strong>Proveedor:</strong> ${presupuesto.proveedor || presupuesto.id_proveedor}</p>
+            <p><strong>Fecha:</strong> ${presupuesto.fecha}</p>
+            <p><strong>Total Estimado:</strong> ${presupuesto.total_estimado}</p>
+            <table class="table table-bordered">
+                <thead>
+                    <tr><th>Producto</th><th>Cantidad</th><th>Precio Unitario</th><th>Subtotal</th></tr>
+                </thead>
+                <tbody>${filas}</tbody>
+            </table>
+        </body>
+        </html>
+    `);
+    win.document.close();
+    win.focus();
+    win.print();
 }
 
 function limpiarPresupuesto(){

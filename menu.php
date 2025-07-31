@@ -693,7 +693,6 @@
     <script src="vistas/ebooks.js"></script>
     <script src="vistas/compras.js"></script>
     <script src="vistas/presupuestos_compra.js"></script>
-    <script src="vistas/detalle_presupuesto.js"></script>
     <script src="vistas/categorias.js"></script>
     <script src="vistas/resenas.js"></script>
     <script src="vistas/proveedor.js"></script>
