@@ -11,6 +11,7 @@ function mostrarAgregarPresupuesto(){
     let contenido = dameContenido("paginas/referenciales/presupuestos_compra/agregar.php");
     $("#contenido-principal").html(contenido);
     cargarListaProveedores();
+    cargarListaProductos();
     limpiarPresupuesto();
 }
 
@@ -22,6 +23,18 @@ function cargarListaProveedores(){
         select.html('<option value="">-- Seleccione un proveedor --</option>');
         json.map(function(p){
             select.append(`<option value="${p.id_proveedor}">${p.razon_social}</option>`);
+        });
+    }
+}
+
+function cargarListaProductos(){
+    let datos = ejecutarAjax("controladores/productos.php", "leer=1");
+    if(datos !== "0"){
+        let json = JSON.parse(datos);
+        let select = $("#id_producto_lst");
+        select.html('<option value="">-- Seleccione un producto --</option>');
+        json.map(function(p){
+            select.append(`<option value="${p.producto_id}">${p.nombre}</option>`);
         });
     }
 }
@@ -39,13 +52,24 @@ function guardarPresupuesto(){
         alert("Debe ingresar el total estimado");
         return;
     }
+    if($("#id_producto_lst").val() === ""){ alert("Debe seleccionar un producto"); return; }
+    if($("#cantidad_txt").val().trim().length===0){ alert("Debe ingresar la cantidad"); return; }
+    if($("#precio_unitario_txt").val().trim().length===0){ alert("Debe ingresar el precio unitario"); return; }
     let datos = {
         id_proveedor: $("#id_proveedor_lst").val(),
         fecha: $("#fecha_txt").val(),
         total_estimado: $("#total_txt").val()
     };
     if($("#id_presupuesto").val() === "0"){
-        ejecutarAjax("controladores/presupuestos_compra.php","guardar="+JSON.stringify(datos));
+        let id = ejecutarAjax("controladores/presupuestos_compra.php","guardar="+JSON.stringify(datos));
+        let detalle = {
+            id_presupuesto: id,
+            id_producto: $("#id_producto_lst").val(),
+            cantidad: $("#cantidad_txt").val(),
+            precio_unitario: $("#precio_unitario_txt").val(),
+            subtotal: $("#subtotal_txt").val()
+        };
+        ejecutarAjax("controladores/detalle_presupuesto.php","guardar="+JSON.stringify(detalle));
         alert("Guardado correctamente");
     }else{
         datos = {...datos, id_presupuesto: $("#id_presupuesto").val()};
@@ -136,4 +160,8 @@ function limpiarPresupuesto(){
     $("#id_proveedor_lst").val("");
     $("#fecha_txt").val("");
     $("#total_txt").val("");
+    $("#id_producto_lst").val("");
+    $("#cantidad_txt").val("");
+    $("#precio_unitario_txt").val("");
+    $("#subtotal_txt").val("");
 }

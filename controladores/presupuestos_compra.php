@@ -5,10 +5,12 @@ require_once '../conexion/db.php';
 if (isset($_POST['guardar'])) {
     $datos = json_decode($_POST['guardar'], true);
     $db = new DB();
-    $query = $db->conectar()->prepare(
+    $cn = $db->conectar();
+    $query = $cn->prepare(
         "INSERT INTO presupuestos_compra (fecha, id_proveedor, total_estimado) VALUES (:fecha, :id_proveedor, :total_estimado)"
     );
     $query->execute($datos);
+    echo $cn->lastInsertId();
 }
 
 // ACTUALIZAR PRESUPUESTO
