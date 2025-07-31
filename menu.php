@@ -59,6 +59,7 @@
       integrity="sha256-+uGLJmmTKOqBr+2E6KDYs/NRsHxSkONXFHUL0fy2O/4="
       crossorigin="anonymous"
     />
+    <link rel="stylesheet" href="css/sweetalert2/sweetalert2.min.css">
   </head>
   <!--end::Head-->
   <!--begin::Body-->
@@ -659,6 +660,7 @@
       const sparkline3 = new ApexCharts(document.querySelector('#sparkline-3'), option_sparkline3);
       sparkline3.render();
     </script>
+    <script src="css/sweetalert2/sweetalert2.min.js"></script>
     <script src="vistas/jquery-3.7.1.min.js"></script>
     <script src="vistas/util.js"></script>
     <script src="vistas/departamento.js"></script>
