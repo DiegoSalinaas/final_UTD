@@ -18,6 +18,22 @@
                     <label for="total_txt" class="form-label">Total Estimado</label>
                     <input type="number" step="0.01" id="total_txt" class="form-control" placeholder="0.00">
                 </div>
+                <div class="col-md-6">
+                    <label for="id_producto_lst" class="form-label">Producto</label>
+                    <select id="id_producto_lst" class="form-select"></select>
+                </div>
+                <div class="col-md-6">
+                    <label for="cantidad_txt" class="form-label">Cantidad</label>
+                    <input type="number" id="cantidad_txt" class="form-control" min="0">
+                </div>
+                <div class="col-md-6">
+                    <label for="precio_unitario_txt" class="form-label">Precio Unitario</label>
+                    <input type="number" step="0.01" id="precio_unitario_txt" class="form-control">
+                </div>
+                <div class="col-md-6">
+                    <label for="subtotal_txt" class="form-label">Subtotal</label>
+                    <input type="number" step="0.01" id="subtotal_txt" class="form-control" readonly>
+                </div>
             </div>
         </div>
         <div class="card-footer text-end">
@@ -30,3 +46,10 @@
         </div>
     </div>
 </div>
+<script>
+$(document).on('input','#cantidad_txt,#precio_unitario_txt',function(){
+    const cant = parseFloat($('#cantidad_txt').val()) || 0;
+    const precio = parseFloat($('#precio_unitario_txt').val()) || 0;
+    $('#subtotal_txt').val((cant * precio).toFixed(2));
+});
+</script>
