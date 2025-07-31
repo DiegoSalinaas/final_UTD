@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 09-07-2025 a las 00:20:39
+-- Tiempo de generación: 31-07-2025 a las 03:18:17
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -24,15 +24,72 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `ciudades`
+-- Estructura de tabla para la tabla `categorias`
 --
 
-CREATE TABLE `ciudades` (
+CREATE TABLE `categorias` (
+  `categoria_id` int(11) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `descripcion` text DEFAULT NULL,
+  `activa` tinyint(1) DEFAULT 1,
+  `fecha_creacion` date NOT NULL,
+  `orden` int(11) DEFAULT 0
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `categorias`
+--
+
+INSERT INTO `categorias` (`categoria_id`, `nombre`, `descripcion`, `activa`, `fecha_creacion`, `orden`) VALUES
+(1, 'categoria 1', 'cualquier cosa', 1, '2025-07-11', 3),
+(3, 'categoria 3', 'prueba 6', 0, '2025-07-14', 7);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ciudad`
+--
+
+CREATE TABLE `ciudad` (
   `id_ciudad` int(11) NOT NULL,
   `descripcion` varchar(200) NOT NULL,
   `id_departamento` int(11) NOT NULL,
   `estado` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `ciudad`
+--
+
+INSERT INTO `ciudad` (`id_ciudad`, `descripcion`, `id_departamento`, `estado`) VALUES
+(3, 'Areguá ', 2, 'ACTIVO'),
+(5, 'Itauguá ', 2, 'ACTIVO'),
+(6, 'Capiata', 2, 'ACTIVO'),
+(7, 'Caacupe', 3, 'ACTIVO');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `compras`
+--
+
+CREATE TABLE `compras` (
+  `compra_id` int(11) NOT NULL,
+  `usuario_id` int(11) DEFAULT NULL,
+  `fecha` datetime NOT NULL,
+  `total` decimal(10,2) NOT NULL,
+  `metodo_pago` enum('Tarjeta','PayPal','Transferencia') NOT NULL,
+  `estado` enum('pendiente','pagado','cancelado') DEFAULT 'pendiente',
+  `referencia` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `compras`
+--
+
+INSERT INTO `compras` (`compra_id`, `usuario_id`, `fecha`, `total`, `metodo_pago`, `estado`, `referencia`) VALUES
+(1, 1, '2025-07-10 20:54:00', 122222.00, 'PayPal', 'pendiente', 'alguna referencia'),
+(6, 1, '2025-07-04 19:46:00', 433.00, 'Tarjeta', 'cancelado', 'cancelado');
 
 -- --------------------------------------------------------
 
@@ -45,6 +102,38 @@ CREATE TABLE `departamentos` (
   `descripcion` varchar(200) NOT NULL,
   `estado` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `departamentos`
+--
+
+INSERT INTO `departamentos` (`id_departamento`, `descripcion`, `estado`) VALUES
+(2, 'Central', 'ACTIVO'),
+(3, 'Cordillera', 'ACTIVO');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `ebooks`
+--
+
+CREATE TABLE `ebooks` (
+  `ebook_id` int(11) NOT NULL,
+  `titulo` varchar(200) NOT NULL,
+  `autor` varchar(150) NOT NULL,
+  `isbn` varchar(20) DEFAULT NULL,
+  `formato` enum('PDF','EPUB','MOBI') NOT NULL,
+  `precio` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `ebooks`
+--
+
+INSERT INTO `ebooks` (`ebook_id`, `titulo`, `autor`, `isbn`, `formato`, `precio`) VALUES
+(1, 'LIBRO 1', 'AAAAA', '1213232', 'PDF', 120000.00),
+(6, 'Libro 2', 'autor1', '1222332', 'PDF', 8766.00),
+(7, 'libro 3', 'DDDD', '2342443', 'EPUB', 99999999.99);
 
 -- --------------------------------------------------------
 
@@ -69,8 +158,9 @@ CREATE TABLE `persona` (
 --
 
 INSERT INTO `persona` (`id_persona`, `nombre`, `cedula`, `fecha`, `ciudad`, `color`, `foto`, `contrasena`, `estado`) VALUES
-(5, 'Luis', 5431319, '2025-06-11', 'aixaaguayo', '#000000', 'C:\\fakepath\\EL SISTEMA BRASIPAR CUENTA CON MODO DE PAGO EN CUOTAS.png', '123', 'ACTIVO'),
-(8, 'Luisa', 5431318, '2025-07-01', 'itaugua', '#000000', 'C:\\fakepath\\FICHA DE PASANTÍA D1-09 (5).docx', 'a112233', 'ACTIVO');
+(7, 'diego salinas', 12334, '2025-06-24', 'itaugua', '#d71d1d', 'C:\\fakepath\\Clase 2 - Sistemas y OODA.docx', '12344444', 'ACTIVO'),
+(8, 'luis', 123454, '2025-07-08', 'capiata', '#000000', 'C:\\fakepath\\Clase 2 - Origen Concepto Diego Cantero.docx', '123', 'ACTIVO'),
+(9, 'marcos', 123, '2025-07-03', 'asuncion', '#d95e5e', 'C:\\fakepath\\Clase 2 - Origen Concepto Diego Cantero.docx', '123', 'ACTIVO');
 
 -- --------------------------------------------------------
 
@@ -81,15 +171,61 @@ INSERT INTO `persona` (`id_persona`, `nombre`, `cedula`, `fecha`, `ciudad`, `col
 CREATE TABLE `producto` (
   `id_producto` int(11) NOT NULL,
   `nombre` varchar(100) NOT NULL,
-  `descripcion` text DEFAULT NULL,
+  `descripcion` text NOT NULL,
   `precio` decimal(10,2) NOT NULL,
   `stock` int(11) NOT NULL,
-  `categoria` varchar(50) DEFAULT NULL,
-  `marca` varchar(50) DEFAULT NULL,
-  `codigo_barra` varchar(30) DEFAULT NULL,
-  `fecha_alta` date DEFAULT NULL,
-  `estado` varchar(20) DEFAULT 'ACTIVO'
+  `categoria` varchar(50) NOT NULL,
+  `marca` varchar(50) NOT NULL,
+  `codigo_barra` varchar(30) NOT NULL,
+  `fecha_alta` date NOT NULL,
+  `estado` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `producto`
+--
+
+INSERT INTO `producto` (`id_producto`, `nombre`, `descripcion`, `precio`, `stock`, `categoria`, `marca`, `codigo_barra`, `fecha_alta`, `estado`) VALUES
+(1, 'AURICULAR', 'AURICULAR CON CABLE', 2212.00, 15, 'AURICULAR', 'JBL', '232', '2025-07-09', 'ACTIVO'),
+(3, 'notebook', 'hdshh', 21212.00, 11, 'nose', 'note', '122', '2025-07-01', 'activo');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `proveedor`
+--
+
+CREATE TABLE `proveedor` (
+  `id_proveedor` int(11) NOT NULL,
+  `razon_social` varchar(100) NOT NULL,
+  `ruc` varchar(50) NOT NULL,
+  `direccion` varchar(150) NOT NULL,
+  `id_ciudad` int(11) NOT NULL,
+  `estado` varchar(30) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `resenas`
+--
+
+CREATE TABLE `resenas` (
+  `resena_id` int(11) NOT NULL,
+  `usuario_id` int(11) DEFAULT NULL,
+  `ebook_id` int(11) DEFAULT NULL,
+  `puntuacion` int(11) DEFAULT NULL CHECK (`puntuacion` between 1 and 5),
+  `comentario` text DEFAULT NULL,
+  `fecha` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `resenas`
+--
+
+INSERT INTO `resenas` (`resena_id`, `usuario_id`, `ebook_id`, `puntuacion`, `comentario`, `fecha`) VALUES
+(5, 4, 1, 3, 'Prueba', '2025-07-11'),
+(6, 1, 1, 5, 'sin comentarios', '2025-07-11');
 
 -- --------------------------------------------------------
 
@@ -104,30 +240,74 @@ CREATE TABLE `usuarios` (
   `nombre_apellido` varchar(100) NOT NULL,
   `rol` varchar(20) NOT NULL,
   `estado` varchar(20) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `usuarios`
 --
 
 INSERT INTO `usuarios` (`id_usuario`, `usuario`, `pass`, `nombre_apellido`, `rol`, `estado`) VALUES
-(1, 'luis', '202cb962ac59075b964b07152d234b70', 'luis guzman', 'ADMINISTRADOR', 'ACTIVO');
+(1, 'diego', '202cb962ac59075b964b07152d234b70', 'Diego Salinas', 'comerciante', 'ACTIVO');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `usuarioss`
+--
+
+CREATE TABLE `usuarioss` (
+  `usuario_id` int(11) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `email` varchar(100) NOT NULL,
+  `fecha_registro` date NOT NULL,
+  `tipo_usuario` enum('admin','empleado','cliente') DEFAULT 'cliente',
+  `estado` enum('activo','inactivo') DEFAULT 'activo'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `usuarioss`
+--
+
+INSERT INTO `usuarioss` (`usuario_id`, `nombre`, `email`, `fecha_registro`, `tipo_usuario`, `estado`) VALUES
+(1, 'Luis Guzman', 'LuisGuzman@gmail.com', '2025-07-11', 'cliente', 'inactivo'),
+(4, 'Diego Salinas', 'diegosalinas@gmail.com', '2025-07-11', 'admin', 'activo');
 
 --
 -- Índices para tablas volcadas
 --
 
 --
--- Indices de la tabla `ciudades`
+-- Indices de la tabla `categorias`
 --
-ALTER TABLE `ciudades`
-  ADD PRIMARY KEY (`id_ciudad`);
+ALTER TABLE `categorias`
+  ADD PRIMARY KEY (`categoria_id`);
+
+--
+-- Indices de la tabla `ciudad`
+--
+ALTER TABLE `ciudad`
+  ADD PRIMARY KEY (`id_ciudad`),
+  ADD KEY `id_departamento` (`id_departamento`);
+
+--
+-- Indices de la tabla `compras`
+--
+ALTER TABLE `compras`
+  ADD PRIMARY KEY (`compra_id`),
+  ADD KEY `usuario_id` (`usuario_id`);
 
 --
 -- Indices de la tabla `departamentos`
 --
 ALTER TABLE `departamentos`
   ADD PRIMARY KEY (`id_departamento`);
+
+--
+-- Indices de la tabla `ebooks`
+--
+ALTER TABLE `ebooks`
+  ADD PRIMARY KEY (`ebook_id`),
+  ADD UNIQUE KEY `isbn` (`isbn`);
 
 --
 -- Indices de la tabla `persona`
@@ -142,44 +322,124 @@ ALTER TABLE `producto`
   ADD PRIMARY KEY (`id_producto`);
 
 --
+-- Indices de la tabla `proveedor`
+--
+ALTER TABLE `proveedor`
+  ADD PRIMARY KEY (`id_proveedor`);
+
+--
+-- Indices de la tabla `resenas`
+--
+ALTER TABLE `resenas`
+  ADD PRIMARY KEY (`resena_id`),
+  ADD KEY `usuario_id` (`usuario_id`),
+  ADD KEY `ebook_id` (`ebook_id`);
+
+--
 -- Indices de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
   ADD PRIMARY KEY (`id_usuario`);
 
 --
+-- Indices de la tabla `usuarioss`
+--
+ALTER TABLE `usuarioss`
+  ADD PRIMARY KEY (`usuario_id`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
 -- AUTO_INCREMENT de las tablas volcadas
 --
 
 --
--- AUTO_INCREMENT de la tabla `ciudades`
+-- AUTO_INCREMENT de la tabla `categorias`
 --
-ALTER TABLE `ciudades`
-  MODIFY `id_ciudad` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `categorias`
+  MODIFY `categoria_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT de la tabla `ciudad`
+--
+ALTER TABLE `ciudad`
+  MODIFY `id_ciudad` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT de la tabla `compras`
+--
+ALTER TABLE `compras`
+  MODIFY `compra_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `departamentos`
 --
 ALTER TABLE `departamentos`
-  MODIFY `id_departamento` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_departamento` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+
+--
+-- AUTO_INCREMENT de la tabla `ebooks`
+--
+ALTER TABLE `ebooks`
+  MODIFY `ebook_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de la tabla `persona`
 --
 ALTER TABLE `persona`
-  MODIFY `id_persona` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `id_persona` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `producto`
 --
 ALTER TABLE `producto`
-  MODIFY `id_producto` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id_producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT de la tabla `proveedor`
+--
+ALTER TABLE `proveedor`
+  MODIFY `id_proveedor` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `resenas`
+--
+ALTER TABLE `resenas`
+  MODIFY `resena_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
   MODIFY `id_usuario` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de la tabla `usuarioss`
+--
+ALTER TABLE `usuarioss`
+  MODIFY `usuario_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+
+--
+-- Restricciones para tablas volcadas
+--
+
+--
+-- Filtros para la tabla `ciudad`
+--
+ALTER TABLE `ciudad`
+  ADD CONSTRAINT `ciudad_ibfk_1` FOREIGN KEY (`id_departamento`) REFERENCES `departamentos` (`id_departamento`);
+
+--
+-- Filtros para la tabla `compras`
+--
+ALTER TABLE `compras`
+  ADD CONSTRAINT `compras_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarioss` (`usuario_id`);
+
+--
+-- Filtros para la tabla `resenas`
+--
+ALTER TABLE `resenas`
+  ADD CONSTRAINT `resenas_ibfk_1` FOREIGN KEY (`usuario_id`) REFERENCES `usuarioss` (`usuario_id`),
+  ADD CONSTRAINT `resenas_ibfk_2` FOREIGN KEY (`ebook_id`) REFERENCES `ebooks` (`ebook_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
