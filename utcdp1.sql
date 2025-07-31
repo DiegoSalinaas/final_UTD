@@ -222,6 +222,28 @@ CREATE TABLE `cliente` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `productos`
+--
+
+CREATE TABLE `productos` (
+  `producto_id` int(11) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `descripcion` text DEFAULT NULL,
+  `precio` decimal(10,2) NOT NULL,
+  `iva` decimal(10,2) NOT NULL,
+  `estado` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `productos`
+--
+
+INSERT INTO `productos` (`producto_id`, `nombre`, `descripcion`, `precio`, `iva`, `estado`) VALUES
+(1, 'Producto Demo', 'Registro inicial', 0.00, 0.00, 'ACTIVO');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `resenas`
 --
 
@@ -337,6 +359,12 @@ ALTER TABLE `producto`
   ADD PRIMARY KEY (`id_producto`);
 
 --
+-- Indices de la tabla `productos`
+--
+ALTER TABLE `productos`
+  ADD PRIMARY KEY (`producto_id`);
+
+--
 -- Indices de la tabla `proveedor`
 --
 ALTER TABLE `proveedor`
@@ -414,6 +442,12 @@ ALTER TABLE `persona`
 --
 ALTER TABLE `producto`
   MODIFY `id_producto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT de la tabla `productos`
+--
+ALTER TABLE `productos`
+  MODIFY `producto_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de la tabla `proveedor`

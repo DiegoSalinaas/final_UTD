@@ -337,6 +337,12 @@
   </a>
 </li>
 <li class="nav-item">
+  <a href="#" class="nav-link" onclick="mostrarListarProductos(); return false;">
+    <i class="nav-icon bi bi-circle"></i>
+    <p>Productos</p>
+  </a>
+</li>
+<li class="nav-item">
   <a href="#" class="nav-link" onclick="mostrarListarEbooks(); return false;">
     <i class="nav-icon bi bi-circle"></i>
     <p>Ebooks</p>
@@ -678,6 +684,7 @@
     <script src="vistas/resenas.js"></script>
     <script src="vistas/proveedor.js"></script>
     <script src="vistas/cliente.js"></script>
+    <script src="vistas/productos.js"></script>
     <!--end::Script-->
   </body>
   <!--end::Body-->
