@@ -28,19 +28,19 @@ function cargarListaCiudad(componente){
 
 function guardarProveedor(){
     if($("#razon_txt").val().trim().length===0){
-        alert("Debes ingresar la razón social");
+        mensaje_dialogo_info_ERROR("Debes ingresar la razón social", "ATENCION");
         return;
     }
     if($("#ruc_txt").val().trim().length===0){
-        alert("Debes ingresar el RUC");
+        mensaje_dialogo_info_ERROR("Debes ingresar el RUC");
         return;
     }
     if($("#direccion_txt").val().trim().length===0){
-        alert("Debes ingresar la dirección");
+        mensaje_dialogo_info_ERROR("Debes ingresar la dirección");
         return;
     }
     if($("#ciudad_lst").val()==="0"){
-        alert("Debes seleccionar la ciudad");
+        mensaje_dialogo_info_ERROR("Debes seleccionar la ciudad");
         return;
     }
 
@@ -54,13 +54,13 @@ function guardarProveedor(){
 
     if($("#id_proveedor").val()==="0"){
         let res = ejecutarAjax("controladores/proveedor.php","guardar="+JSON.stringify(datos));
-        alert("Guardado correctamente");
+        mensaje_dialogo_correcto("Guardado correctamente", 'GUARDADO');
         mostrarListarProveedor();
         limpiarProveedor();
     }else{
         datos = {...datos, id_proveedor: $("#id_proveedor").val()};
         let res = ejecutarAjax("controladores/proveedor.php","actualizar="+JSON.stringify(datos));
-        alert("Actualizado correctamente");
+        mensaje_dialogo_correcto("Actualizado correctamente", 'ACTUAIZADO');
         mostrarListarProveedor();
         limpiarProveedor();
     }
