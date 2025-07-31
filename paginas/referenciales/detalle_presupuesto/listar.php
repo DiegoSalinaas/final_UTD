@@ -1,9 +1,14 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4 class="mb-0">Listado Detalle Presupuesto</h4>
-        <button class="btn btn-primary" onclick="mostrarAgregarDetallePresupuesto(); return false;">
-            <i class="bi bi-plus-circle"></i> Agregar
-        </button>
+        <div>
+            <button class="btn btn-secondary me-2" onclick="mostrarListarPresupuestos(); return false;">
+                <i class="bi bi-arrow-left-circle"></i> Regresar
+            </button>
+            <button class="btn btn-primary" onclick="mostrarAgregarDetallePresupuesto(); return false;">
+                <i class="bi bi-plus-circle"></i> Agregar
+            </button>
+        </div>
     </div>
     <div class="card shadow-sm rounded-4">
         <div class="card-body">

@@ -1,4 +1,7 @@
+const PRESUPUESTO_KEY = 'presupuestoDetalle';
+
 function mostrarListarPresupuestos(){
+    sessionStorage.removeItem(PRESUPUESTO_KEY);
     let contenido = dameContenido("paginas/referenciales/presupuestos_compra/listar.php");
     $("#contenido-principal").html(contenido);
     cargarTablaPresupuesto();
@@ -68,6 +71,7 @@ function cargarTablaPresupuesto(){
                     <td>${it.fecha}</td>
                     <td>${it.total_estimado}</td>
                     <td>
+                        <button class="btn btn-info ver-detalle">Detalles</button>
                         <button class="btn btn-warning editar-presupuesto">Editar</button>
                         <button class="btn btn-danger eliminar-presupuesto">Eliminar</button>
                     </td>
@@ -85,6 +89,11 @@ $(document).on("click",".editar-presupuesto",function(){
     $("#id_proveedor_lst").val(json.id_proveedor);
     $("#fecha_txt").val(json.fecha);
     $("#total_txt").val(json.total_estimado);
+});
+
+$(document).on("click",".ver-detalle",function(){
+    let id = $(this).closest("tr").find("td:eq(0)").text();
+    mostrarListarDetallePresupuesto(id);
 });
 
 $(document).on("click",".eliminar-presupuesto",function(){
@@ -113,6 +122,7 @@ function buscarPresupuesto(){
                     <td>${it.fecha}</td>
                     <td>${it.total_estimado}</td>
                     <td>
+                        <button class="btn btn-info ver-detalle">Detalles</button>
                         <button class="btn btn-warning editar-presupuesto">Editar</button>
                         <button class="btn btn-danger eliminar-presupuesto">Eliminar</button>
                     </td>
