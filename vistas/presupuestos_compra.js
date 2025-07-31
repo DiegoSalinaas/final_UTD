@@ -174,7 +174,7 @@ function imprimirPresupuesto(id){
         <body>
             <h3 class="mb-4">Presupuesto #${presupuesto.id_presupuesto}</h3>
             <p><strong>Proveedor:</strong> ${presupuesto.proveedor || presupuesto.id_proveedor}</p>
-            <p><strong>Fecha:</strong> ${presupuesto.fecha}</p>
+            <p><strong>Fecha:</strong> ${formatearFechaDMA(presupuesto.fecha)}</p>
             <p><strong>Total Estimado:</strong> ${presupuesto.total_estimado}</p>
             <table class="table table-bordered">
                 <thead>
