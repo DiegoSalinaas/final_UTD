@@ -40,11 +40,11 @@ function guardarCliente(){
         return;
     }
     if($("#telefono_txt").val().trim().length===0){
-        alert("Debes ingresar el teléfono");
+        mensaje_dialogo_info_ERROR("Debes ingresar el Telefono", "ATENCION");
         return;
     }
     if($("#ciudad_lst").val()==="0"){
-        alert("Debes seleccionar la ciudad");
+       mensaje_dialogo_info_ERROR("Debes ingresar la ciudad", "ATENCION");
         return;
     }
 
@@ -59,7 +59,7 @@ function guardarCliente(){
 
     if($("#id_cliente").val()==="0"){
         let res = ejecutarAjax("controladores/cliente.php","guardar="+JSON.stringify(datos));
-        alert("Guardado correctamente");
+        mensaje_confirmacion("Guardado correctamente");
         mostrarListarCliente();
         limpiarCliente();
     }else{
