@@ -92,7 +92,7 @@ function cargarTablaPresupuesto(){
                     <td>${it.fecha}</td>
                     <td>${it.total_estimado}</td>
                     <td>
-                        <button class="btn btn-info ver-detalle">Detalles</button>
+                        <button class="btn btn-info ver-detalle">Imprimir</button>
                         <button class="btn btn-warning editar-presupuesto">Editar</button>
                         <button class="btn btn-danger eliminar-presupuesto">Eliminar</button>
                     </td>
