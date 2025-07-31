@@ -28,7 +28,7 @@ function cargarListaCiudad(componente){
 
 function guardarCliente(){
     if($("#nombre_txt").val().trim().length===0){
-        alert("Debes ingresar el nombre y apellido");
+        mensaje_dialogo_info_ERROR("Debes ingresar el nombre y apellido", "ATENCION");
         return;
     }
     if($("#ruc_txt").val().trim().length===0){
