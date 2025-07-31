@@ -207,6 +207,21 @@ CREATE TABLE `proveedor` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `cliente`
+--
+
+CREATE TABLE `cliente` (
+  `id_cliente` int(11) NOT NULL,
+  `nombre_apellido` varchar(100) NOT NULL,
+  `ruc` varchar(50) NOT NULL,
+  `direccion` varchar(150) NOT NULL,
+  `id_ciudad` int(11) NOT NULL,
+  `estado` varchar(30) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `resenas`
 --
 
@@ -328,6 +343,12 @@ ALTER TABLE `proveedor`
   ADD PRIMARY KEY (`id_proveedor`);
 
 --
+-- Indices de la tabla `cliente`
+--
+ALTER TABLE `cliente`
+  ADD PRIMARY KEY (`id_cliente`);
+
+--
 -- Indices de la tabla `resenas`
 --
 ALTER TABLE `resenas`
@@ -399,6 +420,12 @@ ALTER TABLE `producto`
 --
 ALTER TABLE `proveedor`
   MODIFY `id_proveedor` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `cliente`
+--
+ALTER TABLE `cliente`
+  MODIFY `id_cliente` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `resenas`
