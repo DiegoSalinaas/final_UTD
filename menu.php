@@ -324,6 +324,12 @@
   </a>
 </li>
 <li class="nav-item">
+  <a href="#" class="nav-link" onclick="mostrarListarProveedor(); return false;">
+    <i class="nav-icon bi bi-circle"></i>
+    <p>Proveedores</p>
+  </a>
+</li>
+<li class="nav-item">
   <a href="#" class="nav-link" onclick="mostrarListarEbooks(); return false;">
     <i class="nav-icon bi bi-circle"></i>
     <p>Ebooks</p>
@@ -662,6 +668,7 @@
     <script src="vistas/compras.js"></script>
     <script src="vistas/categorias.js"></script>
     <script src="vistas/resenas.js"></script>
+    <script src="vistas/proveedor.js"></script>
     <!--end::Script-->
   </body>
   <!--end::Body-->
