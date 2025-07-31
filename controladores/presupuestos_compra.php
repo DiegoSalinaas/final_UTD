@@ -48,7 +48,9 @@ if (isset($_POST['leer'])) {
 if (isset($_POST['leer_id'])) {
     $db = new DB();
     $query = $db->conectar()->prepare(
-        "SELECT id_presupuesto, fecha, id_proveedor, total_estimado FROM presupuestos_compra WHERE id_presupuesto = :id"
+        "SELECT p.id_presupuesto, p.fecha, p.id_proveedor, pr.razon_social AS proveedor, p.total_estimado " .
+        "FROM presupuestos_compra p LEFT JOIN proveedor pr ON p.id_proveedor = pr.id_proveedor " .
+        "WHERE p.id_presupuesto = :id"
     );
     $query->execute(['id' => $_POST['leer_id']]);
     if ($query->rowCount()) {
