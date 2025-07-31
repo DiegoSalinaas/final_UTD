@@ -39,6 +39,10 @@ function guardarCliente(){
         alert("Debes ingresar la dirección");
         return;
     }
+    if($("#telefono_txt").val().trim().length===0){
+        alert("Debes ingresar el teléfono");
+        return;
+    }
     if($("#ciudad_lst").val()==="0"){
         alert("Debes seleccionar la ciudad");
         return;
@@ -49,6 +53,7 @@ function guardarCliente(){
         ruc: $("#ruc_txt").val(),
         direccion: $("#direccion_txt").val(),
         id_ciudad: $("#ciudad_lst").val(),
+        telefono: $("#telefono_txt").val(),
         estado: $("#estado_lst").val()
     };
 
@@ -80,6 +85,7 @@ function cargarTablaCliente(){
                     <td>${it.nombre_apellido}</td>
                     <td>${it.ruc}</td>
                     <td>${it.direccion}</td>
+                    <td>${it.telefono}</td>
                     <td>${it.ciudad}</td>
                     <td>${it.estado}</td>
                     <td>
@@ -100,6 +106,7 @@ $(document).on("click",".editar-cliente",function(){
         $("#nombre_txt").val(json.nombre_apellido);
         $("#ruc_txt").val(json.ruc);
         $("#direccion_txt").val(json.direccion);
+        $("#telefono_txt").val(json.telefono);
         $("#ciudad_lst").val(json.id_ciudad);
         $("#estado_lst").val(json.estado);
     });
@@ -130,6 +137,7 @@ function buscarCliente(){
                     <td>${it.nombre_apellido}</td>
                     <td>${it.ruc}</td>
                     <td>${it.direccion}</td>
+                    <td>${it.telefono}</td>
                     <td>${it.ciudad}</td>
                     <td>${it.estado}</td>
                     <td>
@@ -146,6 +154,7 @@ function limpiarCliente(){
     $("#nombre_txt").val("");
     $("#ruc_txt").val("");
     $("#direccion_txt").val("");
+    $("#telefono_txt").val("");
     $("#ciudad_lst").val("0");
     $("#estado_lst").val("ACTIVO");
 }

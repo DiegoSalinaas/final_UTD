@@ -21,8 +21,8 @@ function guardarProducto(){
         alert("Debes ingresar el precio");
         return;
     }
-    if($("#iva_txt").val().trim().length===0){
-        alert("Debes ingresar el IVA");
+    if($("#tipo_lst").val()==="0"){
+        alert("Debes seleccionar el tipo");
         return;
     }
 
@@ -30,7 +30,7 @@ function guardarProducto(){
         nombre: $("#nombre_txt").val(),
         descripcion: $("#descripcion_txt").val(),
         precio: $("#precio_txt").val(),
-        iva: $("#iva_txt").val(),
+        tipo: $("#tipo_lst").val(),
         estado: $("#estado_lst").val()
     };
 
@@ -62,7 +62,7 @@ function cargarTablaProductos(){
                     <td>${it.nombre}</td>
                     <td>${it.descripcion}</td>
                     <td>${it.precio}</td>
-                    <td>${it.iva}</td>
+                    <td>${it.tipo}</td>
                     <td>${it.estado}</td>
                     <td>
                         <button class="btn btn-warning editar-producto">Editar</button>
@@ -82,7 +82,7 @@ $(document).on("click",".editar-producto",function(){
         $("#nombre_txt").val(json.nombre);
         $("#descripcion_txt").val(json.descripcion);
         $("#precio_txt").val(json.precio);
-        $("#iva_txt").val(json.iva);
+        $("#tipo_lst").val(json.tipo);
         $("#estado_lst").val(json.estado);
     });
 });
@@ -112,7 +112,7 @@ function buscarProducto(){
                     <td>${it.nombre}</td>
                     <td>${it.descripcion}</td>
                     <td>${it.precio}</td>
-                    <td>${it.iva}</td>
+                    <td>${it.tipo}</td>
                     <td>${it.estado}</td>
                     <td>
                         <button class="btn btn-warning editar-producto">Editar</button>
@@ -128,6 +128,6 @@ function limpiarProducto(){
     $("#nombre_txt").val("");
     $("#descripcion_txt").val("");
     $("#precio_txt").val("");
-    $("#iva_txt").val("");
+    $("#tipo_lst").val("0");
     $("#estado_lst").val("ACTIVO");
 }

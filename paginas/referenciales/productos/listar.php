@@ -26,7 +26,7 @@
                             <th>Nombre</th>
                             <th>Descripción</th>
                             <th>Precio</th>
-                            <th>IVA</th>
+                            <th>Tipo</th>
                             <th>Estado</th>
                             <th>Operaciones</th>
                         </tr>

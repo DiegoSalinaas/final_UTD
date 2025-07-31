@@ -19,6 +19,10 @@
                     <input type="text" id="direccion_txt" class="form-control" placeholder="Dirección">
                 </div>
                 <div class="col-md-6">
+                    <label for="telefono_txt" class="form-label">Teléfono</label>
+                    <input type="text" id="telefono_txt" class="form-control" placeholder="Teléfono">
+                </div>
+                <div class="col-md-6">
                     <label for="ciudad_lst" class="form-label">Ciudad</label>
                     <select id="ciudad_lst" class="form-select"></select>
                 </div>
