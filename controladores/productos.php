@@ -7,8 +7,8 @@ $db = $base_datos->conectar();
 if (isset($_POST['guardar'])) {
     $datos = json_decode($_POST['guardar'], true);
     $query = $db->prepare(
-        "INSERT INTO productos (nombre, descripcion, precio, iva, estado) " .
-        "VALUES (:nombre, :descripcion, :precio, :iva, :estado)"
+        "INSERT INTO productos (nombre, descripcion, precio, tipo, estado) " .
+        "VALUES (:nombre, :descripcion, :precio, :tipo, :estado)"
     );
     $query->execute($datos);
 }
@@ -17,7 +17,7 @@ if (isset($_POST['actualizar'])) {
     $datos = json_decode($_POST['actualizar'], true);
     $query = $db->prepare(
         "UPDATE productos SET nombre = :nombre, descripcion = :descripcion, " .
-        "precio = :precio, iva = :iva, estado = :estado " .
+        "precio = :precio, tipo = :tipo, estado = :estado " .
         "WHERE producto_id = :producto_id"
     );
     $query->execute($datos);
@@ -30,7 +30,7 @@ if (isset($_POST['eliminar'])) {
 
 if (isset($_POST['leer'])) {
     $query = $db->prepare(
-        "SELECT producto_id, nombre, descripcion, precio, iva, estado " .
+        "SELECT producto_id, nombre, descripcion, precio, tipo, estado " .
         "FROM productos ORDER BY producto_id DESC"
     );
     $query->execute();
@@ -40,8 +40,8 @@ if (isset($_POST['leer'])) {
 if (isset($_POST['leer_descripcion'])) {
     $filtro = '%' . $_POST['leer_descripcion'] . '%';
     $query = $db->prepare(
-        "SELECT producto_id, nombre, descripcion, precio, iva, estado " .
-        "FROM productos WHERE CONCAT(producto_id, nombre, descripcion, precio, iva, estado) LIKE :filtro " .
+        "SELECT producto_id, nombre, descripcion, precio, tipo, estado " .
+        "FROM productos WHERE CONCAT(producto_id, nombre, descripcion, precio, tipo, estado) LIKE :filtro " .
         "ORDER BY producto_id DESC"
     );
     $query->execute(['filtro' => $filtro]);
@@ -50,7 +50,7 @@ if (isset($_POST['leer_descripcion'])) {
 
 if (isset($_POST['leer_id'])) {
     $query = $db->prepare(
-        "SELECT producto_id, nombre, descripcion, precio, iva, estado " .
+        "SELECT producto_id, nombre, descripcion, precio, tipo, estado " .
         "FROM productos WHERE producto_id = :id"
     );
     $query->execute(['id' => $_POST['leer_id']]);

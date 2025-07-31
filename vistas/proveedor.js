@@ -39,6 +39,10 @@ function guardarProveedor(){
         mensaje_dialogo_info_ERROR("Debes ingresar la dirección");
         return;
     }
+    if($("#telefono_txt").val().trim().length===0){
+        mensaje_dialogo_info_ERROR("Debes ingresar el teléfono");
+        return;
+    }
     if($("#ciudad_lst").val()==="0"){
         mensaje_dialogo_info_ERROR("Debes seleccionar la ciudad");
         return;
@@ -49,6 +53,7 @@ function guardarProveedor(){
         ruc: $("#ruc_txt").val(),
         direccion: $("#direccion_txt").val(),
         id_ciudad: $("#ciudad_lst").val(),
+        telefono: $("#telefono_txt").val(),
         estado: $("#estado_lst").val()
     };
 
@@ -80,6 +85,7 @@ function cargarTablaProveedor(){
                     <td>${it.razon_social}</td>
                     <td>${it.ruc}</td>
                     <td>${it.direccion}</td>
+                    <td>${it.telefono}</td>
                     <td>${it.ciudad}</td>
                     <td>${it.estado}</td>
                     <td>
@@ -100,6 +106,7 @@ $(document).on("click",".editar-proveedor",function(){
         $("#razon_txt").val(json.razon_social);
         $("#ruc_txt").val(json.ruc);
         $("#direccion_txt").val(json.direccion);
+        $("#telefono_txt").val(json.telefono);
         $("#ciudad_lst").val(json.id_ciudad);
         $("#estado_lst").val(json.estado);
     });
@@ -130,6 +137,7 @@ function buscarProveedor(){
                     <td>${it.razon_social}</td>
                     <td>${it.ruc}</td>
                     <td>${it.direccion}</td>
+                    <td>${it.telefono}</td>
                     <td>${it.ciudad}</td>
                     <td>${it.estado}</td>
                     <td>
@@ -146,6 +154,7 @@ function limpiarProveedor(){
     $("#razon_txt").val("");
     $("#ruc_txt").val("");
     $("#direccion_txt").val("");
+    $("#telefono_txt").val("");
     $("#ciudad_lst").val("0");
     $("#estado_lst").val("ACTIVO");
 }

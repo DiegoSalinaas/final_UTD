@@ -15,8 +15,12 @@
                     <input type="number" id="precio_txt" class="form-control" min="0" step="0.01">
                 </div>
                 <div class="col-md-6">
-                    <label for="iva_txt" class="form-label">IVA</label>
-                    <input type="number" id="iva_txt" class="form-control" min="0" step="0.01">
+                    <label for="tipo_lst" class="form-label">Tipo</label>
+                    <select id="tipo_lst" class="form-select">
+                        <option value="0">Selecciona...</option>
+                        <option value="PRODUCTO">PRODUCTO</option>
+                        <option value="SERVICIO">SERVICIO</option>
+                    </select>
                 </div>
                 <div class="col-12">
                     <label for="descripcion_txt" class="form-label">Descripción</label>

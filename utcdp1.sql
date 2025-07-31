@@ -201,6 +201,7 @@ CREATE TABLE `proveedor` (
   `ruc` varchar(50) NOT NULL,
   `direccion` varchar(150) NOT NULL,
   `id_ciudad` int(11) NOT NULL,
+  `telefono` varchar(50) NOT NULL,
   `estado` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -216,6 +217,7 @@ CREATE TABLE `cliente` (
   `ruc` varchar(50) NOT NULL,
   `direccion` varchar(150) NOT NULL,
   `id_ciudad` int(11) NOT NULL,
+  `telefono` varchar(50) NOT NULL,
   `estado` varchar(30) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -230,7 +232,7 @@ CREATE TABLE `productos` (
   `nombre` varchar(100) NOT NULL,
   `descripcion` text DEFAULT NULL,
   `precio` decimal(10,2) NOT NULL,
-  `iva` decimal(10,2) NOT NULL,
+  `tipo` enum('PRODUCTO','SERVICIO') NOT NULL,
   `estado` varchar(20) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -238,8 +240,8 @@ CREATE TABLE `productos` (
 -- Volcado de datos para la tabla `productos`
 --
 
-INSERT INTO `productos` (`producto_id`, `nombre`, `descripcion`, `precio`, `iva`, `estado`) VALUES
-(1, 'Producto Demo', 'Registro inicial', 0.00, 0.00, 'ACTIVO');
+INSERT INTO `productos` (`producto_id`, `nombre`, `descripcion`, `precio`, `tipo`, `estado`) VALUES
+(1, 'Producto Demo', 'Registro inicial', 0.00, 'PRODUCTO', 'ACTIVO');
 
 -- --------------------------------------------------------
 

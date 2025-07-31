@@ -26,6 +26,7 @@
                             <th>Razón Social</th>
                             <th>RUC</th>
                             <th>Dirección</th>
+                            <th>Teléfono</th>
                             <th>Ciudad</th>
                             <th>Estado</th>
                             <th>Operaciones</th>
