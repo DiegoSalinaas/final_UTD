@@ -195,11 +195,20 @@ $(document).on("click",".ver-detalle",function(){
 
 $(document).on("click",".aprobar-presupuesto",function(){
     let id = $(this).closest("tr").find("td:eq(0)").text();
-    ejecutarAjax("controladores/presupuestos_compra.php","aprobar="+id);
-     mensaje_confirmacion("REALIZADO", "Presupuesto Aprobado");
+
+    // Primero aprobar
+    ejecutarAjax("controladores/presupuestos_compra.php", "aprobar=" + id);
+    mensaje_confirmacion("REALIZADO", "Presupuesto Aprobado");
+
+    // Luego preguntar si desea imprimir
+    setTimeout(() => {
+        if (confirm("¿DESEA IMPRIMIR EL PRESUPUESTO?")) {
+            imprimirPresupuesto(id);
+        }
+    }, 300); // Pequeña pausa para que no se solapen los diálogos
+
     cargarTablaPresupuesto();
 });
-
 $(document).on("click",".anular-presupuesto",function(){
     let id = $(this).closest("tr").find("td:eq(0)").text();
     ejecutarAjax("controladores/presupuestos_compra.php","anular="+id);
