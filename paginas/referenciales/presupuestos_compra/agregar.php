@@ -1,5 +1,6 @@
 <div class="container mt-4">
     <input type="hidden" id="id_presupuesto" value="0">
+    <input type="hidden" id="id_detalle" value="0">
     <div class="card shadow rounded-4">
         <div class="card-header bg-success text-white rounded-top-4">
             <h4 class="mb-0">Agregar / Editar Presupuesto</h4>
