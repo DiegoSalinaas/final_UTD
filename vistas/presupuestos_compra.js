@@ -39,7 +39,7 @@ function cargarListaProductos(){
 }
 
 function agregarDetalle(){
-    if($("#id_producto_lst").val() === ""){ alert("Debe seleccionar un producto"); return; }
+    if($("#id_producto_lst").val() === ""){ mensaje_dialogo_info_ERROR("Debe seleccionar un producto"); return; }
     if($("#cantidad_txt").val().trim().length===0){ alert("Debe ingresar la cantidad"); return; }
     if($("#precio_unitario_txt").val().trim().length===0){ alert("Debe ingresar el precio unitario"); return; }
     let detalle = {
@@ -196,14 +196,14 @@ $(document).on("click",".ver-detalle",function(){
 $(document).on("click",".aprobar-presupuesto",function(){
     let id = $(this).closest("tr").find("td:eq(0)").text();
     ejecutarAjax("controladores/presupuestos_compra.php","aprobar="+id);
-    alert("Presupuesto aprobado");
+     mensaje_confirmacion("Realizado","Presupuesto Aprobado");
     cargarTablaPresupuesto();
 });
 
 $(document).on("click",".anular-presupuesto",function(){
     let id = $(this).closest("tr").find("td:eq(0)").text();
     ejecutarAjax("controladores/presupuestos_compra.php","anular="+id);
-    mensaje_confirmacion("Presupuesto anulado","Realizado");
+    mensaje_confirmacion("Realizado","Presupuesto Anulado");
     cargarTablaPresupuesto();
 });
 
