@@ -304,8 +304,26 @@
                   </p>
                 </a>
                 <ul class="nav nav-treeview">
+                    <li class="nav-item">
+  <a href="#" class="nav-link" onclick="mostrarListarProductos(); return false;">
+    <i class="nav-icon bi bi-circle"></i>
+    <p>Productos</p>
+  </a>
+</li>
+<li class="nav-item">
+  <a href="#" class="nav-link" onclick="mostrarListarProveedor(); return false;">
+    <i class="nav-icon bi bi-circle"></i>
+    <p>Proveedores</p>
+  </a>
+</li>
+<li class="nav-item">
+  <a href="#" class="nav-link" onclick="mostrarListarCliente(); return false;">
+    <i class="nav-icon bi bi-circle"></i>
+    <p>Clientes</p>
+  </a>
+</li>
                   <li class="nav-item">
-                      <a href="#" class="nav-link active" 
+                      <a href="#" class="nav-link" 
                          onclick="mostrarListarDepartamento(); return false;">
                       <i class="nav-icon bi bi-circle"></i>
                       <p>Departamento</p>
@@ -324,24 +342,7 @@
     <p>Usuarios</p>
   </a>
 </li>
-<li class="nav-item">
-  <a href="#" class="nav-link" onclick="mostrarListarProveedor(); return false;">
-    <i class="nav-icon bi bi-circle"></i>
-    <p>Proveedores</p>
-  </a>
-</li>
-<li class="nav-item">
-  <a href="#" class="nav-link" onclick="mostrarListarCliente(); return false;">
-    <i class="nav-icon bi bi-circle"></i>
-    <p>Clientes</p>
-  </a>
-</li>
-<li class="nav-item">
-  <a href="#" class="nav-link" onclick="mostrarListarProductos(); return false;">
-    <i class="nav-icon bi bi-circle"></i>
-    <p>Productos</p>
-  </a>
-</li>
+
 <li class="nav-item">
   <a href="#" class="nav-link" onclick="mostrarListarEbooks(); return false;">
     <i class="nav-icon bi bi-circle"></i>
