@@ -355,12 +355,6 @@
   </a>
 </li>
 <li class="nav-item">
-  <a href="#" class="nav-link" onclick="mostrarListarPresupuestos(); return false;">
-    <i class="nav-icon bi bi-circle"></i>
-    <p>Presupuestos</p>
-  </a>
-</li>
-<li class="nav-item">
   <a href="#" class="nav-link" onclick="mostrarListarCategorias(); return false;">
     <i class="nav-icon bi bi-circle"></i>
     <p>Categorías</p>
