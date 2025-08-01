@@ -4,6 +4,9 @@ function mostrarListarResenas(){
     cargarTablaResena();
 }
 
+let listaUsuarios = [];
+let listaEbooks = [];
+
 function mostrarAgregarResena(){
     let contenido = dameContenido("paginas/referenciales/resenas/agregar.php");
     $("#contenido-principal").html(contenido);
@@ -15,34 +18,60 @@ function mostrarAgregarResena(){
 function cargarUsuariosEnSelect(){
     let datos = ejecutarAjax("controladores/usuarioss.php", "leer=1");
     if(datos !== "0"){
-        let usuarios = JSON.parse(datos);
-        let select = $("#usuario_id_lst");
-        select.html('<option value="">-- Seleccione un usuario --</option>');
-        usuarios.forEach(u => {
-            select.append(`<option value="${u.usuario_id}">${u.nombre}</option>`);
-        });
+        listaUsuarios = JSON.parse(datos);
+        renderListaUsuarios(listaUsuarios);
     }
+}
+
+function renderListaUsuarios(arr){
+    let select = $("#usuario_id_lst");
+    select.html('<option value="">-- Seleccione un usuario --</option>');
+    arr.forEach(u => {
+        select.append(`<option value="${u.usuario_id}">${u.nombre}</option>`);
+    });
+}
+
+function filtrarUsuarios(texto){
+    let filtrados = listaUsuarios.filter(u =>
+        u.nombre.toLowerCase().includes(texto.toLowerCase())
+    );
+    renderListaUsuarios(filtrados);
 }
 
 function cargarEbooksEnSelect(){
     let datos = ejecutarAjax("controladores/ebooks.php", "leer=1");
     if(datos !== "0"){
-        let ebooks = JSON.parse(datos);
-        let select = $("#ebook_id_lst");
-        select.html('<option value="">-- Seleccione un ebook --</option>');
-        ebooks.forEach(e => {
-            select.append(`<option value="${e.ebook_id}">${e.titulo}</option>`);
-        });
+        listaEbooks = JSON.parse(datos);
+        renderListaEbooks(listaEbooks);
     }
+}
+
+function renderListaEbooks(arr){
+    let select = $("#ebook_id_lst");
+    select.html('<option value="">-- Seleccione un ebook --</option>');
+    arr.forEach(e => {
+        select.append(`<option value="${e.ebook_id}">${e.titulo}</option>`);
+    });
+}
+
+function filtrarEbooks(texto){
+    let filtrados = listaEbooks.filter(e =>
+        e.titulo.toLowerCase().includes(texto.toLowerCase())
+    );
+    renderListaEbooks(filtrados);
 }
 
 function limpiarResena(){
     $("#resena_id").val("0");
     $("#usuario_id_lst").val("");
     $("#ebook_id_lst").val("");
+    $("#filtro_usuario").val("");
+    $("#filtro_ebook").val("");
     $("#puntuacion_lst").val("1");
     $("#comentario_txt").val("");
     $("#fecha_txt").val(new Date().toISOString().slice(0,10));
+    renderListaUsuarios(listaUsuarios);
+    renderListaEbooks(listaEbooks);
 }
 
 function guardarResena(){
@@ -166,6 +195,14 @@ $(document).on("keyup", "#b_resena", function(){
     }
 });
 
+$(document).on("keyup", "#filtro_usuario", function(){
+    filtrarUsuarios($(this).val());
+});
+
+$(document).on("keyup", "#filtro_ebook", function(){
+    filtrarEbooks($(this).val());
+});
+
 
 function ejecutarAjax(url, parametros){
     let resultado = null;
@@ -183,3 +220,4 @@ function ejecutarAjax(url, parametros){
     });
     return resultado;
 }
+

@@ -10,6 +10,7 @@
       <div class="row g-3">
         <div class="col-md-6">
           <label for="usuario_id_lst" class="form-label">Usuario</label>
+          <input type="text" id="filtro_usuario" class="form-control mb-2" placeholder="Buscar usuario...">
           <select id="usuario_id_lst" class="form-select">
             <!-- Se cargan dinámicamente -->
           </select>
@@ -17,6 +18,7 @@
 
         <div class="col-md-6">
           <label for="ebook_id_lst" class="form-label">Ebook</label>
+          <input type="text" id="filtro_ebook" class="form-control mb-2" placeholder="Buscar ebook...">
           <select id="ebook_id_lst" class="form-select">
             <!-- Se cargan dinámicamente -->
           </select>
