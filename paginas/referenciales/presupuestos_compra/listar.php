@@ -26,6 +26,7 @@
                             <th>Proveedor</th>
                             <th>Fecha</th>
                             <th>Total Estimado</th>
+                            <th>Estado</th>
                             <th>Operaciones</th>
                         </tr>
                     </thead>
