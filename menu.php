@@ -4,7 +4,7 @@
   <!--begin::Head-->
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>AdminLTE v4 | Dashboard</title>
+    <title>UTCD INFO</title>
     <!--begin::Primary Meta Tags-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="title" content="AdminLTE v4 | Dashboard" />
@@ -299,7 +299,7 @@
             >
               <li class="nav-item menu-open">
                 <a href="#" class="nav-link active">
-                  <i class="nav-icon bi bi-speedometer"></i>
+                  <i class="nav-icon bi-person-lines-fill"></i>
                   <p>
                     REFERENCIALES
                     <i class="nav-arrow bi bi-chevron-right"></i>
@@ -308,64 +308,64 @@
                 <ul class="nav nav-treeview">
                     <li class="nav-item">
   <a href="#" class="nav-link" onclick="mostrarListarProductos(); return false;">
-    <i class="nav-icon bi bi-circle"></i>
+    <i class="nav-icon bi-box-seam"></i>
     <p>Productos</p>
   </a>
 </li>
 <li class="nav-item">
   <a href="#" class="nav-link" onclick="mostrarListarProveedor(); return false;">
-    <i class="nav-icon bi bi-circle"></i>
+    <i class="nav-icon bi-people-fill"></i>
     <p>Proveedores</p>
   </a>
 </li>
 <li class="nav-item">
   <a href="#" class="nav-link" onclick="mostrarListarCliente(); return false;">
-    <i class="nav-icon bi bi-circle"></i>
+    <i class="nav-icon bi bi-person"></i>
     <p>Clientes</p>
   </a>
 </li>
                   <li class="nav-item">
                       <a href="#" class="nav-link" 
                          onclick="mostrarListarDepartamento(); return false;">
-                      <i class="nav-icon bi bi-circle"></i>
-                      <p>Departamento</p>
+                      <i class="nav-icon bi bi-map"></i>
+                      <p>Departamentos</p>
                     </a>
                   </li>
                   <li class="nav-item">
                     <a href="#" class="nav-link" 
                          onclick="mostrarListarCiudad(); return false;">
-                      <i class="nav-icon bi bi-circle"></i>
-                      <p>Ciudad</p>
+                      <i class="nav-icon bi bi-house-door"></i>
+                      <p>Ciudades</p>
                     </a>
                   </li>
                   <li class="nav-item">
   <a href="#" class="nav-link" onclick="mostrarListarUsuarioss(); return false;">
-    <i class="nav-icon bi bi-circle"></i>
+    <i class="nav-icon bi bi-people"></i>
     <p>Usuarios</p>
   </a>
 </li>
 
 <li class="nav-item">
   <a href="#" class="nav-link" onclick="mostrarListarEbooks(); return false;">
-    <i class="nav-icon bi bi-circle"></i>
+    <i class="nav-icon bi-book-fill"></i>
     <p>Ebooks</p>
   </a>
 </li>
 <li class="nav-item">
   <a href="#" class="nav-link" onclick="mostrarListarCompras(); return false;">
-    <i class="nav-icon bi bi-circle"></i>
+    <i class="nav-icon bi-cart-check"></i>
     <p>Compras</p>
   </a>
 </li>
 <li class="nav-item">
   <a href="#" class="nav-link" onclick="mostrarListarCategorias(); return false;">
-    <i class="nav-icon bi bi-circle"></i>
+    <i class="nav-icon bi-tags-fill"></i>
     <p>Categorías</p>
   </a>
 </li>
 <li class="nav-item">
   <a href="#" class="nav-link" onclick="mostrarListarResenas(); return false;">
-    <i class="nav-icon bi bi-circle"></i>
+    <i class="nav-icon bi-star-fill"></i>
     <p>Reseñas</p>
   </a>
 </li>
@@ -375,7 +375,7 @@
               </li>
               <li class="nav-item menu-open">
                 <a href="#" class="nav-link active">
-                  <i class="nav-icon bi bi-speedometer"></i>
+                  <i class="nav-icon bi bi-bag"></i>
                   <p>
                     COMPRAS
                     <i class="nav-arrow bi bi-chevron-right"></i>
@@ -386,7 +386,7 @@
                   
 <li class="nav-item">
   <a href="#" class="nav-link" onclick="mostrarListarPresupuestos(); return false;">
-    <i class="nav-icon bi bi-circle"></i>
+    <i class="nav-icon bi bi-file-earmark-text"></i>
     <p>Presupuestos</p>
   </a>
 </li>

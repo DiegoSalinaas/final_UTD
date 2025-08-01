@@ -14,15 +14,15 @@ function mostrarAgregarProducto(callback = null){
 
 function guardarProducto(){
     if($("#nombre_txt").val().trim().length===0){
-        alert("Debes ingresar el nombre");
+         mensaje_dialogo_info_ERROR("Debes ingresar el Nombre", "ERROR");
         return;
     }
     if($("#precio_txt").val().trim().length===0){
-        alert("Debes ingresar el precio");
+        mensaje_dialogo_info_ERROR("Debes ingresar el Precio", "ERROR");
         return;
     }
     if($("#tipo_lst").val()==="0"){
-        alert("Debes seleccionar el tipo");
+        mensaje_dialogo_info_ERROR("Debes Seleccionar el tipo", "ERROR");
         return;
     }
 
@@ -36,13 +36,13 @@ function guardarProducto(){
 
     if($("#producto_id").val() === "0"){
         let res = ejecutarAjax("controladores/productos.php","guardar="+JSON.stringify(datos));
-        alert("Guardado correctamente");
+        mensaje_confirmacion("REALIZADO", "Guardado correctamente");
         mostrarListarProductos();
         limpiarProducto();
     }else{
         datos = {...datos, producto_id: $("#producto_id").val()};
         let res = ejecutarAjax("controladores/productos.php","actualizar="+JSON.stringify(datos));
-        alert("Actualizado correctamente");
+       mensaje_confirmacion("REALIZADO", "Actualizado correctamente");
         mostrarListarProductos();
         limpiarProducto();
     }
@@ -61,7 +61,7 @@ function cargarTablaProductos(){
                     <td>${it.producto_id}</td>
                     <td>${it.nombre}</td>
                     <td>${it.descripcion}</td>
-                    <td>${it.precio}</td>
+                    <td>${formatearPY(it.precio)}</td>
                     <td>${it.tipo}</td>
                     <td>${it.estado}</td>
                     <td>
@@ -87,12 +87,33 @@ $(document).on("click",".editar-producto",function(){
     });
 });
 
-$(document).on("click",".eliminar-producto",function(){
-    let id=$(this).closest("tr").find("td:eq(0)").text();
-    let res=ejecutarAjax("controladores/productos.php","eliminar="+id);
-    alert("Eliminado correctamente");
-    cargarTablaProductos();
+$(document).on("click", ".eliminar-producto", function () {
+    let id = $(this).closest("tr").find("td:eq(0)").text();
+
+    Swal.fire({
+        title: "¿Estás seguro?",
+        text: "El producto será eliminado permanentemente.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#6c757d",
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            let res = ejecutarAjax("controladores/productos.php", "eliminar=" + id);
+            Swal.fire({
+                icon: "success",
+                title: "Producto eliminado correctamente",
+                showConfirmButton: false,
+                timer: 1500
+            });
+            cargarTablaProductos();
+        }
+    });
 });
+
 
 $(document).on("keyup","#b_producto",function(){
     buscarProducto();
@@ -111,7 +132,7 @@ function buscarProducto(){
                     <td>${it.producto_id}</td>
                     <td>${it.nombre}</td>
                     <td>${it.descripcion}</td>
-                    <td>${it.precio}</td>
+                    <td>${formatearPY(it.precio)}</td>
                     <td>${it.tipo}</td>
                     <td>${it.estado}</td>
                     <td>

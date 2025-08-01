@@ -96,15 +96,15 @@ function calcularTotal(){
 
 function guardarPresupuesto(){
     if($("#id_proveedor_lst").val() === "" || $("#id_proveedor_lst").val() === null){
-        mensaje_dialogo_info_ERROR()("Debe seleccionar un proveedor", "ERROR");
+        mensaje_dialogo_info_ERROR("Debe seleccionar un proveedor", "ERROR");
         return;
     }
     if($("#fecha_txt").val().trim().length===0){
-       mensaje_dialogo_info_ERROR()("Debe ingresar la fecha", "ERROR");
+       mensaje_dialogo_info_ERROR("Debe ingresar la fecha", "ERROR");
         return;
     }
     if(detalles.length === 0){
-        mensaje_dialogo_info_ERROR()("Debe agregar al menos un producto", "ERROR");
+        mensaje_dialogo_info_ERROR("Debe agregar al menos un producto", "ERROR");
         return;
     }
     let datos = {
@@ -211,7 +211,7 @@ $(document).on("click", ".aprobar-presupuesto", function () {
     // Aprobar en backend
     ejecutarAjax("controladores/presupuestos_compra.php", "aprobar=" + id);
 
-    // Mostrar mensaje de aprobado primero
+ 
     Swal.fire({
         icon: "success",
         title: "REALIZADO",
@@ -219,7 +219,7 @@ $(document).on("click", ".aprobar-presupuesto", function () {
         confirmButtonText: "Aceptar",
         confirmButtonColor: "#28a745"
     }).then(() => {
-        // Luego mostrar la pregunta si desea imprimir
+  
         Swal.fire({
             title: "¿Desea imprimir el presupuesto?",
             icon: "question",

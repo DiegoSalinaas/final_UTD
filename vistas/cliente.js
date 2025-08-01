@@ -65,7 +65,7 @@ function guardarCliente(){
     }else{
         datos = {...datos, id_cliente: $("#id_cliente").val()};
         let res = ejecutarAjax("controladores/cliente.php","actualizar="+JSON.stringify(datos));
-        alert("Actualizado correctamente");
+        mensaje_confirmacion("Actualizado correctamente");
         mostrarListarCliente();
         limpiarCliente();
     }
@@ -112,12 +112,34 @@ $(document).on("click",".editar-cliente",function(){
     });
 });
 
-$(document).on("click",".eliminar-cliente",function(){
-    let id=$(this).closest("tr").find("td:eq(0)").text();
-    let res=ejecutarAjax("controladores/cliente.php","eliminar="+id);
-    alert("Eliminado correctamente");
-    cargarTablaCliente();
+$(document).on("click", ".eliminar-cliente", function () {
+    let id = $(this).closest("tr").find("td:eq(0)").text();
+
+    Swal.fire({
+        title: "¿Estás seguro?",
+        text: "Esta acción no se puede deshacer.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "#dc3545",
+        cancelButtonColor: "#6c757d",
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Elimina el cliente
+            let res = ejecutarAjax("controladores/cliente.php", "eliminar=" + id);
+            Swal.fire({
+                icon: "success",
+                title: "Eliminado correctamente",
+                showConfirmButton: false,
+                timer: 1500
+            });
+            cargarTablaCliente();
+        }
+    });
 });
+
 
 $(document).on("keyup","#b_cliente",function(){
     buscarCliente();

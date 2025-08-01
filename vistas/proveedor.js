@@ -112,12 +112,35 @@ $(document).on("click",".editar-proveedor",function(){
     });
 });
 
-$(document).on("click",".eliminar-proveedor",function(){
-    let id=$(this).closest("tr").find("td:eq(0)").text();
-    let res=ejecutarAjax("controladores/proveedor.php","eliminar="+id);
-    alert("Eliminado correctamente");
-    cargarTablaProveedor();
+$(document).on("click", ".eliminar-proveedor", function () {
+    let fila = $(this).closest("tr");
+    let id = fila.find("td:eq(0)").text();
+    let nombre = fila.find("td:eq(1)").text(); // Obtener la razón social del proveedor
+
+    Swal.fire({
+        title: `¿Eliminar proveedor "${nombre}"?`,
+        text: "Esta acción no se puede deshacer.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#6c757d",
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            let res = ejecutarAjax("controladores/proveedor.php", "eliminar=" + id);
+            Swal.fire({
+                icon: "success",
+                title: "Proveedor eliminado correctamente",
+                showConfirmButton: false,
+                timer: 1500
+            });
+            cargarTablaProveedor();
+        }
+    });
 });
+
 
 $(document).on("keyup","#b_proveedor",function(){
     buscarProveedor();
