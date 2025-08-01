@@ -324,3 +324,6 @@ function limpiarPresupuesto(){
     detalles = [];
     renderDetalles();
 }
+function formatearPY(numero) {
+    return new Intl.NumberFormat('es-PY').format(numero);
+}
