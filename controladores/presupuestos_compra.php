@@ -7,7 +7,7 @@ if (isset($_POST['guardar'])) {
     $db = new DB();
     $cn = $db->conectar();
     $query = $cn->prepare(
-        "INSERT INTO presupuestos_compra (fecha, id_proveedor, total_estimado, estado) VALUES (:fecha, :id_proveedor, :total_estimado, 'REALIZADO')"
+        "INSERT INTO presupuestos_compra (fecha, id_proveedor, total_estimado, estado) VALUES (:fecha, :id_proveedor, :total_estimado, 'PENDIENTE')"
     );
     $query->execute($datos);
     echo $cn->lastInsertId();
