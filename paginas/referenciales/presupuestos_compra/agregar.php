@@ -15,13 +15,14 @@
                     <label for="fecha_txt" class="form-label">Fecha</label>
                     <input type="date" id="fecha_txt" class="form-control">
                 </div>
-                <div class="col-md-6">
-                    <label for="total_txt" class="form-label">Total Estimado</label>
-                    <input type="number" step="0.01" id="total_txt" class="form-control" placeholder="0.00">
-                </div>
+               
                 <div class="col-md-6">
                     <label for="id_producto_lst" class="form-label">Producto</label>
                     <select id="id_producto_lst" class="form-select"></select>
+                </div>
+                 <div class="col-md-6">
+                    <label for="total_txt" class="form-label">Total Estimado</label>
+                    <input type="number" step="0.01" id="total_txt" class="form-control" placeholder="0.00">
                 </div>
                 <div class="col-md-3">
                     <label for="cantidad_txt" class="form-label">Cantidad</label>
