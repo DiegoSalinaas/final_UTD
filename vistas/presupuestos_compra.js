@@ -190,6 +190,7 @@ function cargarTablaPresupuesto(){
         $("#datos_tb").html("");
         let json = JSON.parse(datos);
         json.map(function(it){
+            const disabled = it.estado === 'ANULADO' ? 'disabled' : '';
             $("#datos_tb").append(`
                 <tr>
                     <td>${it.id_presupuesto}</td>
@@ -198,16 +199,16 @@ function cargarTablaPresupuesto(){
                     <td>${formatearPY(it.total_estimado)}</td>
                     <td>${badgeEstado(it.estado)}</td>
                     <td>
-                        <button class="btn btn-info ver-detalle" title="Imprimir">
+                        <button class="btn btn-info ver-detalle" ${disabled} title="Imprimir">
                             <i class="bi bi-printer"></i>
                         </button>
-                        <button class="btn btn-success aprobar-presupuesto" title="Aprobar">
+                        <button class="btn btn-success aprobar-presupuesto" ${disabled} title="Aprobar">
                             <i class="bi bi-check-circle"></i>
                         </button>
-                        <button class="btn btn-warning editar-presupuesto" title="Editar">
+                        <button class="btn btn-warning editar-presupuesto" ${disabled} title="Editar">
                             <i class="bi bi-pencil-square"></i>
                         </button>
-                        <button class="btn btn-danger anular-presupuesto" title="Anular">
+                        <button class="btn btn-danger anular-presupuesto" ${disabled} title="Anular">
                             <i class="bi bi-x-circle"></i>
                         </button>
                     </td>
@@ -217,6 +218,7 @@ function cargarTablaPresupuesto(){
 }
 
 $(document).on("click",".editar-presupuesto",function(){
+    if($(this).prop('disabled')) return;
     let id = $(this).closest("tr").find("td:eq(0)").text();
     mostrarAgregarPresupuesto();
     let datos = ejecutarAjax("controladores/presupuestos_compra.php","leer_id="+id);
@@ -235,11 +237,13 @@ $(document).on("click",".editar-presupuesto",function(){
 });
 
 $(document).on("click",".ver-detalle",function(){
+    if($(this).prop('disabled')) return;
     let id = $(this).closest("tr").find("td:eq(0)").text();
     imprimirPresupuesto(id);
 });
 
 $(document).on("click", ".aprobar-presupuesto", function () {
+    if($(this).prop('disabled')) return;
     let id = $(this).closest("tr").find("td:eq(0)").text();
 
     // Aprobar en backend
@@ -276,6 +280,7 @@ $(document).on("click", ".aprobar-presupuesto", function () {
 
 
 $(document).on("click",".anular-presupuesto",function(){
+    if($(this).prop('disabled')) return;
     let id = $(this).closest("tr").find("td:eq(0)").text();
     ejecutarAjax("controladores/presupuestos_compra.php","anular="+id);
     mensaje_confirmacion("Realizado","Presupuesto Anulado");
@@ -308,6 +313,7 @@ function buscarPresupuesto(){
         $("#datos_tb").html("");
         let json = JSON.parse(datos);
         json.map(function(it){
+            const disabled = it.estado === 'ANULADO' ? 'disabled' : '';
             $("#datos_tb").append(`
                 <tr>
                     <td>${it.id_presupuesto}</td>
@@ -316,16 +322,16 @@ function buscarPresupuesto(){
                     <td>${formatearPY(it.total_estimado)}</td>
                     <td>${badgeEstado(it.estado)}</td>
                     <td>
-                        <button class="btn btn-info ver-detalle" title="Imprimir">
+                        <button class="btn btn-info ver-detalle" ${disabled} title="Imprimir">
                             <i class="bi bi-printer"></i>
                         </button>
-                        <button class="btn btn-success aprobar-presupuesto" title="Aprobar">
+                        <button class="btn btn-success aprobar-presupuesto" ${disabled} title="Aprobar">
                             <i class="bi bi-check-circle"></i>
                         </button>
-                        <button class="btn btn-warning editar-presupuesto" title="Editar">
+                        <button class="btn btn-warning editar-presupuesto" ${disabled} title="Editar">
                             <i class="bi bi-pencil-square"></i>
                         </button>
-                        <button class="btn btn-danger anular-presupuesto" title="Anular">
+                        <button class="btn btn-danger anular-presupuesto" ${disabled} title="Anular">
                             <i class="bi bi-x-circle"></i>
                         </button>
                     </td>
