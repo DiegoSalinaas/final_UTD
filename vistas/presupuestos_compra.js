@@ -196,27 +196,36 @@ $(document).on("click",".ver-detalle",function(){
 $(document).on("click", ".aprobar-presupuesto", function () {
     let id = $(this).closest("tr").find("td:eq(0)").text();
 
-    // Primero aprobar en la base de datos
+    // Aprobar en backend
     ejecutarAjax("controladores/presupuestos_compra.php", "aprobar=" + id);
-    mensaje_confirmacion("REALIZADO", "Presupuesto Aprobado");
 
-    // Mostrar ventana de confirmación con SweetAlert
+    // Mostrar mensaje de aprobado primero
     Swal.fire({
-        title: "¿Desea imprimir el presupuesto?",
-        icon: "question",
-        showCancelButton: true,
-        confirmButtonText: "Sí",
-        cancelButtonText: "No",
-        confirmButtonColor: "#28a745",
-        cancelButtonColor: "#dc3545",
-        reverseButtons: true
-    }).then((result) => {
-        if (result.isConfirmed) {
-            imprimirPresupuesto(id);
-        }
-    });
+        icon: "success",
+        title: "REALIZADO",
+        text: "Presupuesto Aprobado",
+        confirmButtonText: "Aceptar",
+        confirmButtonColor: "#28a745"
+    }).then(() => {
+        // Luego mostrar la pregunta si desea imprimir
+        Swal.fire({
+            title: "¿Desea imprimir el presupuesto?",
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonText: "Sí",
+            cancelButtonText: "No",
+            confirmButtonColor: "#28a745",
+            cancelButtonColor: "#dc3545",
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                imprimirPresupuesto(id);
+            }
+        });
 
-    cargarTablaPresupuesto();
+        // Actualiza tabla después de ambos Swal
+        cargarTablaPresupuesto();
+    });
 });
 
 
