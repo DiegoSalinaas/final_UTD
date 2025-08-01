@@ -39,6 +39,18 @@ if (isset($_POST['leer'])) {
     echo $query->rowCount() ? json_encode($query->fetchAll(PDO::FETCH_OBJ)) : '0';
 }
 
+if (isset($_POST['leerActivo'])) {
+    $query = $db->prepare(
+        "SELECT p.id_proveedor, p.razon_social, p.ruc, p.direccion, p.telefono, p.estado, " .
+        "c.descripcion AS ciudad " .
+        "FROM proveedor p LEFT JOIN ciudad c ON p.id_ciudad = c.id_ciudad " .
+        "WHERE p.estado = 'ACTIVO' " .
+        "ORDER BY p.id_proveedor DESC"
+    );
+    $query->execute();
+    echo $query->rowCount() ? json_encode($query->fetchAll(PDO::FETCH_OBJ)) : '0';
+}
+
 if (isset($_POST['leer_descripcion'])) {
     $filtro = '%' . $_POST['leer_descripcion'] . '%';
     $query = $db->prepare(

@@ -17,7 +17,7 @@ function mostrarAgregarPresupuesto(){
 }
 
 function cargarListaProveedores(){
-    let datos = ejecutarAjax("controladores/proveedor.php","leer=1");
+    let datos = ejecutarAjax("controladores/proveedor.php","leerActivo=1");
     if(datos !== "0"){
         listaProveedores = JSON.parse(datos);
         renderListaProveedores(listaProveedores);
