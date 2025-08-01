@@ -23,17 +23,22 @@
                     <label for="id_producto_lst" class="form-label">Producto</label>
                     <select id="id_producto_lst" class="form-select"></select>
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-3">
                     <label for="cantidad_txt" class="form-label">Cantidad</label>
                     <input type="number" id="cantidad_txt" class="form-control" min="0">
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-3">
                     <label for="precio_unitario_txt" class="form-label">Precio Unitario</label>
                     <input type="number" step="0.01" id="precio_unitario_txt" class="form-control">
                 </div>
-                <div class="col-md-6">
+                <div class="col-md-3">
                     <label for="subtotal_txt" class="form-label">Subtotal</label>
                     <input type="number" step="0.01" id="subtotal_txt" class="form-control" readonly>
+                </div>
+                <div class="col-md-3 d-grid align-items-end">
+                    <button class="btn btn-primary" onclick="agregarDetalle(); return false;">
+                        <i class="bi bi-plus-lg"></i> Agregar Producto
+                    </button>
                 </div>
             </div>
         </div>
@@ -45,6 +50,24 @@
                 <i class="bi bi-x-circle"></i> Cancelar
             </button>
         </div>
+    </div>
+</div>
+<div class="container mt-4">
+    <div class="table-responsive">
+        <table class="table table-bordered text-center align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unitario</th>
+                    <th>Subtotal</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="detalle_tb">
+                <!-- filas detalle -->
+            </tbody>
+        </table>
     </div>
 </div>
 <script>
