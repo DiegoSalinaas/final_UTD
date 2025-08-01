@@ -193,22 +193,33 @@ $(document).on("click",".ver-detalle",function(){
     imprimirPresupuesto(id);
 });
 
-$(document).on("click",".aprobar-presupuesto",function(){
+$(document).on("click", ".aprobar-presupuesto", function () {
     let id = $(this).closest("tr").find("td:eq(0)").text();
 
-    // Primero aprobar
+    // Primero aprobar en la base de datos
     ejecutarAjax("controladores/presupuestos_compra.php", "aprobar=" + id);
     mensaje_confirmacion("REALIZADO", "Presupuesto Aprobado");
 
-    // Luego preguntar si desea imprimir
-    setTimeout(() => {
-        if (confirm("¿DESEA IMPRIMIR EL PRESUPUESTO?")) {
+    // Mostrar ventana de confirmación con SweetAlert
+    Swal.fire({
+        title: "¿Desea imprimir el presupuesto?",
+        icon: "question",
+        showCancelButton: true,
+        confirmButtonText: "Sí",
+        cancelButtonText: "No",
+        confirmButtonColor: "#28a745",
+        cancelButtonColor: "#dc3545",
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
             imprimirPresupuesto(id);
         }
-    }, 300); // Pequeña pausa para que no se solapen los diálogos
+    });
 
     cargarTablaPresupuesto();
 });
+
+
 $(document).on("click",".anular-presupuesto",function(){
     let id = $(this).closest("tr").find("td:eq(0)").text();
     ejecutarAjax("controladores/presupuestos_compra.php","anular="+id);
