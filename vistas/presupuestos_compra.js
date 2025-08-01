@@ -255,13 +255,14 @@ function imprimirPresupuesto(id){
             <h3 class="mb-4">Presupuesto #${presupuesto.id_presupuesto}</h3>
             <p><strong>Proveedor:</strong> ${presupuesto.proveedor || presupuesto.id_proveedor}</p>
             <p><strong>Fecha:</strong> ${formatearFechaDMA(presupuesto.fecha)}</p>
-            <p><strong>Total Estimado:</strong> ${presupuesto.total_estimado}</p>
+            
             <table class="table table-bordered">
                 <thead>
                     <tr><th>Producto</th><th>Cantidad</th><th>Precio Unitario</th><th>Subtotal</th></tr>
                 </thead>
                 <tbody>${filas}</tbody>
             </table>
+             <p><strong>Total Estimado:</strong> ${presupuesto.total_estimado}</p>
         </body>
         </html>
     `);
