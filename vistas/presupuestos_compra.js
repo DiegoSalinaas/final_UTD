@@ -112,7 +112,7 @@ function guardarPresupuesto(){
             };
             ejecutarAjax("controladores/detalle_presupuesto.php","guardar="+JSON.stringify(det));
         });
-        mensaje_confirmacion("Guardado correctamente", "REALIZADO");
+        mensaje_confirmacion("REALIZADO", "Guardado correctamente");
     }else{
         datos = {...datos, id_presupuesto: $("#id_presupuesto").val()};
         ejecutarAjax("controladores/presupuestos_compra.php","actualizar="+JSON.stringify(datos));
@@ -138,7 +138,7 @@ function guardarPresupuesto(){
                 ejecutarAjax("controladores/detalle_presupuesto.php","guardar="+JSON.stringify(det));
             }
         });
-         mensaje_confirmacion("Actualizado correctamente", "REALIZADO");
+      mensaje_confirmacion("REALIZADO", "Actualizado correctamente");
     }
     mostrarListarPresupuestos();
     limpiarPresupuesto();
@@ -196,7 +196,7 @@ $(document).on("click",".ver-detalle",function(){
 $(document).on("click",".aprobar-presupuesto",function(){
     let id = $(this).closest("tr").find("td:eq(0)").text();
     ejecutarAjax("controladores/presupuestos_compra.php","aprobar="+id);
-     mensaje_confirmacion("Realizado","Presupuesto Aprobado");
+     mensaje_confirmacion("REALIZADO", "Presupuesto Aprobado");
     cargarTablaPresupuesto();
 });
 
