@@ -87,7 +87,7 @@ function cargarTablaProveedor(){
                     <td>${it.direccion}</td>
                     <td>${it.telefono}</td>
                     <td>${it.ciudad}</td>
-                    <td>${it.estado}</td>
+                    <td>${badgeEstado(it.estado)}</td>
                     <td>
                         <button class="btn btn-warning editar-proveedor">Editar</button>
                         <button class="btn btn-danger eliminar-proveedor">Eliminar</button>
@@ -162,7 +162,7 @@ function buscarProveedor(){
                     <td>${it.direccion}</td>
                     <td>${it.telefono}</td>
                     <td>${it.ciudad}</td>
-                    <td>${it.estado}</td>
+                    <td>${badgeEstado(it.estado)}</td>
                     <td>
                         <button class="btn btn-warning editar-proveedor">Editar</button>
                         <button class="btn btn-danger eliminar-proveedor">Eliminar</button>

@@ -98,7 +98,7 @@ function cargarTablaCompra(){
                     <td>${item.fecha}</td>
                     <td>${item.total}</td>
                     <td>${item.metodo_pago}</td>
-                    <td>${item.estado}</td>
+                    <td>${badgeEstado(item.estado)}</td>
                     <td>${item.referencia || ""}</td>
                     <td>
                         <button class="btn btn-warning editar-compra">Editar</button>
@@ -172,7 +172,7 @@ $(document).on("keyup", "#b_compra", function (evt) {
                     <td>${item.fecha}</td>
                     <td>${item.total}</td>
                     <td>${item.metodo_pago}</td>
-                    <td>${item.estado}</td>
+                    <td>${badgeEstado(item.estado)}</td>
                     <td>${item.referencia || ""}</td>
                     <td>
                         <button class="btn btn-warning editar-compra">Editar</button>

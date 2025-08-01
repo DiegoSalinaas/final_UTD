@@ -73,7 +73,7 @@ function cargarTablaDepartamento(){
                 <tr>
                     <td>${item.id_departamento}</td>
                     <td>${item.descripcion}</td>
-                    <td>${item.estado}</td>
+                    <td>${badgeEstado(item.estado)}</td>
                     <td>
                         <button class="btn btn-warning editar-departamento">Editar</button>
                         <button class="btn btn-danger eliminar-departamento">Eliminar</button>
@@ -148,7 +148,7 @@ $(document).on("keyup", "#b_departamento", function (evt) {
                 <tr>
                     <td>${item.id_departamento}</td>
                     <td>${item.descripcion}</td>
-                    <td>${item.estado}</td>
+                    <td>${badgeEstado(item.estado)}</td>
                     <td>
                         <button class="btn btn-warning editar-departamento">Editar</button>
                         <button class="btn btn-danger eliminar-departamento">Eliminar</button>
