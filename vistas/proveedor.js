@@ -65,7 +65,7 @@ function guardarProveedor(){
     }else{
         datos = {...datos, id_proveedor: $("#id_proveedor").val()};
         let res = ejecutarAjax("controladores/proveedor.php","actualizar="+JSON.stringify(datos));
-        mensaje_dialogo_correcto("Actualizado correctamente", 'ACTUAIZADO');
+        mensaje_dialogo_correcto("Actualizado correctamente", 'ACTUALIZADO');
         mostrarListarProveedor();
         limpiarProveedor();
     }
