@@ -39,9 +39,9 @@ function cargarListaProductos(){
 }
 
 function agregarDetalle(){
-    if($("#id_producto_lst").val() === ""){ mensaje_dialogo_info_ERROR("Debe seleccionar un producto"); return; }
-    if($("#cantidad_txt").val().trim().length===0){ alert("Debe ingresar la cantidad"); return; }
-    if($("#precio_unitario_txt").val().trim().length===0){ alert("Debe ingresar el precio unitario"); return; }
+    if($("#id_producto_lst").val() === ""){ mensaje_dialogo_info_ERROR("Debe seleccionar un producto", "ERROR"); return; }
+    if($("#cantidad_txt").val().trim().length===0){ mensaje_dialogo_info_ERROR("Debe ingresar la cantidad", "ERROR"); return; }
+    if($("#precio_unitario_txt").val().trim().length===0){ mensaje_dialogo_info_ERROR("Debe ingresar el costo", "ERROR"); return; }
     let detalle = {
         id_detalle: 0,
         id_producto: $("#id_producto_lst").val(),
@@ -84,15 +84,15 @@ function calcularTotal(){
 
 function guardarPresupuesto(){
     if($("#id_proveedor_lst").val() === "" || $("#id_proveedor_lst").val() === null){
-        alert("Debe seleccionar un proveedor");
+        mensaje_dialogo_info_ERROR()("Debe seleccionar un proveedor", "ERROR");
         return;
     }
     if($("#fecha_txt").val().trim().length===0){
-        alert("Debe ingresar la fecha");
+       mensaje_dialogo_info_ERROR()("Debe ingresar la fecha", "ERROR");
         return;
     }
     if(detalles.length === 0){
-        alert("Debe agregar al menos un producto");
+        mensaje_dialogo_info_ERROR()("Debe agregar al menos un producto", "ERROR");
         return;
     }
     let datos = {
@@ -112,7 +112,7 @@ function guardarPresupuesto(){
             };
             ejecutarAjax("controladores/detalle_presupuesto.php","guardar="+JSON.stringify(det));
         });
-        alert("Guardado correctamente");
+        mensaje_confirmacion("Guardado correctamente", "REALIZADO");
     }else{
         datos = {...datos, id_presupuesto: $("#id_presupuesto").val()};
         ejecutarAjax("controladores/presupuestos_compra.php","actualizar="+JSON.stringify(datos));
@@ -138,7 +138,7 @@ function guardarPresupuesto(){
                 ejecutarAjax("controladores/detalle_presupuesto.php","guardar="+JSON.stringify(det));
             }
         });
-        alert("Actualizado correctamente");
+         mensaje_confirmacion("Actualizado correctamente", "REALIZADO");
     }
     mostrarListarPresupuestos();
     limpiarPresupuesto();
