@@ -158,10 +158,12 @@ function cargarTablaPresupuesto(){
                     <td>${it.proveedor}</td>
                     <td>${it.fecha}</td>
                     <td>${it.total_estimado}</td>
+                    <td>${it.estado}</td>
                     <td>
                         <button class="btn btn-info ver-detalle">Imprimir</button>
+                        <button class="btn btn-success aprobar-presupuesto">Aprobar</button>
                         <button class="btn btn-warning editar-presupuesto">Editar</button>
-                        <button class="btn btn-danger eliminar-presupuesto">Eliminar</button>
+                        <button class="btn btn-danger anular-presupuesto">Anular</button>
                     </td>
                 </tr>`);
         });
@@ -191,10 +193,17 @@ $(document).on("click",".ver-detalle",function(){
     imprimirPresupuesto(id);
 });
 
-$(document).on("click",".eliminar-presupuesto",function(){
+$(document).on("click",".aprobar-presupuesto",function(){
     let id = $(this).closest("tr").find("td:eq(0)").text();
-    ejecutarAjax("controladores/presupuestos_compra.php","eliminar="+id);
-    alert("Eliminado");
+    ejecutarAjax("controladores/presupuestos_compra.php","aprobar="+id);
+    alert("Presupuesto aprobado");
+    cargarTablaPresupuesto();
+});
+
+$(document).on("click",".anular-presupuesto",function(){
+    let id = $(this).closest("tr").find("td:eq(0)").text();
+    ejecutarAjax("controladores/presupuestos_compra.php","anular="+id);
+    alert("Presupuesto anulado");
     cargarTablaPresupuesto();
 });
 
@@ -222,10 +231,12 @@ function buscarPresupuesto(){
                     <td>${it.proveedor}</td>
                     <td>${it.fecha}</td>
                     <td>${it.total_estimado}</td>
+                    <td>${it.estado}</td>
                     <td>
                         <button class="btn btn-info ver-detalle">Detalles</button>
+                        <button class="btn btn-success aprobar-presupuesto">Aprobar</button>
                         <button class="btn btn-warning editar-presupuesto">Editar</button>
-                        <button class="btn btn-danger eliminar-presupuesto">Eliminar</button>
+                        <button class="btn btn-danger anular-presupuesto">Anular</button>
                     </td>
                 </tr>`);
         });
