@@ -72,9 +72,18 @@
     </div>
 </div>
 <script>
-$(document).on('input','#cantidad_txt,#precio_unitario_txt',function(){
+
+function formatearPY(numero) {
+    return new Intl.NumberFormat('es-PY').format(Math.round(numero));
+}
+
+$(document).on('input', '#cantidad_txt, #precio_unitario_txt', function () {
     const cant = parseFloat($('#cantidad_txt').val()) || 0;
     const precio = parseFloat($('#precio_unitario_txt').val()) || 0;
-    $('#subtotal_txt').val((cant * precio).toFixed(2));
+    const subtotal = cant * precio;
+
+    // Mostrar el resultado formateado en el campo Subtotal
+    $('#subtotal_txt').val(formatearPY(subtotal));
 });
 </script>
+

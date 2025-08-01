@@ -128,6 +128,10 @@ function dameFechaActual(id_componente) {
     $("#" + id_componente).val(actual);
 
 }
+function formatearPY(numero) {
+    return new Intl.NumberFormat('es-PY').format(Math.round(numero));
+}
+
 
 
 function dameFechaActualFormateada() {

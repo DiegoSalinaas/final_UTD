@@ -39,21 +39,33 @@ function cargarListaProductos(){
 }
 
 function agregarDetalle(){
-    if($("#id_producto_lst").val() === ""){ mensaje_dialogo_info_ERROR("Debe seleccionar un producto", "ERROR"); return; }
-    if($("#cantidad_txt").val().trim().length===0){ mensaje_dialogo_info_ERROR("Debe ingresar la cantidad", "ERROR"); return; }
-    if($("#precio_unitario_txt").val().trim().length===0){ mensaje_dialogo_info_ERROR("Debe ingresar el costo", "ERROR"); return; }
+    if($("#id_producto_lst").val() === ""){ 
+        mensaje_dialogo_info_ERROR("Debe seleccionar un producto", "ERROR"); 
+        return; 
+    }
+    if($("#cantidad_txt").val().trim().length === 0){ 
+        mensaje_dialogo_info_ERROR("Debe ingresar la cantidad", "ERROR"); 
+        return; 
+    }
+    if($("#precio_unitario_txt").val().trim().length === 0){ 
+        mensaje_dialogo_info_ERROR("Debe ingresar el costo", "ERROR"); 
+        return; 
+    }
+
     let detalle = {
         id_detalle: 0,
         id_producto: $("#id_producto_lst").val(),
         producto: $("#id_producto_lst option:selected").text(),
         cantidad: $("#cantidad_txt").val(),
         precio_unitario: $("#precio_unitario_txt").val(),
-        subtotal: $("#subtotal_txt").val()
+        subtotal: (parseFloat($("#cantidad_txt").val()) || 0) * (parseFloat($("#precio_unitario_txt").val()) || 0)
     };
+
     detalles.push(detalle);
     renderDetalles();
     limpiarDetalleForm();
 }
+
 
 function renderDetalles(){
     let tbody = $("#detalle_tb");
@@ -157,7 +169,7 @@ function cargarTablaPresupuesto(){
                     <td>${it.id_presupuesto}</td>
                     <td>${it.proveedor}</td>
                     <td>${it.fecha}</td>
-                    <td>${it.total_estimado}</td>
+                    <td>${formatearPY(it.total_estimado)}</td>
                     <td>${it.estado}</td>
                     <td>
                         <button class="btn btn-info ver-detalle">Imprimir</button>
@@ -259,7 +271,7 @@ function buscarPresupuesto(){
                     <td>${it.id_presupuesto}</td>
                     <td>${it.proveedor}</td>
                     <td>${it.fecha}</td>
-                    <td>${it.total_estimado}</td>
+                    <td>${formatearPY(it.total_estimado)}</td>
                     <td>${it.estado}</td>
                     <td>
                         <button class="btn btn-info ver-detalle">Detalles</button>
@@ -280,7 +292,12 @@ function imprimirPresupuesto(id){
     let filas = "";
     if(detalleData !== "0"){ 
         JSON.parse(detalleData).forEach(function(d){
-            filas += `<tr><td>${d.producto || d.id_producto}</td><td>${d.cantidad}</td><td>${d.precio_unitario}</td><td>${d.subtotal}</td></tr>`;
+filas += `<tr>
+    <td>${d.producto || d.id_producto}</td>
+    <td>${d.cantidad}</td>
+    <td>${formatearPY(d.precio_unitario)}</td>
+    <td>${formatearPY(d.subtotal)}</td>
+</tr>`;
         });
     }
     let win = window.open('', '', 'width=900,height=700');
@@ -302,7 +319,7 @@ function imprimirPresupuesto(id){
                 </thead>
                 <tbody>${filas}</tbody>
             </table>
-             <p><strong>Total Estimado:</strong> ${presupuesto.total_estimado}</p>
+            <p><strong>Total Estimado:</strong> ${formatearPY(presupuesto.total_estimado)}</p>
         </body>
         </html>
     `);
@@ -323,7 +340,4 @@ function limpiarPresupuesto(){
     $("#subtotal_txt").val("");
     detalles = [];
     renderDetalles();
-}
-function formatearPY(numero) {
-    return new Intl.NumberFormat('es-PY').format(numero);
 }
