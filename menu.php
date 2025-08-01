@@ -312,7 +312,7 @@
                     </a>
                   </li>
                   <li class="nav-item">
-                    <a href="#" class="nav-link active" 
+                    <a href="#" class="nav-link" 
                          onclick="mostrarListarCiudad(); return false;">
                       <i class="nav-icon bi bi-circle"></i>
                       <p>Ciudad</p>
