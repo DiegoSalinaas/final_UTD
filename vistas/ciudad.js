@@ -151,7 +151,7 @@ function cargarTablaCiudad(){
                        <i>${item.departamentos}</i>
                    </div>
                    <div class="col-4">
-                       <i class="badge bg-secondary p-2">${item.estado}</i>
+                       ${badgeEstado(item.estado)}
                    </div>
                    <div class="col-12">
                        <hr>
@@ -256,7 +256,7 @@ $(document).on("keyup", "#b_ciudad", function (evt) {
                             <i>${item.departamento}</i>
                         </div>
                         <div class="col-4">
-                            <i class="badge bg-secondary p-2">${item.estado}</i>
+                            ${badgeEstado(item.estado)}
                         </div>
                         <div class="col-12">
                             <hr>

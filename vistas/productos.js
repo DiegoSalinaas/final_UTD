@@ -63,7 +63,7 @@ function cargarTablaProductos(){
                     <td>${it.descripcion}</td>
                     <td>${formatearPY(it.precio)}</td>
                     <td>${it.tipo}</td>
-                    <td>${it.estado}</td>
+                    <td>${badgeEstado(it.estado)}</td>
                     <td>
                         <button class="btn btn-warning editar-producto">Editar</button>
                         <button class="btn btn-danger eliminar-producto">Eliminar</button>
@@ -134,7 +134,7 @@ function buscarProducto(){
                     <td>${it.descripcion}</td>
                     <td>${formatearPY(it.precio)}</td>
                     <td>${it.tipo}</td>
-                    <td>${it.estado}</td>
+                    <td>${badgeEstado(it.estado)}</td>
                     <td>
                         <button class="btn btn-warning editar-producto">Editar</button>
                         <button class="btn btn-danger eliminar-producto">Eliminar</button>

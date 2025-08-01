@@ -93,7 +93,7 @@ function cargarTablaProducto(){
                     <td>${item.categoria}</td>
                     <td>${item.marca}</td>
                     <td>${item.codigodebarra}</td>
-                    <td>${item.estado}</td>
+                    <td>${badgeEstado(item.estado)}</td>
                     <td>
                         <button class="btn btn-warning editar-producto">Editar</button>
                         <button class="btn btn-danger eliminar-producto">Eliminar</button>
@@ -189,7 +189,7 @@ $(document).on("keyup", "#busqueda_txt", function (evt) {
                     <td>${item.marca}</td>
                     <td>${item.codigodebarra}</td>
                     <td>${item.fecha}</td>
-                    <td>${item.estado}</td>
+                    <td>${badgeEstado(item.estado)}</td>
                     <td>
                         <button class="btn btn-warning editar-producto">Editar</button>
                         <button class="btn btn-danger eliminar-producto">Eliminar</button>

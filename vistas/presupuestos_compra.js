@@ -194,7 +194,7 @@ function cargarTablaPresupuesto(){
                     <td>${it.proveedor}</td>
                     <td>${it.fecha}</td>
                     <td>${formatearPY(it.total_estimado)}</td>
-                    <td>${it.estado}</td>
+                    <td>${badgeEstado(it.estado)}</td>
                     <td>
                         <button class="btn btn-info ver-detalle">Imprimir</button>
                         <button class="btn btn-success aprobar-presupuesto">Aprobar</button>
@@ -304,7 +304,7 @@ function buscarPresupuesto(){
                     <td>${it.proveedor}</td>
                     <td>${it.fecha}</td>
                     <td>${formatearPY(it.total_estimado)}</td>
-                    <td>${it.estado}</td>
+                    <td>${badgeEstado(it.estado)}</td>
                     <td>
                         <button class="btn btn-info ver-detalle">Detalles</button>
                         <button class="btn btn-success aprobar-presupuesto">Aprobar</button>

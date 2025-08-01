@@ -132,6 +132,20 @@ function formatearPY(numero) {
     return new Intl.NumberFormat('es-PY').format(Math.round(numero));
 }
 
+// Devuelve un badge coloreado según el estado proporcionado
+function badgeEstado(estado) {
+    const est = (estado || '').toString().toUpperCase();
+    let clase = 'secondary';
+    if (est === 'ACTIVO' || est === 'APROBADO') {
+        clase = 'success';
+    } else if (est === 'PENDIENTE') {
+        clase = 'warning text-dark';
+    } else if (est === 'INACTIVO' || est === 'ANULADO') {
+        clase = 'danger';
+    }
+    return `<span class="badge bg-${clase}">${estado}</span>`;
+}
+
 
 
 function dameFechaActualFormateada() {

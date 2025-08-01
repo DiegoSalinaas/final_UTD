@@ -87,7 +87,7 @@ function cargarTablaCliente(){
                     <td>${it.direccion}</td>
                     <td>${it.telefono}</td>
                     <td>${it.ciudad}</td>
-                    <td>${it.estado}</td>
+                    <td>${badgeEstado(it.estado)}</td>
                     <td>
                         <button class="btn btn-warning editar-cliente">Editar</button>
                         <button class="btn btn-danger eliminar-cliente">Eliminar</button>
@@ -161,7 +161,7 @@ function buscarCliente(){
                     <td>${it.direccion}</td>
                     <td>${it.telefono}</td>
                     <td>${it.ciudad}</td>
-                    <td>${it.estado}</td>
+                    <td>${badgeEstado(it.estado)}</td>
                     <td>
                         <button class="btn btn-warning editar-cliente">Editar</button>
                         <button class="btn btn-danger eliminar-cliente">Eliminar</button>

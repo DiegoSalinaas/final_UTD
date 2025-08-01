@@ -85,7 +85,7 @@ function cargarTablaUsuarioss() {
                     <td>${item.email}</td>
                     <td>${item.fecha_registro}</td>
                     <td>${item.tipo_usuario}</td>
-                    <td>${item.estado}</td>
+                    <td>${badgeEstado(item.estado)}</td>
                     <td>
                         <button class="btn btn-warning editar-usuarioss">Editar</button>
                         <button class="btn btn-danger eliminar-usuarioss">Eliminar</button>
@@ -145,7 +145,7 @@ $(document).on("keyup", "#b_usuarioss", function () {
                     <td>${item.email}</td>
                     <td>${item.fecha_registro}</td>
                     <td>${item.tipo_usuario}</td>
-                    <td>${item.estado}</td>
+                    <td>${badgeEstado(item.estado)}</td>
                     <td>
                         <button class="btn btn-warning editar-usuarioss">Editar</button>
                         <button class="btn btn-danger eliminar-usuarioss">Eliminar</button>

@@ -49,9 +49,18 @@ $ciudades = $query->fetchAll(PDO::FETCH_ASSOC);
                     <td><?= htmlspecialchars($ciudad['descripcion']) ?></td>
                     <td><?= htmlspecialchars($ciudad['departamentos']) ?></td>
                     <td>
-                        <span class="badge bg-<?= $ciudad['estado'] ? 'success' : 'secondary' ?>">
-                            <?= $ciudad['estado'] ? 'Activo' : 'Inactivo' ?>
-                        </span>
+                        <?php
+                            $est = strtoupper($ciudad['estado']);
+                            $class = 'secondary';
+                            if ($est === 'ACTIVO' || $est === 'APROBADO') {
+                                $class = 'success';
+                            } elseif ($est === 'PENDIENTE') {
+                                $class = 'warning text-dark';
+                            } elseif ($est === 'INACTIVO' || $est === 'ANULADO') {
+                                $class = 'danger';
+                            }
+                        ?>
+                        <span class="badge bg-<?= $class ?>"><?= htmlspecialchars($ciudad['estado']) ?></span>
                     </td>
                 </tr>
                 <?php endforeach; ?>

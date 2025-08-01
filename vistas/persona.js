@@ -88,7 +88,7 @@ function cargarTablaProducto(){
                     <td>${item.ciudad}</td>
                     <td>${item.color}</td>
                     <td>${item.foto}</td>
-                    <td>${item.estado}</td>
+                    <td>${badgeEstado(item.estado)}</td>
                     <td>
                         <button class="btn btn-warning editar-persona">Editar</button>
                         <button class="btn btn-danger eliminar-persona">Eliminar</button>
@@ -180,7 +180,7 @@ $(document).on("keyup", "#busqueda_txt", function (evt) {
                     <td>${item.ciudad}</td>
                     <td>${item.color}</td>
                     <td>${item.foto}</td>
-                    <td>${item.estado}</td>
+                    <td>${badgeEstado(item.estado)}</td>
                     <td>
                         <button class="btn btn-warning editar-persona">Editar</button>
                         <button class="btn btn-danger eliminar-persona">Eliminar</button>
