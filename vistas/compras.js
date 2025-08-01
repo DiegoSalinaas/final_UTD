@@ -101,8 +101,12 @@ function cargarTablaCompra(){
                     <td>${badgeEstado(item.estado)}</td>
                     <td>${item.referencia || ""}</td>
                     <td>
-                        <button class="btn btn-warning editar-compra">Editar</button>
-                        <button class="btn btn-danger eliminar-compra">Eliminar</button>
+                        <button class="btn btn-warning editar-compra" title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-danger eliminar-compra" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </td>
                 </tr>
             `);
@@ -175,8 +179,12 @@ $(document).on("keyup", "#b_compra", function (evt) {
                     <td>${badgeEstado(item.estado)}</td>
                     <td>${item.referencia || ""}</td>
                     <td>
-                        <button class="btn btn-warning editar-compra">Editar</button>
-                        <button class="btn btn-danger eliminar-compra">Eliminar</button>
+                        <button class="btn btn-warning editar-compra" title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-danger eliminar-compra" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </td>
                 </tr>
             `);

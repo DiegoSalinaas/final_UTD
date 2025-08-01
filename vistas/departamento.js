@@ -75,8 +75,12 @@ function cargarTablaDepartamento(){
                     <td>${item.descripcion}</td>
                     <td>${badgeEstado(item.estado)}</td>
                     <td>
-                        <button class="btn btn-warning editar-departamento">Editar</button>
-                        <button class="btn btn-danger eliminar-departamento">Eliminar</button>
+                        <button class="btn btn-warning editar-departamento" title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-danger eliminar-departamento" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </td>
                 </tr>
             `);
@@ -150,8 +154,12 @@ $(document).on("keyup", "#b_departamento", function (evt) {
                     <td>${item.descripcion}</td>
                     <td>${badgeEstado(item.estado)}</td>
                     <td>
-                        <button class="btn btn-warning editar-departamento">Editar</button>
-                        <button class="btn btn-danger eliminar-departamento">Eliminar</button>
+                        <button class="btn btn-warning editar-departamento" title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-danger eliminar-departamento" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </td>
                 </tr>
             `);

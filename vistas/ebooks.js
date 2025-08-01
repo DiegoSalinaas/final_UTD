@@ -74,8 +74,12 @@ function cargarTablaEbook() {
                     <td>${item.formato}</td>
                     <td>${item.precio}</td>
                     <td>
-                        <button class="btn btn-warning editar-ebook">Editar</button>
-                        <button class="btn btn-danger eliminar-ebook">Eliminar</button>
+                        <button class="btn btn-warning editar-ebook" title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-danger eliminar-ebook" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </td>
                 </tr>
             `);
@@ -120,8 +124,12 @@ $(document).on("keyup", "#b_ebook", function () {
                     <td>${item.formato}</td>
                     <td>${item.precio}</td>
                     <td>
-                        <button class="btn btn-warning editar-ebook">Editar</button>
-                        <button class="btn btn-danger eliminar-ebook">Eliminar</button>
+                        <button class="btn btn-warning editar-ebook" title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-danger eliminar-ebook" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </td>
                 </tr>
             `);

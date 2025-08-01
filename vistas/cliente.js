@@ -89,8 +89,12 @@ function cargarTablaCliente(){
                     <td>${it.ciudad}</td>
                     <td>${badgeEstado(it.estado)}</td>
                     <td>
-                        <button class="btn btn-warning editar-cliente">Editar</button>
-                        <button class="btn btn-danger eliminar-cliente">Eliminar</button>
+                        <button class="btn btn-warning editar-cliente" title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-danger eliminar-cliente" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </td>
                 </tr>`);
         });
@@ -163,8 +167,12 @@ function buscarCliente(){
                     <td>${it.ciudad}</td>
                     <td>${badgeEstado(it.estado)}</td>
                     <td>
-                        <button class="btn btn-warning editar-cliente">Editar</button>
-                        <button class="btn btn-danger eliminar-cliente">Eliminar</button>
+                        <button class="btn btn-warning editar-cliente" title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-danger eliminar-cliente" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </td>
                 </tr>`);
         });

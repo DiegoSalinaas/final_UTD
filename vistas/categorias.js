@@ -77,8 +77,12 @@ function cargarTablaCategoria(){
                     <td>${item.fecha_creacion}</td>
                     <td>${item.orden}</td>
                     <td>
-                        <button class="btn btn-warning editar-categoria">Editar</button>
-                        <button class="btn btn-danger eliminar-categoria">Eliminar</button>
+                        <button class="btn btn-warning editar-categoria" title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-danger eliminar-categoria" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </td>
                 </tr>
             `);
@@ -137,8 +141,12 @@ $(document).on("keyup", "#b_categoria", function(){
                     <td>${item.fecha_creacion}</td>
                     <td>${item.orden}</td>
                     <td>
-                        <button class="btn btn-warning editar-categoria">Editar</button>
-                        <button class="btn btn-danger eliminar-categoria">Eliminar</button>
+                        <button class="btn btn-warning editar-categoria" title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-danger eliminar-categoria" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </td>
                 </tr>
             `);

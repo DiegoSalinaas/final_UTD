@@ -90,8 +90,12 @@ function cargarTablaProducto(){
                     <td>${item.foto}</td>
                     <td>${badgeEstado(item.estado)}</td>
                     <td>
-                        <button class="btn btn-warning editar-persona">Editar</button>
-                        <button class="btn btn-danger eliminar-persona">Eliminar</button>
+                        <button class="btn btn-warning editar-persona" title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-danger eliminar-persona" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </td>
                 </tr>
             `);
@@ -182,8 +186,12 @@ $(document).on("keyup", "#busqueda_txt", function (evt) {
                     <td>${item.foto}</td>
                     <td>${badgeEstado(item.estado)}</td>
                     <td>
-                        <button class="btn btn-warning editar-persona">Editar</button>
-                        <button class="btn btn-danger eliminar-persona">Eliminar</button>
+                        <button class="btn btn-warning editar-persona" title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-danger eliminar-persona" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </td>
                 </tr>
             `);

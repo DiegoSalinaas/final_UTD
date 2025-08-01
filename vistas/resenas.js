@@ -133,8 +133,12 @@ function cargarTablaResena(){
                     <td>${item.comentario}</td>
                     <td>${item.fecha}</td>
                     <td>
-                        <button class="btn btn-warning editar-resena">Editar</button>
-                        <button class="btn btn-danger eliminar-resena">Eliminar</button>
+                        <button class="btn btn-warning editar-resena" title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-danger eliminar-resena" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </td>
                 </tr>
             `);
@@ -186,8 +190,12 @@ $(document).on("keyup", "#b_resena", function(){
                     <td>${item.comentario}</td>
                     <td>${item.fecha}</td>
                     <td>
-                        <button class="btn btn-warning editar-resena">Editar</button>
-                        <button class="btn btn-danger eliminar-resena">Eliminar</button>
+                        <button class="btn btn-warning editar-resena" title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-danger eliminar-resena" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </td>
                 </tr>
             `);
