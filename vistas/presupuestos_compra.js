@@ -1,4 +1,6 @@
 let detalles = [];
+let listaProveedores = [];
+let listaProductos = [];
 
 function mostrarListarPresupuestos(){
     let contenido = dameContenido("paginas/referenciales/presupuestos_compra/listar.php");
@@ -17,25 +19,47 @@ function mostrarAgregarPresupuesto(){
 function cargarListaProveedores(){
     let datos = ejecutarAjax("controladores/proveedor.php","leer=1");
     if(datos !== "0"){
-        let json = JSON.parse(datos);
-        let select = $("#id_proveedor_lst");
-        select.html('<option value="">-- Seleccione un proveedor --</option>');
-        json.map(function(p){
-            select.append(`<option value="${p.id_proveedor}">${p.razon_social}</option>`);
-        });
+        listaProveedores = JSON.parse(datos);
+        renderListaProveedores(listaProveedores);
     }
+}
+
+function renderListaProveedores(arr){
+    let select = $("#id_proveedor_lst");
+    select.html('<option value="">-- Seleccione un proveedor --</option>');
+    arr.forEach(function(p){
+        select.append(`<option value="${p.id_proveedor}">${p.razon_social}</option>`);
+    });
+}
+
+function filtrarProveedores(texto){
+    let filtrados = listaProveedores.filter(function(p){
+        return p.razon_social.toLowerCase().includes(texto.toLowerCase());
+    });
+    renderListaProveedores(filtrados);
 }
 
 function cargarListaProductos(){
     let datos = ejecutarAjax("controladores/productos.php", "leer=1");
     if(datos !== "0"){
-        let json = JSON.parse(datos);
-        let select = $("#id_producto_lst");
-        select.html('<option value="">-- Seleccione un producto --</option>');
-        json.map(function(p){
-            select.append(`<option value="${p.producto_id}">${p.nombre}</option>`);
-        });
+        listaProductos = JSON.parse(datos);
+        renderListaProductos(listaProductos);
     }
+}
+
+function renderListaProductos(arr){
+    let select = $("#id_producto_lst");
+    select.html('<option value="">-- Seleccione un producto --</option>');
+    arr.forEach(function(p){
+        select.append(`<option value="${p.producto_id}">${p.nombre}</option>`);
+    });
+}
+
+function filtrarProductos(texto){
+    let filtrados = listaProductos.filter(function(p){
+        return p.nombre.toLowerCase().includes(texto.toLowerCase());
+    });
+    renderListaProductos(filtrados);
 }
 
 function agregarDetalle(){
@@ -252,6 +276,14 @@ $(document).on("click",".quitar-detalle",function(){
     let idx = $(this).data("idx");
     detalles.splice(idx,1);
     renderDetalles();
+});
+
+$(document).on("keyup","#filtro_proveedor",function(){
+    filtrarProveedores($(this).val());
+});
+
+$(document).on("keyup","#filtro_producto",function(){
+    filtrarProductos($(this).val());
 });
 
 $(document).on("keyup","#b_presupuesto",function(){

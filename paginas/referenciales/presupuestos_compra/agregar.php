@@ -9,6 +9,7 @@
             <div class="row g-3">
                 <div class="col-md-6">
                     <label for="id_proveedor_lst" class="form-label">Proveedor</label>
+                    <input type="text" id="filtro_proveedor" class="form-control mb-2" placeholder="Buscar proveedor...">
                     <select id="id_proveedor_lst" class="form-select"></select>
                 </div>
                 <div class="col-md-6">
@@ -18,6 +19,7 @@
                
                 <div class="col-md-6">
                     <label for="id_producto_lst" class="form-label">Producto</label>
+                    <input type="text" id="filtro_producto" class="form-control mb-2" placeholder="Buscar producto...">
                     <select id="id_producto_lst" class="form-select"></select>
                 </div>
                  <div class="col-md-6">
