@@ -262,19 +262,19 @@ function buscarPresupuesto(){
                     <td>${it.total_estimado}</td>
                     <td>${it.estado}</td>
                     <td>
-    <button class="btn btn-outline-info btn-sm ver-detalle" title="Imprimir">
-        <i class="bi bi-printer-fill"></i>
-    </button>
-    <button class="btn btn-outline-success btn-sm aprobar-presupuesto" title="Aprobar">
-        <i class="bi bi-check-circle-fill"></i>
-    </button>
-    <button class="btn btn-outline-warning btn-sm editar-presupuesto" title="Editar">
-        <i class="bi bi-pencil-fill"></i>
-    </button>
-    <button class="btn btn-outline-danger btn-sm anular-presupuesto" title="Anular">
-        <i class="bi bi-x-circle-fill"></i>
-    </button>
-</td>
+                        <button class="btn btn-outline-info btn-sm ver-detalle" title="Imprimir">
+                      <i class="bi bi-printer-fill"></i>
+                        </button>
+                         <button class="btn btn-outline-success btn-sm aprobar-presupuesto" title="Aprobar">
+                           <i class="bi bi-check-circle-fill"></i>
+                        </button>
+                        <button class="btn btn-outline-warning btn-sm editar-presupuesto" title="Editar">
+                         <i class="bi bi-pencil-fill"></i>
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm anular-presupuesto" title="Anular">
+                          <i class="bi bi-x-circle-fill"></i>
+                        </button>
+                    </td>
 
                 </tr>`);
         });
