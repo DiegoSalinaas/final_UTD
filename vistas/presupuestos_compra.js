@@ -203,7 +203,7 @@ $(document).on("click",".aprobar-presupuesto",function(){
 $(document).on("click",".anular-presupuesto",function(){
     let id = $(this).closest("tr").find("td:eq(0)").text();
     ejecutarAjax("controladores/presupuestos_compra.php","anular="+id);
-    alert("Presupuesto anulado");
+    mensaje_confirmacion("Presupuesto anulado","Realizado");
     cargarTablaPresupuesto();
 });
 
