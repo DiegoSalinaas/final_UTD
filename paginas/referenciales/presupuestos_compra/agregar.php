@@ -29,7 +29,7 @@
                     <input type="number" id="cantidad_txt" class="form-control" min="0">
                 </div>
                 <div class="col-md-3">
-                    <label for="precio_unitario_txt" class="form-label">Precio Unitario</label>
+                    <label for="precio_unitario_txt" class="form-label">Costo Unitario</label>
                     <input type="number" step="0.01" id="precio_unitario_txt" class="form-control">
                 </div>
                 <div class="col-md-3">

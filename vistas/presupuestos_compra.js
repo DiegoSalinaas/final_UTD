@@ -258,7 +258,7 @@ function imprimirPresupuesto(id){
             
             <table class="table table-bordered">
                 <thead>
-                    <tr><th>Producto</th><th>Cantidad</th><th>Precio Unitario</th><th>Subtotal</th></tr>
+                    <tr><th>Producto</th><th>Cantidad</th><th>Costo Unitario</th><th>Subtotal</th></tr>
                 </thead>
                 <tbody>${filas}</tbody>
             </table>
