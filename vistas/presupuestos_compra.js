@@ -40,7 +40,7 @@ function filtrarProveedores(texto){
 }
 
 function cargarListaProductos(){
-    let datos = ejecutarAjax("controladores/productos.php", "leer=1");
+    let datos = ejecutarAjax("controladores/productos.php", "leerActivo=1");
     if(datos !== "0"){
         listaProductos = JSON.parse(datos);
         renderListaProductos(listaProductos);

@@ -37,6 +37,16 @@ if (isset($_POST['leer'])) {
     echo $query->rowCount() ? json_encode($query->fetchAll(PDO::FETCH_OBJ)) : '0';
 }
 
+if (isset($_POST['leerActivo'])) {
+    $query = $db->prepare(
+        "SELECT producto_id, nombre, descripcion, precio, tipo, estado " .
+        "FROM productos WHERE estado = 'ACTIVO' " .
+        "ORDER BY producto_id DESC"
+    );
+    $query->execute();
+    echo $query->rowCount() ? json_encode($query->fetchAll(PDO::FETCH_OBJ)) : '0';
+}
+
 if (isset($_POST['leer_descripcion'])) {
     $filtro = '%' . $_POST['leer_descripcion'] . '%';
     $query = $db->prepare(
