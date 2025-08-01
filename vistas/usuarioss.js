@@ -87,8 +87,12 @@ function cargarTablaUsuarioss() {
                     <td>${item.tipo_usuario}</td>
                     <td>${badgeEstado(item.estado)}</td>
                     <td>
-                        <button class="btn btn-warning editar-usuarioss">Editar</button>
-                        <button class="btn btn-danger eliminar-usuarioss">Eliminar</button>
+                        <button class="btn btn-warning editar-usuarioss" title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-danger eliminar-usuarioss" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </td>
                 </tr>
             `);
@@ -147,8 +151,12 @@ $(document).on("keyup", "#b_usuarioss", function () {
                     <td>${item.tipo_usuario}</td>
                     <td>${badgeEstado(item.estado)}</td>
                     <td>
-                        <button class="btn btn-warning editar-usuarioss">Editar</button>
-                        <button class="btn btn-danger eliminar-usuarioss">Eliminar</button>
+                        <button class="btn btn-warning editar-usuarioss" title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-danger eliminar-usuarioss" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </td>
                 </tr>
             `);

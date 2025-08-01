@@ -100,7 +100,9 @@ function renderDetalles(){
             <td>${d.cantidad}</td>
             <td>${d.precio_unitario}</td>
             <td>${d.subtotal}</td>
-            <td><button class="btn btn-danger btn-sm quitar-detalle" data-idx="${idx}">Eliminar</button></td>
+            <td><button class="btn btn-danger btn-sm quitar-detalle" data-idx="${idx}" title="Eliminar">
+                <i class="bi bi-trash"></i>
+            </button></td>
         </tr>`);
     });
     calcularTotal();
@@ -196,10 +198,18 @@ function cargarTablaPresupuesto(){
                     <td>${formatearPY(it.total_estimado)}</td>
                     <td>${badgeEstado(it.estado)}</td>
                     <td>
-                        <button class="btn btn-info ver-detalle">Imprimir</button>
-                        <button class="btn btn-success aprobar-presupuesto">Aprobar</button>
-                        <button class="btn btn-warning editar-presupuesto">Editar</button>
-                        <button class="btn btn-danger anular-presupuesto">Anular</button>
+                        <button class="btn btn-info ver-detalle" title="Imprimir">
+                            <i class="bi bi-printer"></i>
+                        </button>
+                        <button class="btn btn-success aprobar-presupuesto" title="Aprobar">
+                            <i class="bi bi-check-circle"></i>
+                        </button>
+                        <button class="btn btn-warning editar-presupuesto" title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-danger anular-presupuesto" title="Anular">
+                            <i class="bi bi-x-circle"></i>
+                        </button>
                     </td>
                 </tr>`);
         });
@@ -306,10 +316,18 @@ function buscarPresupuesto(){
                     <td>${formatearPY(it.total_estimado)}</td>
                     <td>${badgeEstado(it.estado)}</td>
                     <td>
-                        <button class="btn btn-info ver-detalle">Detalles</button>
-                        <button class="btn btn-success aprobar-presupuesto">Aprobar</button>
-                        <button class="btn btn-warning editar-presupuesto">Editar</button>
-                        <button class="btn btn-danger anular-presupuesto">Anular</button>
+                        <button class="btn btn-info ver-detalle" title="Imprimir">
+                            <i class="bi bi-printer"></i>
+                        </button>
+                        <button class="btn btn-success aprobar-presupuesto" title="Aprobar">
+                            <i class="bi bi-check-circle"></i>
+                        </button>
+                        <button class="btn btn-warning editar-presupuesto" title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-danger anular-presupuesto" title="Anular">
+                            <i class="bi bi-x-circle"></i>
+                        </button>
                     </td>
                 </tr>`);
         });

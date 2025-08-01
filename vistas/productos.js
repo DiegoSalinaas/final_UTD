@@ -65,8 +65,12 @@ function cargarTablaProductos(){
                     <td>${it.tipo}</td>
                     <td>${badgeEstado(it.estado)}</td>
                     <td>
-                        <button class="btn btn-warning editar-producto">Editar</button>
-                        <button class="btn btn-danger eliminar-producto">Eliminar</button>
+                        <button class="btn btn-warning editar-producto" title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-danger eliminar-producto" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </td>
                 </tr>`);
         });
@@ -136,8 +140,12 @@ function buscarProducto(){
                     <td>${it.tipo}</td>
                     <td>${badgeEstado(it.estado)}</td>
                     <td>
-                        <button class="btn btn-warning editar-producto">Editar</button>
-                        <button class="btn btn-danger eliminar-producto">Eliminar</button>
+                        <button class="btn btn-warning editar-producto" title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-danger eliminar-producto" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </td>
                 </tr>`);
         });

@@ -89,8 +89,12 @@ function cargarTablaProveedor(){
                     <td>${it.ciudad}</td>
                     <td>${badgeEstado(it.estado)}</td>
                     <td>
-                        <button class="btn btn-warning editar-proveedor">Editar</button>
-                        <button class="btn btn-danger eliminar-proveedor">Eliminar</button>
+                        <button class="btn btn-warning editar-proveedor" title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-danger eliminar-proveedor" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </td>
                 </tr>`);
         });
@@ -164,8 +168,12 @@ function buscarProveedor(){
                     <td>${it.ciudad}</td>
                     <td>${badgeEstado(it.estado)}</td>
                     <td>
-                        <button class="btn btn-warning editar-proveedor">Editar</button>
-                        <button class="btn btn-danger eliminar-proveedor">Eliminar</button>
+                        <button class="btn btn-warning editar-proveedor" title="Editar">
+                            <i class="bi bi-pencil-square"></i>
+                        </button>
+                        <button class="btn btn-danger eliminar-proveedor" title="Eliminar">
+                            <i class="bi bi-trash"></i>
+                        </button>
                     </td>
                 </tr>`);
         });
