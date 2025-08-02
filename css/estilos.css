@@ -1,0 +1,118 @@
+body {
+    font-family: 'Source Sans 3', sans-serif;
+    background-color: #f4f6f9;
+}
+
+h1, h2, h3, .brand-text {
+    font-weight: 600;
+    color: #003366;
+}
+
+.sidebar-wrapper {
+    background-color: #001f3f;
+}
+
+.nav-link.active {
+    background-color: #0d6efd !important;
+    color: white !important;
+}
+
+.nav-link:hover {
+    background-color: #0b5ed7 !important;
+    color: white !important;
+}
+
+.app-header, .app-footer {
+    background-color: #ffffff;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.dropdown-menu {
+    border-radius: 0.5rem;
+}
+.btn-primario {
+  background-color: #007ACC;
+  color: #fff;
+  border: none;
+  padding: 0.6em 1.2em;
+  border-radius: 4px;
+  transition: background 0.3s;
+}
+.btn-primary:hover {
+    background-color: #001f3f;
+    border-color: #001f3f;
+}
+.app-sidebar {
+    background-color: #2b4c7e !important; /* azul menos fuerte */
+}
+
+
+.app-sidebar .nav-link {
+    color: #ffffff;
+}
+
+.app-sidebar .nav-link.active {
+    background-color: #1f3c64;
+    color: #ffffff;
+}
+
+body {
+  background: linear-gradient(180deg, #f0f4ff 0%, #dfe9ff 100%);
+}
+
+.tarjeta {
+  background-color: #ffffff;
+  border-left: 4px solid #007ACC;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 1em;
+  margin-bottom: 1.5em;
+}
+
+/*-----------------------------------------------------------*/
+/* Fondo abstracto con patrón de circuito */
+.seccion-con-banner {
+  position: relative;
+
+  background-size: cover;
+  background-position: center;
+  border-radius: 1rem;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  color: #1f2937; /* texto oscuro */
+  overflow: hidden;
+}
+
+.seccion-con-banner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.85); /* baja opacidad para no distraer */
+  z-index: 0;
+}
+
+/* Contenido encima del banner */
+.seccion-con-banner > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Iconos grandes tipo tecnología */
+.icono-tecnologia {
+  font-size: 1.75rem;
+  color: #0d6efd;
+  margin-right: 0.5rem;
+}
+
+/* Botón agregar personalizado */
+.boton-agregar {
+  background-color: #0d6efd;
+  color: white;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+
+.boton-agregar:hover {
+  background-color: #084298;
+}
+
