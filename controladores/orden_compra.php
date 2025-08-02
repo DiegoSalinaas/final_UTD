@@ -10,7 +10,13 @@ if (isset($_POST['guardar'])) {
         "INSERT INTO orden_compra (fecha_emision, estado, id_presupuesto, id_proveedor) VALUES (:fecha_emision, 'EMITIDO', :id_presupuesto, :id_proveedor)"
     );
     $query->execute($datos);
-    echo $cn->lastInsertId();
+    $idOrden = $cn->lastInsertId();
+
+    // Cambiar estado del presupuesto asociado a APROBADO
+    $update = $cn->prepare("UPDATE presupuestos_compra SET estado = 'APROBADO' WHERE id_presupuesto = :id_presupuesto");
+    $update->execute(['id_presupuesto' => $datos['id_presupuesto']]);
+
+    echo $idOrden;
 }
 
 // ACTUALIZAR ORDEN
@@ -21,6 +27,10 @@ if (isset($_POST['actualizar'])) {
         "UPDATE orden_compra SET fecha_emision = :fecha_emision, id_presupuesto = :id_presupuesto, id_proveedor = :id_proveedor WHERE id_orden = :id_orden"
     );
     $query->execute($datos);
+
+    // Asegurar que el presupuesto quede aprobado
+    $up = $db->conectar()->prepare("UPDATE presupuestos_compra SET estado = 'APROBADO' WHERE id_presupuesto = :id_presupuesto");
+    $up->execute(['id_presupuesto' => $datos['id_presupuesto']]);
 }
 
 // ELIMINAR ORDEN

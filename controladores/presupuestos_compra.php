@@ -30,13 +30,6 @@ if (isset($_POST['eliminar'])) {
     $query->execute(["id" => $_POST['eliminar']]);
 }
 
-// APROBAR PRESUPUESTO
-if (isset($_POST['aprobar'])) {
-    $db = new DB();
-    $query = $db->conectar()->prepare("UPDATE presupuestos_compra SET estado = 'APROBADO' WHERE id_presupuesto = :id");
-    $query->execute(['id' => $_POST['aprobar']]);
-}
-
 // ANULAR PRESUPUESTO
 if (isset($_POST['anular'])) {
     $db = new DB();
