@@ -20,6 +20,29 @@
                     <input type="date" id="fecha_txt" class="form-control">
                 </div>
             </div>
+            <div class="row g-3 mt-3">
+                <div class="col-md-4">
+                    <label for="id_producto_lst" class="form-label">Producto</label>
+                    <select id="id_producto_lst" class="form-select"></select>
+                </div>
+                <div class="col-md-2">
+                    <label for="cantidad_txt" class="form-label">Cantidad</label>
+                    <input type="number" id="cantidad_txt" class="form-control" min="0">
+                </div>
+                <div class="col-md-2">
+                    <label for="precio_unitario_txt" class="form-label">Precio Unitario</label>
+                    <input type="number" step="0.01" id="precio_unitario_txt" class="form-control">
+                </div>
+                <div class="col-md-2">
+                    <label for="subtotal_txt" class="form-label">Subtotal</label>
+                    <input type="number" step="0.01" id="subtotal_txt" class="form-control" readonly>
+                </div>
+                <div class="col-md-2 d-grid align-items-end">
+                    <button class="btn btn-primary" onclick="agregarProductoExtra(); return false;">
+                        <i class="bi bi-plus-lg"></i> Agregar Producto
+                    </button>
+                </div>
+            </div>
         </div>
         <div class="card-footer text-end">
             <button class="btn btn-success me-2" onclick="guardarOrden(); return false;">

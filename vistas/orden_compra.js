@@ -1,5 +1,6 @@
 let detallesOC = [];
 let listaPresupuestos = [];
+let listaProductos = [];
 
 function mostrarListarOrdenes(){
     let contenido = dameContenido("paginas/referenciales/orden_compra/listar.php");
@@ -11,6 +12,7 @@ function mostrarAgregarOrden(){
     let contenido = dameContenido("paginas/referenciales/orden_compra/agregar.php");
     $("#contenido-principal").html(contenido);
     cargarListaPresupuestos();
+    cargarListaProductos();
     limpiarOrden();
 }
 
@@ -27,6 +29,22 @@ function renderListaPresupuestos(arr){
     select.html('<option value="">-- Seleccione un presupuesto --</option>');
     arr.forEach(function(p){
         select.append(`<option value="${p.id_presupuesto}" data-prov="${p.id_proveedor}" data-prov-nombre="${p.proveedor}">Presupuesto #${p.id_presupuesto}</option>`);
+    });
+}
+
+function cargarListaProductos(){
+    let datos = ejecutarAjax("controladores/productos.php","leerActivo=1");
+    if(datos !== "0"){
+        listaProductos = JSON.parse(datos);
+        renderListaProductos(listaProductos);
+    }
+}
+
+function renderListaProductos(arr){
+    let select = $("#id_producto_lst");
+    select.html('<option value="">-- Seleccione un producto --</option>');
+    arr.forEach(function(p){
+        select.append(`<option value="${p.producto_id}">${p.nombre}</option>`);
     });
 }
 
@@ -53,6 +71,58 @@ $(document).on('change','#id_presupuesto_lst',function(){
        renderDetallesOC();
    }
 });
+
+$(document).on('input','#cantidad_txt, #precio_unitario_txt', function(){
+    const cant = parseFloat($('#cantidad_txt').val()) || 0;
+    const precio = parseFloat($('#precio_unitario_txt').val()) || 0;
+    const subtotal = cant * precio;
+    $('#subtotal_txt').val(formatearPY(subtotal));
+});
+
+function agregarProductoExtra(){
+    if($("#id_presupuesto_lst").val() === ""){mensaje_dialogo_info_ERROR("Debe seleccionar un presupuesto","ERROR");return;}
+    if($("#id_producto_lst").val() === ""){mensaje_dialogo_info_ERROR("Debe seleccionar un producto","ERROR");return;}
+    if($("#cantidad_txt").val().trim().length === 0){mensaje_dialogo_info_ERROR("Debe ingresar la cantidad","ERROR");return;}
+    if($("#precio_unitario_txt").val().trim().length === 0){mensaje_dialogo_info_ERROR("Debe ingresar el costo","ERROR");return;}
+
+    let detalle = {
+        id_producto: $("#id_producto_lst").val(),
+        producto: $("#id_producto_lst option:selected").text(),
+        cantidad: $("#cantidad_txt").val(),
+        precio_unitario: $("#precio_unitario_txt").val(),
+        subtotal: (parseFloat($("#cantidad_txt").val()) || 0) * (parseFloat($("#precio_unitario_txt").val()) || 0)
+    };
+
+    detallesOC.push(detalle);
+    renderDetallesOC();
+
+    let idPresupuesto = $("#id_presupuesto_lst").val();
+    let detPres = {
+        id_presupuesto: idPresupuesto,
+        id_producto: detalle.id_producto,
+        cantidad: detalle.cantidad,
+        precio_unitario: detalle.precio_unitario,
+        subtotal: detalle.subtotal
+    };
+    ejecutarAjax("controladores/detalle_presupuesto.php","guardar="+JSON.stringify(detPres));
+
+    let presObj = listaPresupuestos.find(p => p.id_presupuesto == idPresupuesto);
+    if(presObj){
+        let nuevoTotal = (parseFloat(presObj.total_estimado) || 0) + parseFloat(detalle.subtotal);
+        let upd = {id_presupuesto:idPresupuesto, fecha: presObj.fecha, id_proveedor: presObj.id_proveedor, total_estimado:nuevoTotal};
+        ejecutarAjax("controladores/presupuestos_compra.php","actualizar="+JSON.stringify(upd));
+        presObj.total_estimado = nuevoTotal;
+    }
+
+    limpiarDetalleExtraForm();
+}
+
+function limpiarDetalleExtraForm(){
+    $("#id_producto_lst").val("");
+    $("#cantidad_txt").val("");
+    $("#precio_unitario_txt").val("");
+    $("#subtotal_txt").val("");
+}
 
 function renderDetallesOC(){
     let tbody = $("#detalle_oc_tb");
@@ -114,6 +184,7 @@ function limpiarOrden(){
     $("#proveedor_txt").val("");
     $("#id_proveedor").val("");
     $("#fecha_txt").val("");
+    limpiarDetalleExtraForm();
     detallesOC = [];
     renderDetallesOC();
 }
@@ -183,4 +254,5 @@ window.mostrarListarOrdenes = mostrarListarOrdenes;
 window.mostrarAgregarOrden = mostrarAgregarOrden;
 window.guardarOrden = guardarOrden;
 window.buscarOrden = buscarOrden;
+window.agregarProductoExtra = agregarProductoExtra;
 
