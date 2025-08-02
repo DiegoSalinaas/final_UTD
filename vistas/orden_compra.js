@@ -253,3 +253,8 @@ $(document).on('keyup','#b_orden',function(){
     buscarOrden();
 });
 
+$(document).on('click', '.listar-ordenes', function(e){
+    e.preventDefault();
+    console.log("Click detectado");
+    mostrarListarOrdenes();
+});
