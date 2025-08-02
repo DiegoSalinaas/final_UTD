@@ -227,7 +227,7 @@ function imprimirOrden(id, auto = true){
                 <tbody>${filas}</tbody>
             </table>
             <p><strong>Total:</strong> ${formatearPY(orden.total)}</p>
-            <button class="btn btn-primary" onclick="window.print()">Imprimir / Guardar PDF</button>
+            
         </body>
         </html>
     `);
