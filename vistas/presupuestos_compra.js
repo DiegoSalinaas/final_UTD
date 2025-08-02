@@ -202,9 +202,6 @@ function cargarTablaPresupuesto(){
                         <button class="btn btn-info ver-detalle" ${disabled} title="Imprimir">
                             <i class="bi bi-printer"></i>
                         </button>
-                        <button class="btn btn-success aprobar-presupuesto" ${disabled} title="Aprobar">
-                            <i class="bi bi-check-circle"></i>
-                        </button>
                         <button class="btn btn-warning editar-presupuesto" ${disabled} title="Editar">
                             <i class="bi bi-pencil-square"></i>
                         </button>
@@ -241,43 +238,6 @@ $(document).on("click",".ver-detalle",function(){
     let id = $(this).closest("tr").find("td:eq(0)").text();
     imprimirPresupuesto(id);
 });
-
-$(document).on("click", ".aprobar-presupuesto", function () {
-    if($(this).prop('disabled')) return;
-    let id = $(this).closest("tr").find("td:eq(0)").text();
-
-    // Aprobar en backend
-    ejecutarAjax("controladores/presupuestos_compra.php", "aprobar=" + id);
-
- 
-    Swal.fire({
-        icon: "success",
-        title: "REALIZADO",
-        text: "Presupuesto Aprobado",
-        confirmButtonText: "Aceptar",
-        confirmButtonColor: "#28a745"
-    }).then(() => {
-  
-        Swal.fire({
-            title: "¿Desea imprimir el presupuesto?",
-            icon: "question",
-            showCancelButton: true,
-            confirmButtonText: "Sí",
-            cancelButtonText: "No",
-            confirmButtonColor: "#28a745",
-            cancelButtonColor: "#dc3545",
-            reverseButtons: true
-        }).then((result) => {
-            if (result.isConfirmed) {
-                imprimirPresupuesto(id);
-            }
-        });
-
-        // Actualiza tabla después de ambos Swal
-        cargarTablaPresupuesto();
-    });
-});
-
 
 $(document).on("click",".anular-presupuesto",function(){
     if($(this).prop('disabled')) return;
@@ -324,9 +284,6 @@ function buscarPresupuesto(){
                     <td>
                         <button class="btn btn-info ver-detalle" ${disabled} title="Imprimir">
                             <i class="bi bi-printer"></i>
-                        </button>
-                        <button class="btn btn-success aprobar-presupuesto" ${disabled} title="Aprobar">
-                            <i class="bi bi-check-circle"></i>
                         </button>
                         <button class="btn btn-warning editar-presupuesto" ${disabled} title="Editar">
                             <i class="bi bi-pencil-square"></i>
