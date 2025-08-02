@@ -398,6 +398,11 @@
   </a>
 </li>
 
+<a href="#" class="nav-link test-boton">
+  <i class="nav-icon bi bi-check2-circle"></i>
+  <p>Probar Script</p>
+</a>
+
 
                   
                 </ul>

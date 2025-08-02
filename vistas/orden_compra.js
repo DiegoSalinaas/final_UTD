@@ -1,9 +1,12 @@
-alert("orden_compra.js se cargó");
-let detallesOC = [];
-let listaPresupuestos = [];
-let listaProductos = [];
+(function(){
+  let detallesOC = [];
+  let listaPresupuestos = [];
+  let listaProductos = [];
 
+  // ... resto de funciones privadas que usan esas variables
+})();
 function mostrarListarOrdenes(){
+    console.log("Entró en mostrarListarOrdenes()");
     let contenido = dameContenido("paginas/referenciales/orden_compra/listar.php");
     $("#contenido-principal").html(contenido);
     cargarTablaOrden();
@@ -195,6 +198,7 @@ function limpiarOrden(){
 }
 
 function cargarTablaOrden(){
+     console.log("Entró en cargarTablaOrden()");
     let datos = ejecutarAjax("controladores/orden_compra.php","leer=1");
     if(datos !== "0"){
         renderTablaOrden(JSON.parse(datos));
@@ -254,11 +258,6 @@ $(document).on('keyup','#b_orden',function(){
     buscarOrden();
 });
 
-$(document).on('click', '.listar-ordenes', function(e){
-    e.preventDefault();
-    console.log("Click detectado");
-    mostrarListarOrdenes();
-});
 $(function(){
   $(document).on('click', '.listar-ordenes', function(e){
       e.preventDefault();
