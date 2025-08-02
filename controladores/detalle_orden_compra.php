@@ -28,6 +28,12 @@ if (isset($_POST['eliminar'])) {
     $query->execute(['id' => $_POST['eliminar']]);
 }
 
+// ELIMINAR DETALLES POR ORDEN
+if (isset($_POST['eliminar_por_orden'])) {
+    $query = $cn->prepare("DELETE FROM detalle_orden_compra WHERE id_orden = :id");
+    $query->execute(['id' => $_POST['eliminar_por_orden']]);
+}
+
 // LISTAR DETALLES
 if (isset($_POST['leer'])) {
     $sql =

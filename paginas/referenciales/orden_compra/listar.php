@@ -23,9 +23,9 @@
                     <thead class="table-light">
                         <tr>
                             <th>#</th>
-                            <th>Presupuesto</th>
-                            <th>Proveedor</th>
                             <th>Fecha</th>
+                            <th>Proveedor</th>
+                            <th>Total</th>
                             <th>Estado</th>
                             <th>Operaciones</th>
                         </tr>
