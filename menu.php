@@ -338,7 +338,7 @@
                       <p>Ciudades</p>
                     </a>
                   </li>
-                  <li class="nav-item">
+<!--                  <li class="nav-item">
   <a href="#" class="nav-link" onclick="mostrarListarUsuarioss(); return false;">
     <i class="nav-icon bi bi-people"></i>
     <p>Usuarios</p>
@@ -368,7 +368,7 @@
     <i class="nav-icon bi-star-fill"></i>
     <p>Reseñas</p>
   </a>
-</li>
+</li>-->
 
                   
                 </ul>
@@ -398,10 +398,7 @@
   </a>
 </li>
 
-<a href="#" class="nav-link test-boton">
-  <i class="nav-icon bi bi-check2-circle"></i>
-  <p>Probar Script</p>
-</a>
+
 
 
                   
