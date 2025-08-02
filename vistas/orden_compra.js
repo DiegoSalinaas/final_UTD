@@ -1,6 +1,5 @@
 let detallesOC = [];
 let listaPresupuestos = [];
-let listaProductos = [];
 
 function mostrarListarOrdenes(){
     let contenido = dameContenido("paginas/referenciales/orden_compra/listar.php");
@@ -12,7 +11,6 @@ function mostrarAgregarOrden(){
     let contenido = dameContenido("paginas/referenciales/orden_compra/agregar.php");
     $("#contenido-principal").html(contenido);
     cargarListaPresupuestos();
-    cargarListaProductos();
     limpiarOrden();
 }
 
@@ -48,7 +46,7 @@ $(document).on('change','#id_presupuesto_lst',function(){
        $("#id_proveedor").val(p.id_proveedor);
        let det = ejecutarAjax("controladores/detalle_presupuesto.php","leer=1&id_presupuesto="+id);
        if(det !== "0"){
-           detallesOC = JSON.parse(det).map(d => ({id_orden_detalle:0,id_producto:d.id_producto,producto:d.producto,cantidad:d.cantidad,precio_unitario:d.precio_unitario,subtotal:d.subtotal}));
+           detallesOC = JSON.parse(det).map(d => ({id_producto:d.id_producto,producto:d.producto,cantidad:d.cantidad,precio_unitario:d.precio_unitario,subtotal:d.subtotal}));
        }else{
            detallesOC = [];
        }
@@ -56,90 +54,23 @@ $(document).on('change','#id_presupuesto_lst',function(){
    }
 });
 
-function cargarListaProductos(){
-    let datos = ejecutarAjax("controladores/productos.php","leerActivo=1");
-    if(datos !== "0"){
-        listaProductos = JSON.parse(datos);
-        renderListaProductos(listaProductos);
-    }
-}
-
-function renderListaProductos(arr){
-    let select = $("#id_producto_lst");
-    select.html('<option value="">-- Seleccione un producto --</option>');
-    arr.forEach(function(p){
-        select.append(`<option value="${p.producto_id}">${p.nombre}</option>`);
-    });
-}
-
-function filtrarProductos(texto){
-    let filtrados = listaProductos.filter(function(p){
-        return p.nombre.toLowerCase().includes(texto.toLowerCase());
-    });
-    renderListaProductos(filtrados);
-}
-
-$(document).on('keyup','#filtro_producto',function(){
-    filtrarProductos($(this).val());
-});
-
-function agregarDetalleOC(){
-    if($("#id_producto_lst").val() === ""){
-        mensaje_dialogo_info_ERROR("Debe seleccionar un producto","ERROR");
-        return;
-    }
-    if($("#cantidad_txt").val().trim().length === 0){
-        mensaje_dialogo_info_ERROR("Debe ingresar la cantidad","ERROR");
-        return;
-    }
-    if($("#precio_unitario_txt").val().trim().length === 0){
-        mensaje_dialogo_info_ERROR("Debe ingresar el costo","ERROR");
-        return;
-    }
-    let detalle = {
-        id_orden_detalle:0,
-        id_producto:$("#id_producto_lst").val(),
-        producto:$("#id_producto_lst option:selected").text(),
-        cantidad:$("#cantidad_txt").val(),
-        precio_unitario:$("#precio_unitario_txt").val(),
-        subtotal:(parseFloat($("#cantidad_txt").val())||0)*(parseFloat($("#precio_unitario_txt").val())||0)
-    };
-    detallesOC.push(detalle);
-    renderDetallesOC();
-    limpiarDetalleOCForm();
-}
-
 function renderDetallesOC(){
     let tbody = $("#detalle_oc_tb");
     tbody.html("");
-    detallesOC.forEach(function(d,idx){
+    detallesOC.forEach(function(d){
         tbody.append(`<tr>
             <td>${d.producto}</td>
             <td>${d.cantidad}</td>
-            <td>${d.precio_unitario}</td>
-            <td>${d.subtotal}</td>
-            <td><button class="btn btn-danger btn-sm quitar-detalle-oc" data-idx="${idx}" title="Eliminar"><i class="bi bi-trash"></i></button></td>
+            <td>${formatearPY(d.precio_unitario)}</td>
+            <td>${formatearPY(d.subtotal)}</td>
         </tr>`);
     });
-}
-
-$(document).on('click','.quitar-detalle-oc',function(){
-    let idx = $(this).data('idx');
-    detallesOC.splice(idx,1);
-    renderDetallesOC();
-});
-
-function limpiarDetalleOCForm(){
-    $("#id_producto_lst").val("");
-    $("#cantidad_txt").val("");
-    $("#precio_unitario_txt").val("");
-    $("#subtotal_txt").val("");
 }
 
 function guardarOrden(){
     if($("#id_presupuesto_lst").val() === ""){mensaje_dialogo_info_ERROR("Debe seleccionar un presupuesto","ERROR");return;}
     if($("#fecha_txt").val().trim().length===0){mensaje_dialogo_info_ERROR("Debe ingresar la fecha","ERROR");return;}
-    if(detallesOC.length === 0){mensaje_dialogo_info_ERROR("Debe agregar al menos un producto","ERROR");return;}
+    if(detallesOC.length === 0){mensaje_dialogo_info_ERROR("No hay productos en el presupuesto seleccionado","ERROR");return;}
     let datos = {
         id_presupuesto: $("#id_presupuesto_lst").val(),
         id_proveedor: $("#id_proveedor").val(),
@@ -161,27 +92,16 @@ function guardarOrden(){
     }else{
         datos = {...datos, id_orden: $("#id_orden").val()};
         ejecutarAjax("controladores/orden_compra.php","actualizar="+JSON.stringify(datos));
+        ejecutarAjax("controladores/detalle_orden_compra.php","eliminar_por_orden="+$("#id_orden").val());
         detallesOC.forEach(function(d){
-            if(d.id_orden_detalle && d.id_orden_detalle != 0){
-                let det = {
-                    id_orden_detalle: d.id_orden_detalle,
-                    id_orden: $("#id_orden").val(),
-                    id_producto: d.id_producto,
-                    cantidad: d.cantidad,
-                    precio_unitario: d.precio_unitario,
-                    subtotal: d.subtotal
-                };
-                ejecutarAjax("controladores/detalle_orden_compra.php","actualizar="+JSON.stringify(det));
-            }else{
-                let det = {
-                    id_orden: $("#id_orden").val(),
-                    id_producto: d.id_producto,
-                    cantidad: d.cantidad,
-                    precio_unitario: d.precio_unitario,
-                    subtotal: d.subtotal
-                };
-                ejecutarAjax("controladores/detalle_orden_compra.php","guardar="+JSON.stringify(det));
-            }
+            let det = {
+                id_orden: $("#id_orden").val(),
+                id_producto: d.id_producto,
+                cantidad: d.cantidad,
+                precio_unitario: d.precio_unitario,
+                subtotal: d.subtotal
+            };
+            ejecutarAjax("controladores/detalle_orden_compra.php","guardar="+JSON.stringify(det));
         });
         mensaje_confirmacion("REALIZADO","Actualizado correctamente");
     }
@@ -213,10 +133,10 @@ function renderTablaOrden(arr){
     arr.forEach(function(o){
         tbody.append(`<tr>
             <td>${o.id_orden}</td>
-            <td>${o.id_presupuesto}</td>
-            <td>${o.proveedor || o.id_proveedor}</td>
             <td>${formatearFechaDMA(o.fecha_emision)}</td>
-            <td>${o.estado}</td>
+            <td>${o.proveedor || o.id_proveedor}</td>
+            <td>${formatearPY(o.total)}</td>
+            <td>${badgeEstado(o.estado)}</td>
             <td>
                 <button class="btn btn-warning btn-sm editar-orden" data-id="${o.id_orden}" title="Editar"><i class="bi bi-pencil"></i></button>
                 <button class="btn btn-danger btn-sm eliminar-orden" data-id="${o.id_orden}" title="Eliminar"><i class="bi bi-trash"></i></button>
@@ -261,7 +181,6 @@ $(document).on('keyup','#b_orden',function(){
 // from inline HTML event handlers.
 window.mostrarListarOrdenes = mostrarListarOrdenes;
 window.mostrarAgregarOrden = mostrarAgregarOrden;
-window.agregarDetalleOC = agregarDetalleOC;
 window.guardarOrden = guardarOrden;
 window.buscarOrden = buscarOrden;
 

@@ -1,6 +1,5 @@
 <div class="container mt-4">
     <input type="hidden" id="id_orden" value="0">
-    <input type="hidden" id="id_detalle" value="0">
     <input type="hidden" id="id_proveedor">
     <div class="card shadow rounded-4">
         <div class="card-header bg-success text-white rounded-top-4">
@@ -19,28 +18,6 @@
                 <div class="col-md-6">
                     <label for="fecha_txt" class="form-label">Fecha</label>
                     <input type="date" id="fecha_txt" class="form-control">
-                </div>
-                <div class="col-md-6">
-                    <label for="id_producto_lst" class="form-label">Producto</label>
-                    <input type="text" id="filtro_producto" class="form-control mb-2" placeholder="Buscar producto...">
-                    <select id="id_producto_lst" class="form-select"></select>
-                </div>
-                <div class="col-md-3">
-                    <label for="cantidad_txt" class="form-label">Cantidad</label>
-                    <input type="number" id="cantidad_txt" class="form-control" min="0">
-                </div>
-                <div class="col-md-3">
-                    <label for="precio_unitario_txt" class="form-label">Costo Unitario</label>
-                    <input type="number" step="0.01" id="precio_unitario_txt" class="form-control">
-                </div>
-                <div class="col-md-3">
-                    <label for="subtotal_txt" class="form-label">Subtotal</label>
-                    <input type="number" step="0.01" id="subtotal_txt" class="form-control" readonly>
-                </div>
-                <div class="col-md-3 d-grid align-items-end">
-                    <button class="btn btn-primary" onclick="agregarDetalleOC(); return false;">
-                        <i class="bi bi-plus-lg"></i> Agregar Producto
-                    </button>
                 </div>
             </div>
         </div>
@@ -63,7 +40,6 @@
                     <th>Cantidad</th>
                     <th>Precio Unitario</th>
                     <th>Subtotal</th>
-                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody id="detalle_oc_tb">
@@ -72,14 +48,3 @@
         </table>
     </div>
 </div>
-<script>
-function formatearPY(numero) {
-    return new Intl.NumberFormat('es-PY').format(Math.round(numero));
-}
-$(document).on('input', '#cantidad_txt, #precio_unitario_txt', function () {
-    const cant = parseFloat($('#cantidad_txt').val()) || 0;
-    const precio = parseFloat($('#precio_unitario_txt').val()) || 0;
-    const subtotal = cant * precio;
-    $('#subtotal_txt').val(formatearPY(subtotal));
-});
-</script>
