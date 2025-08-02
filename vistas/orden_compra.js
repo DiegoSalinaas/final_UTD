@@ -7,6 +7,7 @@ function mostrarListarOrdenes(){
     $("#contenido-principal").html(contenido);
     cargarTablaOrden();
 }
+window.mostrarListarOrdenes = mostrarListarOrdenes;
 
 function mostrarAgregarOrden(){
     let contenido = dameContenido("paginas/referenciales/orden_compra/agregar.php");
@@ -15,6 +16,7 @@ function mostrarAgregarOrden(){
     cargarListaProductos();
     limpiarOrden();
 }
+window.mostrarAgregarOrden = mostrarAgregarOrden;
 
 function cargarListaPresupuestos(){
     let datos = ejecutarAjax("controladores/presupuestos_compra.php","leer=1");
@@ -116,6 +118,7 @@ function agregarProductoExtra(){
 
     limpiarDetalleExtraForm();
 }
+window.agregarProductoExtra = agregarProductoExtra;
 
 function limpiarDetalleExtraForm(){
     $("#id_producto_lst").val("");
@@ -177,6 +180,7 @@ function guardarOrden(){
     }
     mostrarListarOrdenes();
 }
+window.guardarOrden = guardarOrden;
 
 function limpiarOrden(){
     $("#id_orden").val("0");
@@ -243,16 +247,9 @@ function buscarOrden(){
         $("#orden_datos_tb").html("");
     }
 }
+window.buscarOrden = buscarOrden;
 
 $(document).on('keyup','#b_orden',function(){
     buscarOrden();
 });
-
-// Expose functions to the global scope so they can be used
-// from inline HTML event handlers.
-window.mostrarListarOrdenes = mostrarListarOrdenes;
-window.mostrarAgregarOrden = mostrarAgregarOrden;
-window.guardarOrden = guardarOrden;
-window.buscarOrden = buscarOrden;
-window.agregarProductoExtra = agregarProductoExtra;
 
