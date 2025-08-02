@@ -271,6 +271,32 @@ CREATE TABLE `detalle_presupuesto` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
+-- --------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `orden_compra`
+--
+CREATE TABLE `orden_compra` (
+  `id_orden` int(11) NOT NULL,
+  `fecha_emision` date NOT NULL,
+  `estado` varchar(20) NOT NULL DEFAULT 'EMITIDO',
+  `id_presupuesto` int(11) NOT NULL,
+  `id_proveedor` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `detalle_orden_compra`
+--
+CREATE TABLE `detalle_orden_compra` (
+  `id_orden_detalle` int(11) NOT NULL,
+  `id_orden` int(11) NOT NULL,
+  `id_producto` int(11) NOT NULL,
+  `cantidad` int(11) NOT NULL,
+  `precio_unitario` decimal(10,2) NOT NULL,
+  `subtotal` decimal(10,2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+
 --
 -- Estructura de tabla para la tabla `resenas`
 --
@@ -402,6 +428,18 @@ ALTER TABLE `detalle_presupuesto`
   ADD PRIMARY KEY (`id_detalle`),
   ADD KEY `id_presupuesto` (`id_presupuesto`),
   ADD KEY `id_producto` (`id_producto`);
+
+-- Indices de la tabla `orden_compra`
+ALTER TABLE `orden_compra`
+  ADD PRIMARY KEY (`id_orden`),
+  ADD KEY `id_presupuesto` (`id_presupuesto`),
+  ADD KEY `id_proveedor` (`id_proveedor`);
+
+-- Indices de la tabla `detalle_orden_compra`
+ALTER TABLE `detalle_orden_compra`
+  ADD PRIMARY KEY (`id_orden_detalle`),
+  ADD KEY `id_orden` (`id_orden`),
+  ADD KEY `id_producto` (`id_producto`);
 --
 -- Indices de la tabla `proveedor`
 --
@@ -506,6 +544,12 @@ ALTER TABLE `presupuestos_compra`
 -- AUTO_INCREMENT de la tabla `detalle_presupuesto`
 ALTER TABLE `detalle_presupuesto`
   MODIFY `id_detalle` int(11) NOT NULL AUTO_INCREMENT;
+-- AUTO_INCREMENT de la tabla `orden_compra`
+ALTER TABLE `orden_compra`
+  MODIFY `id_orden` int(11) NOT NULL AUTO_INCREMENT;
+-- AUTO_INCREMENT de la tabla `detalle_orden_compra`
+ALTER TABLE `detalle_orden_compra`
+  MODIFY `id_orden_detalle` int(11) NOT NULL AUTO_INCREMENT;
 --
 -- AUTO_INCREMENT de la tabla `resenas`
 --
@@ -548,6 +592,16 @@ ALTER TABLE `presupuestos_compra`
 ALTER TABLE `detalle_presupuesto`
   ADD CONSTRAINT `detalle_presupuesto_ibfk_1` FOREIGN KEY (`id_presupuesto`) REFERENCES `presupuestos_compra` (`id_presupuesto`),
   ADD CONSTRAINT `detalle_presupuesto_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `productos` (`producto_id`);
+
+-- Filtros para la tabla `orden_compra`
+ALTER TABLE `orden_compra`
+  ADD CONSTRAINT `orden_compra_ibfk_1` FOREIGN KEY (`id_presupuesto`) REFERENCES `presupuestos_compra` (`id_presupuesto`),
+  ADD CONSTRAINT `orden_compra_ibfk_2` FOREIGN KEY (`id_proveedor`) REFERENCES `proveedor` (`id_proveedor`);
+
+-- Filtros para la tabla `detalle_orden_compra`
+ALTER TABLE `detalle_orden_compra`
+  ADD CONSTRAINT `detalle_orden_compra_ibfk_1` FOREIGN KEY (`id_orden`) REFERENCES `orden_compra` (`id_orden`),
+  ADD CONSTRAINT `detalle_orden_compra_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `productos` (`producto_id`);
 --
 -- Filtros para la tabla `resenas`
 --
