@@ -154,6 +154,7 @@ function guardarOrden(){
         fecha_emision: $("#fecha_txt").val()
     };
     let idOrden = $("#id_orden").val();
+    let mensaje;
     if(idOrden === "0"){
         idOrden = ejecutarAjax("controladores/orden_compra.php","guardar="+JSON.stringify(datos));
         detallesOC.forEach(function(d){
@@ -166,7 +167,7 @@ function guardarOrden(){
             };
             ejecutarAjax("controladores/detalle_orden_compra.php","guardar="+JSON.stringify(det));
         });
-        mensaje_confirmacion("REALIZADO","Guardado correctamente");
+        mensaje = "Guardado correctamente";
     }else{
         datos = {...datos, id_orden: idOrden};
         ejecutarAjax("controladores/orden_compra.php","actualizar="+JSON.stringify(datos));
@@ -181,14 +182,12 @@ function guardarOrden(){
             };
             ejecutarAjax("controladores/detalle_orden_compra.php","guardar="+JSON.stringify(det));
         });
-        mensaje_confirmacion("REALIZADO","Actualizado correctamente");
+        mensaje = "Actualizado correctamente";
     }
-    if(confirm('¿Desea imprimir la orden de compra?')){
-        imprimirOrden(idOrden,true);
-    }else{
-        imprimirOrden(idOrden,false);
-    }
-    mostrarListarOrdenes();
+    mensaje_confirmacion("REALIZADO", mensaje).then(() => {
+        imprimirOrden(idOrden, true);
+        mostrarListarOrdenes();
+    });
 }
 window.guardarOrden = guardarOrden;
 
