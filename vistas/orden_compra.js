@@ -153,11 +153,12 @@ function guardarOrden(){
         id_proveedor: $("#id_proveedor").val(),
         fecha_emision: $("#fecha_txt").val()
     };
-    if($("#id_orden").val() === "0"){
-        let id = ejecutarAjax("controladores/orden_compra.php","guardar="+JSON.stringify(datos));
+    let idOrden = $("#id_orden").val();
+    if(idOrden === "0"){
+        idOrden = ejecutarAjax("controladores/orden_compra.php","guardar="+JSON.stringify(datos));
         detallesOC.forEach(function(d){
             let det = {
-                id_orden: id,
+                id_orden: idOrden,
                 id_producto: d.id_producto,
                 cantidad: d.cantidad,
                 precio_unitario: d.precio_unitario,
@@ -167,12 +168,12 @@ function guardarOrden(){
         });
         mensaje_confirmacion("REALIZADO","Guardado correctamente");
     }else{
-        datos = {...datos, id_orden: $("#id_orden").val()};
+        datos = {...datos, id_orden: idOrden};
         ejecutarAjax("controladores/orden_compra.php","actualizar="+JSON.stringify(datos));
-        ejecutarAjax("controladores/detalle_orden_compra.php","eliminar_por_orden="+$("#id_orden").val());
+        ejecutarAjax("controladores/detalle_orden_compra.php","eliminar_por_orden="+idOrden);
         detallesOC.forEach(function(d){
             let det = {
-                id_orden: $("#id_orden").val(),
+                id_orden: idOrden,
                 id_producto: d.id_producto,
                 cantidad: d.cantidad,
                 precio_unitario: d.precio_unitario,
@@ -182,9 +183,60 @@ function guardarOrden(){
         });
         mensaje_confirmacion("REALIZADO","Actualizado correctamente");
     }
+    if(confirm('¿Desea imprimir la orden de compra?')){
+        imprimirOrden(idOrden,true);
+    }else{
+        imprimirOrden(idOrden,false);
+    }
     mostrarListarOrdenes();
 }
 window.guardarOrden = guardarOrden;
+
+function imprimirOrden(id, auto = true){
+    let ordenData = ejecutarAjax("controladores/orden_compra.php","leer=1");
+    if(ordenData === "0"){ alert("No se encontró la orden"); return; }
+    let orden = JSON.parse(ordenData).find(o => o.id_orden == id);
+    if(!orden){ alert("No se encontró la orden"); return; }
+    let detalleData = ejecutarAjax("controladores/detalle_orden_compra.php","leer=1&id_orden="+id);
+    let filas = "";
+    if(detalleData !== "0"){
+        JSON.parse(detalleData).forEach(function(d){
+            filas += `<tr>
+                <td>${d.producto || d.id_producto}</td>
+                <td>${d.cantidad}</td>
+                <td>${formatearPY(d.precio_unitario)}</td>
+                <td>${formatearPY(d.subtotal)}</td>
+            </tr>`;
+        });
+    }
+    let win = window.open('', '', 'width=900,height=700');
+    win.document.write(`
+        <html>
+        <head>
+            <title>Orden de Compra #${orden.id_orden}</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+            <style>body{padding:30px;font-size:14px;} table{width:100%;border-collapse:collapse;} th,td{padding:8px;border:1px solid #ccc;text-align:left;} th{background:#f8f9fa;}</style>
+        </head>
+        <body>
+            <h3 class="mb-4">Orden de Compra #${orden.id_orden}</h3>
+            <p><strong>Proveedor:</strong> ${orden.proveedor || orden.id_proveedor}</p>
+            <p><strong>Fecha:</strong> ${formatearFechaDMA(orden.fecha_emision)}</p>
+            <table class="table table-bordered">
+                <thead>
+                    <tr><th>Producto</th><th>Cantidad</th><th>Precio Unitario</th><th>Subtotal</th></tr>
+                </thead>
+                <tbody>${filas}</tbody>
+            </table>
+            <p><strong>Total:</strong> ${formatearPY(orden.total)}</p>
+            <button class="btn btn-primary" onclick="window.print()">Imprimir / Guardar PDF</button>
+        </body>
+        </html>
+    `);
+    win.document.close();
+    win.focus();
+    if(auto){ win.print(); }
+}
+window.imprimirOrden = imprimirOrden;
 
 function limpiarOrden(){
     $("#id_orden").val("0");
