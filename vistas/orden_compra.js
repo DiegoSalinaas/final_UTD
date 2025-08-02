@@ -23,7 +23,7 @@ function mostrarAgregarOrden(){
 window.mostrarAgregarOrden = mostrarAgregarOrden;
 
 function cargarListaPresupuestos(){
-    let datos = ejecutarAjax("controladores/presupuestos_compra.php","leer=1");
+    let datos = ejecutarAjax("controladores/presupuestos_compra.php","leerPendiente=1");
     if(datos !== "0"){
         listaPresupuestos = JSON.parse(datos);
         renderListaPresupuestos(listaPresupuestos);

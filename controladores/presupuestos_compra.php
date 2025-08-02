@@ -51,6 +51,20 @@ if (isset($_POST['leer'])) {
     }
 }
 
+// LEER PRESUPUESTOS PENDIENTES
+if (isset($_POST['leerPendiente'])) {
+    $db = new DB();
+    $query = $db->conectar()->prepare(
+        "SELECT p.id_presupuesto, p.fecha, p.id_proveedor, pr.razon_social AS proveedor, p.total_estimado, p.estado FROM presupuestos_compra p LEFT JOIN proveedor pr ON p.id_proveedor = pr.id_proveedor WHERE p.estado = 'PENDIENTE' ORDER BY p.id_presupuesto DESC"
+    );
+    $query->execute();
+    if ($query->rowCount()) {
+        echo json_encode($query->fetchAll(PDO::FETCH_OBJ));
+    } else {
+        echo '0';
+    }
+}
+
 // LEER POR ID
 if (isset($_POST['leer_id'])) {
     $db = new DB();
