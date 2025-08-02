@@ -410,7 +410,7 @@ function ejecutarAjaxERROR(url, data, mensaje_error, mensaje_correcto) {
 
 var modalConfirm;
 function mensaje_confirmacion(mensaje, titulo) {
-    Swal.fire(
+    return Swal.fire(
             mensaje,
             titulo,
             'success'
