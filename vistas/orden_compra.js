@@ -256,3 +256,12 @@ function buscarOrden(){
 $(document).on('keyup','#b_orden',function(){
     buscarOrden();
 });
+
+// Expose functions to the global scope so they can be used
+// from inline HTML event handlers.
+window.mostrarListarOrdenes = mostrarListarOrdenes;
+window.mostrarAgregarOrden = mostrarAgregarOrden;
+window.agregarDetalleOC = agregarDetalleOC;
+window.guardarOrden = guardarOrden;
+window.buscarOrden = buscarOrden;
+
