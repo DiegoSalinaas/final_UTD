@@ -1,3 +1,4 @@
+alert("orden_compra.js se cargó");
 let detallesOC = [];
 let listaPresupuestos = [];
 let listaProductos = [];
@@ -257,4 +258,11 @@ $(document).on('click', '.listar-ordenes', function(e){
     e.preventDefault();
     console.log("Click detectado");
     mostrarListarOrdenes();
+});
+$(function(){
+  $(document).on('click', '.listar-ordenes', function(e){
+      e.preventDefault();
+      console.log("Click detectado");
+      mostrarListarOrdenes();
+  });
 });

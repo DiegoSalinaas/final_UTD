@@ -394,7 +394,7 @@
 <li class="nav-item">
   <a href="#" class="nav-link listar-ordenes">
     <i class="nav-icon bi bi-file-earmark-text"></i>
-    <p>Órdenes de Compra</p>
+    <p>Orden de Compra</p>
   </a>
 </li>
 
