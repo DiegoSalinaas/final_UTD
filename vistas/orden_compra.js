@@ -209,28 +209,111 @@ function imprimirOrden(id, auto = true){
         });
     }
     let win = window.open('', '', 'width=900,height=700');
-    win.document.write(`
-        <html>
-        <head>
-            <title>Orden de Compra #${orden.id_orden}</title>
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-            <style>body{padding:30px;font-size:14px;} table{width:100%;border-collapse:collapse;} th,td{padding:8px;border:1px solid #ccc;text-align:left;} th{background:#f8f9fa;}</style>
-        </head>
-        <body>
-            <h3 class="mb-4">Orden de Compra #${orden.id_orden}</h3>
-            <p><strong>Proveedor:</strong> ${orden.proveedor || orden.id_proveedor}</p>
-            <p><strong>Fecha:</strong> ${formatearFechaDMA(orden.fecha_emision)}</p>
-            <table class="table table-bordered">
-                <thead>
-                    <tr><th>Producto</th><th>Cantidad</th><th>Precio Unitario</th><th>Subtotal</th></tr>
-                </thead>
-                <tbody>${filas}</tbody>
-            </table>
-            <p><strong>Total:</strong> ${formatearPY(orden.total)}</p>
-            
-        </body>
-        </html>
-    `);
+ win.document.write(`
+  <html>
+  <head>
+    <title>Orden de Compra #${orden.id_orden}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      body {
+        padding: 40px;
+        font-size: 13pt;
+        font-family: 'Segoe UI', sans-serif;
+        color: #000;
+      }
+      .titulo {
+        border-bottom: 2px solid #000;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      .info {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+      .info div {
+        width: 48%;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th, td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: center;
+      }
+      th {
+        background-color: #f0f0f0;
+      }
+      .total {
+        margin-top: 20px;
+        text-align: right;
+        font-size: 16pt;
+        font-weight: bold;
+      }
+      .footer {
+        margin-top: 40px;
+        text-align: center;
+        font-size: 10pt;
+        color: #555;
+      }
+      @media print {
+        .no-print { display: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="titulo">
+      <h2>Orden de Compra N° ${orden.id_orden}</h2>
+      <p><small>Documento generado automáticamente</small></p>
+    </div>
+
+    <div class="info">
+      <div>
+        <strong>Proveedor:</strong> ${orden.proveedor || orden.id_proveedor}<br>
+        <strong>Fecha de Emisión:</strong> ${formatearFechaDMA(orden.fecha_emision)}
+      </div>
+      <div>
+        <strong>Estado:</strong> ${orden.estado || "GENERADA"}<br>
+        <strong>Total:</strong> ${formatearPY(orden.total)}
+      </div>
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Precio Unitario</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${JSON.parse(detalleData).map((d, i) => `
+          <tr>
+            <td>${i + 1}</td>
+            <td>${d.producto || d.id_producto}</td>
+            <td>${d.cantidad}</td>
+            <td>${formatearPY(d.precio_unitario)}</td>
+            <td>${formatearPY(d.subtotal)}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+
+    <div class="total">
+      Total General: ${formatearPY(orden.total)}
+    </div>
+
+    
+  </body>
+  </html>
+`);
+
     win.document.close();
     win.focus();
     if(auto){ win.print(); }

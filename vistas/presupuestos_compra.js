@@ -315,27 +315,110 @@ filas += `<tr>
     }
     let win = window.open('', '', 'width=900,height=700');
     win.document.write(`
-        <html>
-        <head>
-            <title>Presupuesto #${presupuesto.id_presupuesto}</title>
-            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-            <style>body{padding:30px;font-size:14px;} table{width:100%;border-collapse:collapse;} th,td{padding:8px;border:1px solid #ccc;text-align:left;} th{background:#f8f9fa;}</style>
-        </head>
-        <body>
-            <h3 class="mb-4">Presupuesto #${presupuesto.id_presupuesto}</h3>
-            <p><strong>Proveedor:</strong> ${presupuesto.proveedor || presupuesto.id_proveedor}</p>
-            <p><strong>Fecha:</strong> ${formatearFechaDMA(presupuesto.fecha)}</p>
-            
-            <table class="table table-bordered">
-                <thead>
-                    <tr><th>Producto</th><th>Cantidad</th><th>Costo Unitario</th><th>Subtotal</th></tr>
-                </thead>
-                <tbody>${filas}</tbody>
-            </table>
-            <p><strong>Total Estimado:</strong> ${formatearPY(presupuesto.total_estimado)}</p>
-        </body>
-        </html>
-    `);
+  <html>
+  <head>
+    <title>Presupuesto #${presupuesto.id_presupuesto}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      body {
+        padding: 40px;
+        font-size: 13pt;
+        font-family: 'Segoe UI', sans-serif;
+        color: #000;
+      }
+      .titulo {
+        border-bottom: 2px solid #000;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+      .info {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+      }
+      .info div {
+        width: 48%;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+      th, td {
+        border: 1px solid #ccc;
+        padding: 8px;
+        text-align: center;
+      }
+      th {
+        background-color: #f0f0f0;
+      }
+      .total {
+        margin-top: 20px;
+        text-align: right;
+        font-size: 16pt;
+        font-weight: bold;
+      }
+      .footer {
+        margin-top: 40px;
+        text-align: center;
+        font-size: 10pt;
+        color: #555;
+      }
+      @media print {
+        .no-print { display: none; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="titulo">
+      <h2>Presupuesto N° ${presupuesto.id_presupuesto}</h2>
+      <p><small>Documento generado automáticamente</small></p>
+    </div>
+
+    <div class="info">
+      <div>
+        <strong>Proveedor:</strong> ${presupuesto.proveedor || presupuesto.id_proveedor}<br>
+        <strong>Fecha:</strong> ${formatearFechaDMA(presupuesto.fecha)}
+      </div>
+      <div>
+        <strong>Estado:</strong> ${presupuesto.estado || "PENDIENTE"}<br>
+        <strong>Total:</strong> ${formatearPY(presupuesto.total_estimado)}
+      </div>
+    </div>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Costo Unitario</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${JSON.parse(detalleData).map((d, i) => `
+          <tr>
+            <td>${i + 1}</td>
+            <td>${d.producto || d.id_producto}</td>
+            <td>${d.cantidad}</td>
+            <td>${formatearPY(d.precio_unitario)}</td>
+            <td>${formatearPY(d.subtotal)}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+
+    <div class="total">
+      Total Estimado: ${formatearPY(presupuesto.total_estimado)}
+    </div>
+
+   
+  </body>
+  </html>
+`);
+
     win.document.close();
     win.focus();
     win.print();
