@@ -7,11 +7,24 @@ $cn = $db->conectar();
 // GUARDAR DETALLE
 if (isset($_POST['guardar'])) {
     $datos = json_decode($_POST['guardar'], true);
+
     $query = $cn->prepare(
-        "INSERT INTO detalle_remision (id_remision, id_producto, cantidad, precio_unitario, subtotal) VALUES (:id_remision, :id_producto, :cantidad, :precio_unitario, :subtotal)"
+        "INSERT INTO detalle_remision 
+        (id_remision, id_producto, cantidad, precio_unitario, subtotal) 
+        VALUES (:id_remision, :id_producto, :cantidad, :precio_unitario, :subtotal)"
     );
-    $query->execute($datos);
+
+    $query->execute([
+        'id_remision' => $datos['id_remision'],
+        'id_producto' => $datos['id_producto'],
+        'cantidad' => $datos['cantidad'],
+        'precio_unitario' => $datos['precio_unitario'],
+        'subtotal' => $datos['subtotal']
+    ]);
+
+    echo "OK";
 }
+
 
 // ACTUALIZAR DETALLE
 if (isset($_POST['actualizar'])) {

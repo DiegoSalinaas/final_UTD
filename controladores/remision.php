@@ -39,13 +39,15 @@ if (isset($_POST['leer'])) {
     $query = $cn->prepare(
         "SELECT r.id_remision, r.fecha_remision, r.id_cliente, c.nombre_apellido AS cliente, r.observacion, r.estado, IFNULL(SUM(d.subtotal),0) AS total
          FROM remision r
-         LEFT JOIN cliente c ON r.id_cliente = c.id_cliente
+         LEFT JOIN clientes c ON r.id_cliente = c.id_cliente
          LEFT JOIN detalle_remision d ON r.id_remision = d.id_remision
          GROUP BY r.id_remision, r.fecha_remision, r.id_cliente, c.nombre_apellido, r.observacion, r.estado
          ORDER BY r.id_remision DESC"
     );
     $query->execute();
     if ($query->rowCount()) {
+       
+
         echo json_encode($query->fetchAll(PDO::FETCH_OBJ));
     } else {
         echo '0';
@@ -59,13 +61,15 @@ if (isset($_POST['leer_id'])) {
     $query = $cn->prepare(
         "SELECT r.id_remision, r.fecha_remision, r.id_cliente, c.nombre_apellido AS cliente, r.observacion, r.estado, IFNULL(SUM(d.subtotal),0) AS total
          FROM remision r
-         LEFT JOIN cliente c ON r.id_cliente = c.id_cliente
+         LEFT JOIN clientes c ON r.id_cliente = c.id_cliente
          LEFT JOIN detalle_remision d ON r.id_remision = d.id_remision
          WHERE r.id_remision = :id
          GROUP BY r.id_remision, r.fecha_remision, r.id_cliente, c.nombre_apellido, r.observacion, r.estado"
     );
     $query->execute(['id' => $_POST['leer_id']]);
     if ($query->rowCount()) {
+       
+
         echo json_encode($query->fetch(PDO::FETCH_OBJ));
     } else {
         echo '0';
@@ -80,7 +84,7 @@ if (isset($_POST['leer_descripcion'])) {
     $query = $cn->prepare(
         "SELECT r.id_remision, r.fecha_remision, r.id_cliente, c.nombre_apellido AS cliente, r.observacion, r.estado, IFNULL(SUM(d.subtotal),0) AS total
          FROM remision r
-         LEFT JOIN cliente c ON r.id_cliente = c.id_cliente
+         LEFT JOIN clientes c ON r.id_cliente = c.id_cliente
          LEFT JOIN detalle_remision d ON r.id_remision = d.id_remision
          WHERE c.nombre_apellido LIKE :filtro
          GROUP BY r.id_remision, r.fecha_remision, r.id_cliente, c.nombre_apellido, r.observacion, r.estado
@@ -88,6 +92,8 @@ if (isset($_POST['leer_descripcion'])) {
     );
     $query->execute(['filtro' => $f]);
     if ($query->rowCount()) {
+      
+
         echo json_encode($query->fetchAll(PDO::FETCH_OBJ));
     } else {
         echo '0';

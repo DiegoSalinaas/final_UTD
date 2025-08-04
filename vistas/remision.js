@@ -70,6 +70,8 @@ function agregarDetalleRemision(){
         precio_unitario: $("#precio_unitario_txt").val(),
         subtotal: (parseFloat($("#cantidad_txt").val()) || 0) * (parseFloat($("#precio_unitario_txt").val()) || 0)
     };
+console.log("✔ Detalles a guardar:", JSON.stringify(detallesRemision, null, 2));
+
 
     detallesRemision.push(detalle);
     renderDetallesRemision();
@@ -107,35 +109,64 @@ function eliminarDetalleRemision(index){
 }
 window.eliminarDetalleRemision = eliminarDetalleRemision;
 
-function guardarRemision(){
-    if($("#id_cliente_lst").val() === ""){mensaje_dialogo_info_ERROR("Debe seleccionar un cliente","ERROR");return;}
-    if($("#fecha_txt").val().trim().length===0){mensaje_dialogo_info_ERROR("Debe ingresar la fecha","ERROR");return;}
-    if(detallesRemision.length === 0){mensaje_dialogo_info_ERROR("Debe agregar al menos un producto","ERROR");return;}
+function guardarRemision() {
+    console.log("guardarRemision ejecutada");
+
+    if ($("#id_cliente_lst").val() === "") {
+        mensaje_dialogo_info_ERROR("Debe seleccionar un cliente", "ERROR");
+        return;
+    }
+
+    if ($("#fecha_txt").val().trim().length === 0) {
+        mensaje_dialogo_info_ERROR("Debe ingresar la fecha", "ERROR");
+        return;
+    }
+
+    if (detallesRemision.length === 0) {
+        mensaje_dialogo_info_ERROR("Debe agregar al menos un producto", "ERROR");
+        return;
+    }
+
     let datos = {
         id_cliente: $("#id_cliente_lst").val(),
         fecha_remision: $("#fecha_txt").val(),
         observacion: $("#observacion_txt").val(),
         estado: $("#estado_txt").val()
     };
-    let idRemision = $("#id_remision").val();
-    if(idRemision === "0"){
-        idRemision = ejecutarAjax("controladores/remision.php","guardar="+JSON.stringify(datos));
-        detallesRemision.forEach(function(d){
-            let det = {...d, id_remision:idRemision};
-            ejecutarAjax("controladores/detalle_remision.php","guardar="+JSON.stringify(det));
+
+    console.log("✔ Datos a guardar:", JSON.stringify(datos, null, 2));
+    console.log("✔ Detalles a guardar:", JSON.stringify(detallesRemision, null, 2));
+
+    let idRemision = $("#id_remision").val(); // 👈 ahora está declarado correctamente
+
+    if (idRemision === "0") {
+        idRemision = ejecutarAjax("controladores/remision.php", "guardar=" + JSON.stringify(datos));
+        console.log("🟢 ID de remisión generado:", idRemision); // 👈 se usa después
+
+        if (!idRemision || isNaN(idRemision)) {
+            mensaje_dialogo_info_ERROR("Error al guardar la remisión. ID inválido.", "ERROR");
+            return;
+        }
+
+        detallesRemision.forEach(function (d) {
+            let det = { ...d, id_remision: idRemision };
+            ejecutarAjax("controladores/detalle_remision.php", "guardar=" + JSON.stringify(det));
         });
-    }else{
-        datos = {...datos, id_remision:idRemision};
-        ejecutarAjax("controladores/remision.php","actualizar="+JSON.stringify(datos));
-        ejecutarAjax("controladores/detalle_remision.php","eliminar_por_remision="+idRemision);
-        detallesRemision.forEach(function(d){
-            let det = {...d, id_remision:idRemision};
-            ejecutarAjax("controladores/detalle_remision.php","guardar="+JSON.stringify(det));
+    } else {
+        datos = { ...datos, id_remision: idRemision };
+        ejecutarAjax("controladores/remision.php", "actualizar=" + JSON.stringify(datos));
+        ejecutarAjax("controladores/detalle_remision.php", "eliminar_por_remision=" + idRemision);
+        detallesRemision.forEach(function (d) {
+            let det = { ...d, id_remision: idRemision };
+            ejecutarAjax("controladores/detalle_remision.php", "guardar=" + JSON.stringify(det));
         });
     }
+
     mensaje_confirmacion("Guardado correctamente");
     mostrarListarRemision();
 }
+
+
 window.guardarRemision = guardarRemision;
 
 function cargarTablaRemision(){
