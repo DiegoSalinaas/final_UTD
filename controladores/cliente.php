@@ -61,3 +61,4 @@ if (isset($_POST['leer_id'])) {
     echo $query->rowCount() ? json_encode($query->fetch(PDO::FETCH_OBJ)) : '0';
 }
 
+//prueba
