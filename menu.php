@@ -415,7 +415,7 @@
                 
                   
 <li class="nav-item">
-  <a href="#" class="nav-link" onclick="mostrarListar(); return false;">
+  <a href="#" class="nav-link" onclick="mostrarListarRemision(); return false;">
     <i class="nav-icon bi bi-file-earmark-text"></i>
     <p>Remision</p>
   </a>
@@ -746,6 +746,7 @@
     <script src="vistas/proveedor.js"></script>
     <script src="vistas/cliente.js"></script>
     <script src="vistas/productos.js"></script>
+    <script src="vistas/remision.js"></script>
     <!--end::Script-->
   </body>
   <!--end::Body-->
