@@ -1,48 +1,53 @@
 <div class="container mt-4">
-  <div class="seccion-con-banner shadow-sm rounded-4">
+  <div class="shadow-lg rounded-4 p-4 bg-white bg-opacity-75 position-relative">
+    <!-- Título y botón -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-      <h4 class="mb-0">
-        <i class="bi bi-diagram-3 icono-tecnologia"></i> Listado de Proveedores
-      </h4>
-      <button class="btn boton-agregar" onclick="mostrarAgregarProveedor(); return false;">
-        <i class="bi bi-plus-circle me-1"></i> Agregar
+      <h3 class="text-primary fw-bold mb-0">
+        <i class="bi bi-diagram-3 me-2"></i> Proveedores
+      </h3>
+      <button class="btn btn-success shadow-sm d-flex align-items-center" onclick="mostrarAgregarProveedor(); return false;">
+        <i class="bi bi-plus-circle me-2"></i> Nuevo Proveedor
       </button>
     </div>
 
-    <div class="card border-0 bg-white bg-opacity-75 rounded-4 shadow-sm">
+    <!-- Buscador -->
+    <div class="card border-0 bg-light bg-opacity-75 rounded-4 shadow-sm mb-4">
       <div class="card-body">
         <div class="row g-3 align-items-end">
           <div class="col-md-8">
-            <label for="b_proveedor" class="form-label">
-              <i class="bi bi-search icono-tecnologia"></i> Buscador
+            <label for="b_proveedor" class="form-label fw-semibold">
+              <i class="bi bi-search me-2"></i> Buscar proveedor
             </label>
-            <input type="text" id="b_proveedor" class="form-control" placeholder="Buscar proveedores...">
+            <input type="text" id="b_proveedor" class="form-control form-control-lg" placeholder="Buscar por nombre, RUC, ciudad...">
           </div>
           <div class="col-md-4">
-            <button class="btn btn-dark w-100" onclick="buscarProveedor(); return false;">
-              <i class="bi bi-search me-1"></i> Buscar
+            <button class="btn btn-outline-primary btn-lg w-100 shadow-sm" onclick="buscarProveedor(); return false;">
+              <i class="bi bi-search me-2"></i> Buscar
             </button>
           </div>
         </div>
-
-        <div class="table-responsive mt-4">
-          <table class="table table-bordered table-hover align-middle text-center bg-white rounded-3">
-            <thead class="table-light">
-              <tr>
-                <th>#</th>
-                <th>Razón Social</th>
-                <th>RUC</th>
-                <th>Dirección</th>
-                <th>Teléfono</th>
-                <th>Ciudad</th>
-                <th>Estado</th>
-                <th>Operaciones</th>
-              </tr>
-            </thead>
-            <tbody id="datos_tb"></tbody>
-          </table>
-        </div>
       </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="table-responsive">
+      <table class="table table-striped table-hover align-middle text-center border rounded-4 overflow-hidden shadow-sm">
+        <thead class="table-primary">
+          <tr>
+            <th>#</th>
+            <th>Razón Social</th>
+            <th>RUC</th>
+            <th>Dirección</th>
+            <th>Teléfono</th>
+            <th>Ciudad</th>
+            <th>Estado</th>
+            <th>Operaciones</th>
+          </tr>
+        </thead>
+        <tbody id="datos_tb">
+          <!-- Contenido dinámico -->
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

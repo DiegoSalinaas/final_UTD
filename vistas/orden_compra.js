@@ -38,14 +38,18 @@ function renderListaPresupuestos(arr){
     });
 }
 
-function cargarListaProductos(){
-    let datos = ejecutarAjax("controladores/productos.php","leerActivo=1");
+function cargarListaPresupuestos(){
+    let datos = ejecutarAjax("controladores/presupuestos_compra.php","leerPendiente=1");
+    let select = $("#id_presupuesto_lst");
+
     if(datos !== "0"){
-        listaProductos = JSON.parse(datos);
-        renderListaProductos(listaProductos);
+        listaPresupuestos = JSON.parse(datos);
+        renderListaPresupuestos(listaPresupuestos);
+    } else {
+        // Si no hay presupuestos pendientes
+        select.html('<option value="">-- No hay presupuestos pendientes --</option>');
     }
 }
-
 function renderListaProductos(arr){
     let select = $("#id_producto_lst");
     select.html('<option value="">-- Seleccione un producto --</option>');
