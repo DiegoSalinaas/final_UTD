@@ -23,6 +23,7 @@ function imprimirProveedores() {
 
     let json = JSON.parse(datos);
     let filasTabla = "";
+    const fechaHoy = new Date().toLocaleDateString();
 
     json.forEach(p => {
         filasTabla += `
@@ -34,8 +35,7 @@ function imprimirProveedores() {
                 <td>${p.telefono}</td>
                 <td>${p.ciudad}</td>
                 <td>${p.estado}</td>
-            </tr>
-        `;
+            </tr>`;
     });
 
     let ventana = window.open('', '', 'width=900,height=700');
@@ -45,14 +45,27 @@ function imprimirProveedores() {
             <title>Reporte de Proveedores</title>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
             <style>
-                body { padding: 30px; font-size: 14px; }
-                table { width: 100%; border-collapse: collapse; }
-                th, td { padding: 8px; border: 1px solid #ccc; text-align: left; }
-                th { background-color: #f8f9fa; }
+                body { padding: 30px; font-size: 14px; font-family: Arial, sans-serif; }
+                h2 { color: #0d6efd; margin-bottom: 20px; }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                }
+                th {
+                    background-color: #0d6efd;
+                    color: white;
+                    text-align: center;
+                }
+                td, th {
+                    border: 1px solid #dee2e6;
+                    padding: 8px;
+                }
             </style>
         </head>
         <body>
-            <h3 class="mb-4">🤝 Reporte de Proveedores</h3>
+            <h2>📑 Reporte de Proveedores</h2>
+            <small>Fecha de impresión: ${fechaHoy}</small>
+            <hr>
             <table class="table table-bordered">
                 <thead>
                     <tr>
@@ -76,6 +89,10 @@ function imprimirProveedores() {
     ventana.focus();
     ventana.print();
 }
+
+
+
+
 
 function cargarListaCiudad(componente){
     let datos = ejecutarAjax("controladores/ciudad.php","leer=1");
