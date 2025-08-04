@@ -144,9 +144,34 @@ function renderDetallesOC(){
             <td>${d.cantidad}</td>
             <td>${formatearPY(d.precio_unitario)}</td>
             <td>${formatearPY(d.subtotal)}</td>
+            <td><button class="btn btn-danger btn-sm eliminar-detalle" data-id="${d.id_producto}"><i class="bi bi-trash"></i></button></td>
         </tr>`);
     });
 }
+
+$(document).on('click','.eliminar-detalle',function(){
+    let idProducto = $(this).data('id');
+    let idx = detallesOC.findIndex(d => d.id_producto == idProducto);
+    if(idx !== -1){
+        let detalle = detallesOC[idx];
+        detallesOC.splice(idx,1);
+        renderDetallesOC();
+        let idPresupuesto = $("#id_presupuesto_lst").val();
+        if(idPresupuesto){
+            let datos = {id_presupuesto:idPresupuesto, id_producto:idProducto};
+            ejecutarAjax("controladores/detalle_presupuesto.php","eliminar_producto="+JSON.stringify(datos));
+            let presData = ejecutarAjax("controladores/presupuestos_compra.php","leer_id="+idPresupuesto);
+            if(presData !== "0"){
+                let pres = JSON.parse(presData);
+                let nuevoTotal = (parseFloat(pres.total_estimado) || 0) - parseFloat(detalle.subtotal);
+                let upd = {id_presupuesto:idPresupuesto, fecha: pres.fecha, id_proveedor: pres.id_proveedor, total_estimado:nuevoTotal};
+                ejecutarAjax("controladores/presupuestos_compra.php","actualizar="+JSON.stringify(upd));
+                let presObj = listaPresupuestos.find(p => p.id_presupuesto == idPresupuesto);
+                if(presObj){ presObj.total_estimado = nuevoTotal; }
+            }
+        }
+    }
+});
 
 function guardarOrden(){
     if($("#id_presupuesto_lst").val() === ""){mensaje_dialogo_info_ERROR("Debe seleccionar un presupuesto","ERROR");return;}

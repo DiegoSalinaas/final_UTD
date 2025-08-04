@@ -31,6 +31,15 @@ if (isset($_POST['eliminar'])) {
     $query->execute(['id' => $_POST['eliminar']]);
 }
 
+// ELIMINAR DETALLE POR PRESUPUESTO Y PRODUCTO
+if (isset($_POST['eliminar_producto'])) {
+    $datos = json_decode($_POST['eliminar_producto'], true);
+    $query = $cn->prepare(
+        "DELETE FROM detalle_presupuesto WHERE id_presupuesto = :id_presupuesto AND id_producto = :id_producto"
+    );
+    $query->execute($datos);
+}
+
 // LISTAR DETALLES
 if (isset($_POST['leer'])) {
     $sql =
