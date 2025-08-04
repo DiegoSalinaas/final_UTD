@@ -12,6 +12,68 @@ function mostrarAgregarProducto(callback = null){
     }
 }
 
+function imprimirProductos() {
+    let datos = ejecutarAjax("controladores/productos.php", "leer=1");
+
+    if (!datos || datos === "0") {
+        alert("No hay productos para imprimir.");
+        return;
+    }
+
+    let json = JSON.parse(datos);
+    let filasTabla = "";
+
+    json.forEach(p => {
+        filasTabla += `
+            <tr>
+                <td>${p.producto_id}</td>
+                <td>${p.nombre}</td>
+                <td>${p.descripcion}</td>
+                <td>${formatearPY(p.precio)}</td>
+                <td>${p.tipo}</td>
+                <td>${p.estado}</td>
+            </tr>
+        `;
+    });
+
+    let ventana = window.open('', '', 'width=900,height=700');
+    ventana.document.write(`
+        <html>
+        <head>
+            <title>Reporte de Productos</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+            <style>
+                body { padding: 30px; font-size: 14px; }
+                table { width: 100%; border-collapse: collapse; }
+                th, td { padding: 8px; border: 1px solid #ccc; text-align: left; }
+                th { background-color: #f8f9fa; }
+            </style>
+        </head>
+        <body>
+            <h3 class="mb-4">📦 Reporte de Productos</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Descripción</th>
+                        <th>Precio</th>
+                        <th>Tipo</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${filasTabla}
+                </tbody>
+            </table>
+        </body>
+        </html>
+    `);
+    ventana.document.close();
+    ventana.focus();
+    ventana.print();
+}
+
 function guardarProducto(){
     if($("#nombre_txt").val().trim().length===0){
          mensaje_dialogo_info_ERROR("Debes ingresar el Nombre", "ERROR");
