@@ -134,14 +134,12 @@ function guardarRemision() {
         estado: $("#estado_txt").val()
     };
 
-    console.log("✔ Datos a guardar:", JSON.stringify(datos, null, 2));
-    console.log("✔ Detalles a guardar:", JSON.stringify(detallesRemision, null, 2));
-
-    let idRemision = $("#id_remision").val(); // 👈 ahora está declarado correctamente
+    
+    let idRemision = $("#id_remision").val();
 
     if (idRemision === "0") {
         idRemision = ejecutarAjax("controladores/remision.php", "guardar=" + JSON.stringify(datos));
-        console.log("🟢 ID de remisión generado:", idRemision); // 👈 se usa después
+        console.log("🟢 ID de remisión generado:", idRemision); 
 
         if (!idRemision || isNaN(idRemision)) {
             mensaje_dialogo_info_ERROR("Error al guardar la remisión. ID inválido.", "ERROR");
@@ -230,6 +228,7 @@ $(document).on("click",".editar-remision",function(){
         $("#fecha_txt").val(json.fecha_remision);
         $("#observacion_txt").val(json.observacion);
         $("#estado_txt").val(json.estado);
+        
         let det=ejecutarAjax("controladores/detalle_remision.php","leer=1&id_remision="+id);
         if(det !== "0"){
             detallesRemision=JSON.parse(det).map(d=>({id_producto:d.id_producto,producto:d.producto,cantidad:d.cantidad,precio_unitario:d.precio_unitario,subtotal:d.subtotal}));
