@@ -123,8 +123,12 @@ $(document).on("keyup","#b_producto",function(){
     buscarProducto();
 });
 
+$(document).on("change","#tipo_filtro",function(){
+    buscarProducto();
+});
+
 function buscarProducto(){
-    let datos=ejecutarAjax("controladores/productos.php","leer_descripcion="+$("#b_producto").val());
+    let datos=ejecutarAjax("controladores/productos.php","leer_descripcion="+$("#b_producto").val()+"&tipo="+$("#tipo_filtro").val());
     if(datos === "0"){
         $("#datos_tb").html("NO HAY REGISTROS");
     }else{
