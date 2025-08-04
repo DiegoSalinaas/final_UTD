@@ -84,11 +84,19 @@ if (isset($_POST['leer_id'])) {
 // LEER POR DESCRIPCION
 if (isset($_POST['leer_descripcion'])) {
     $f = '%' . $_POST['leer_descripcion'] . '%';
+    $estado = $_POST['estado'] ?? '';
     $db = new DB();
-    $query = $db->conectar()->prepare(
-        "SELECT p.id_presupuesto, p.fecha, p.id_proveedor, pr.razon_social AS proveedor, p.total_estimado, p.estado FROM presupuestos_compra p LEFT JOIN proveedor pr ON p.id_proveedor = pr.id_proveedor WHERE CONCAT(p.id_presupuesto, pr.razon_social) LIKE :filtro ORDER BY p.id_presupuesto DESC"
-    );
-    $query->execute(['filtro' => $f]);
+    $sql = "SELECT p.id_presupuesto, p.fecha, p.id_proveedor, pr.razon_social AS proveedor, p.total_estimado, p.estado FROM presupuestos_compra p LEFT JOIN proveedor pr ON p.id_proveedor = pr.id_proveedor WHERE CONCAT(p.id_presupuesto, pr.razon_social) LIKE :filtro";
+    if ($estado !== '') {
+        $sql .= " AND p.estado = :estado";
+    }
+    $sql .= " ORDER BY p.id_presupuesto DESC";
+    $query = $db->conectar()->prepare($sql);
+    $params = ['filtro' => $f];
+    if ($estado !== '') {
+        $params['estado'] = $estado;
+    }
+    $query->execute($params);
     if ($query->rowCount()) {
         echo json_encode($query->fetchAll(PDO::FETCH_OBJ));
     } else {
