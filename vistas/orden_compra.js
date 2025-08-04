@@ -150,6 +150,10 @@ function renderDetallesOC(){
 }
 
 $(document).on('click','.eliminar-detalle',function(){
+    if(detallesOC.length <= 1){
+        mensaje_dialogo_info_ERROR("No se puede eliminar todos los productos", "ERROR");
+        return;
+    }
     let idProducto = $(this).data('id');
     let idx = detallesOC.findIndex(d => d.id_producto == idProducto);
     if(idx !== -1){

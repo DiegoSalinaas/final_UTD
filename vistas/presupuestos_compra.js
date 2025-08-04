@@ -250,6 +250,10 @@ $(document).on("click",".anular-presupuesto",function(){
 });
 
 $(document).on("click",".quitar-detalle",function(){
+    if(detalles.length <= 1){
+        mensaje_dialogo_info_ERROR("No se puede eliminar todos los productos", "ERROR");
+        return;
+    }
     let idx = $(this).data("idx");
     detalles.splice(idx,1);
     renderDetalles();
