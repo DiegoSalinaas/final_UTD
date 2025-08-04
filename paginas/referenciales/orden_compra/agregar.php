@@ -78,6 +78,7 @@
                             <th>Cantidad</th>
                             <th>Precio Unitario</th>
                             <th>Subtotal</th>
+                            <th>Acción</th>
                         </tr>
                     </thead>
                     <tbody id="detalle_oc_tb">
