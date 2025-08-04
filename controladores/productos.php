@@ -49,12 +49,20 @@ if (isset($_POST['leerActivo'])) {
 
 if (isset($_POST['leer_descripcion'])) {
     $filtro = '%' . $_POST['leer_descripcion'] . '%';
-    $query = $db->prepare(
+    $tipo = $_POST['tipo'] ?? '';
+    $sql =
         "SELECT producto_id, nombre, descripcion, precio, tipo, estado " .
-        "FROM productos WHERE CONCAT(producto_id, nombre, descripcion, precio, tipo, estado) LIKE :filtro " .
-        "ORDER BY producto_id DESC"
-    );
-    $query->execute(['filtro' => $filtro]);
+        "FROM productos WHERE CONCAT(producto_id, nombre, descripcion, precio, tipo, estado) LIKE :filtro";
+    if ($tipo !== '') {
+        $sql .= " AND tipo = :tipo";
+    }
+    $sql .= " ORDER BY producto_id DESC";
+    $query = $db->prepare($sql);
+    $params = ['filtro' => $filtro];
+    if ($tipo !== '') {
+        $params['tipo'] = $tipo;
+    }
+    $query->execute($params);
     echo $query->rowCount() ? json_encode($query->fetchAll(PDO::FETCH_OBJ)) : '0';
 }
 
