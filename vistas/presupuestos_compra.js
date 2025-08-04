@@ -265,8 +265,15 @@ $(document).on("keyup","#b_presupuesto",function(){
     buscarPresupuesto();
 });
 
+$(document).on("change","#estado_filtro",function(){
+    buscarPresupuesto();
+});
+
 function buscarPresupuesto(){
-    let datos = ejecutarAjax("controladores/presupuestos_compra.php","leer_descripcion="+$("#b_presupuesto").val());
+    let datos = ejecutarAjax(
+        "controladores/presupuestos_compra.php",
+        "leer_descripcion="+$("#b_presupuesto").val()+"&estado="+$("#estado_filtro").val()
+    );
     if(datos === "0"){
         $("#datos_tb").html("NO HAY REGISTROS");
     }else{
