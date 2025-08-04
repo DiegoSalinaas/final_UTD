@@ -13,6 +13,70 @@ function mostrarAgregarCliente(callback = null){
     }
 }
 
+function imprimirClientes() {
+    let datos = ejecutarAjax("controladores/cliente.php", "leer=1");
+
+    if (!datos || datos === "0") {
+        alert("No hay clientes para imprimir.");
+        return;
+    }
+
+    let json = JSON.parse(datos);
+    let filasTabla = "";
+
+    json.forEach(c => {
+        filasTabla += `
+            <tr>
+                <td>${c.id_cliente}</td>
+                <td>${c.nombre_apellido}</td>
+                <td>${c.ruc}</td>
+                <td>${c.direccion}</td>
+                <td>${c.telefono}</td>
+                <td>${c.ciudad}</td>
+                <td>${c.estado}</td>
+            </tr>
+        `;
+    });
+
+    let ventana = window.open('', '', 'width=900,height=700');
+    ventana.document.write(`
+        <html>
+        <head>
+            <title>Reporte de Clientes</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+            <style>
+                body { padding: 30px; font-size: 14px; }
+                table { width: 100%; border-collapse: collapse; }
+                th, td { padding: 8px; border: 1px solid #ccc; text-align: left; }
+                th { background-color: #f8f9fa; }
+            </style>
+        </head>
+        <body>
+            <h3 class="mb-4">👥 Reporte de Clientes</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre y Apellido</th>
+                        <th>RUC</th>
+                        <th>Dirección</th>
+                        <th>Teléfono</th>
+                        <th>Ciudad</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${filasTabla}
+                </tbody>
+            </table>
+        </body>
+        </html>
+    `);
+    ventana.document.close();
+    ventana.focus();
+    ventana.print();
+}
+
 function cargarListaCiudad(componente){
     let datos = ejecutarAjax("controladores/ciudad.php","leer=1");
     if(datos === "0"){
