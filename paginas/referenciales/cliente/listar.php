@@ -5,9 +5,14 @@
       <h3 class="text-primary fw-bold mb-0">
         <i class="bi bi-people-fill me-2"></i> Clientes
       </h3>
-      <button class="btn btn-success shadow-sm d-flex align-items-center" onclick="mostrarAgregarCliente(); return false;">
-        <i class="bi bi-plus-circle me-2"></i> Nuevo Cliente
-      </button>
+      <div class="d-flex gap-2">
+        <button class="btn btn-outline-primary shadow-sm d-flex align-items-center" onclick="imprimirClientes(); return false;">
+          <i class="bi bi-printer-fill me-2"></i> Imprimir
+        </button>
+        <button class="btn btn-success shadow-sm d-flex align-items-center" onclick="mostrarAgregarCliente(); return false;">
+          <i class="bi bi-plus-circle me-2"></i> Nuevo Cliente
+        </button>
+      </div>
     </div>
 
     <!-- Buscador -->
