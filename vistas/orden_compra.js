@@ -1,6 +1,10 @@
-let detallesOC = [];
+(function(){
+ let detallesOC = [];
 let listaPresupuestos = [];
 let listaProductos = [];
+
+
+})();
 function mostrarListarOrdenes(){
     console.log("Entró en mostrarListarOrdenes()");
     let contenido = dameContenido("paginas/referenciales/orden_compra/listar.php");

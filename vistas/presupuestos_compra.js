@@ -2,6 +2,8 @@ let detalles = [];
 let listaProveedores = [];
 let listaProductos = [];
 
+
+
 function mostrarListarPresupuestos(){
     let contenido = dameContenido("paginas/referenciales/presupuestos_compra/listar.php");
     $("#contenido-principal").html(contenido);
