@@ -13,6 +13,70 @@ function mostrarAgregarProveedor(callback = null){
     }
 }
 
+function imprimirProveedores() {
+    let datos = ejecutarAjax("controladores/proveedor.php", "leer=1");
+
+    if (!datos || datos === "0") {
+        alert("No hay proveedores para imprimir.");
+        return;
+    }
+
+    let json = JSON.parse(datos);
+    let filasTabla = "";
+
+    json.forEach(p => {
+        filasTabla += `
+            <tr>
+                <td>${p.id_proveedor}</td>
+                <td>${p.razon_social}</td>
+                <td>${p.ruc}</td>
+                <td>${p.direccion}</td>
+                <td>${p.telefono}</td>
+                <td>${p.ciudad}</td>
+                <td>${p.estado}</td>
+            </tr>
+        `;
+    });
+
+    let ventana = window.open('', '', 'width=900,height=700');
+    ventana.document.write(`
+        <html>
+        <head>
+            <title>Reporte de Proveedores</title>
+            <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+            <style>
+                body { padding: 30px; font-size: 14px; }
+                table { width: 100%; border-collapse: collapse; }
+                th, td { padding: 8px; border: 1px solid #ccc; text-align: left; }
+                th { background-color: #f8f9fa; }
+            </style>
+        </head>
+        <body>
+            <h3 class="mb-4">🤝 Reporte de Proveedores</h3>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Razón Social</th>
+                        <th>RUC</th>
+                        <th>Dirección</th>
+                        <th>Teléfono</th>
+                        <th>Ciudad</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${filasTabla}
+                </tbody>
+            </table>
+        </body>
+        </html>
+    `);
+    ventana.document.close();
+    ventana.focus();
+    ventana.print();
+}
+
 function cargarListaCiudad(componente){
     let datos = ejecutarAjax("controladores/ciudad.php","leer=1");
     if(datos === "0"){
