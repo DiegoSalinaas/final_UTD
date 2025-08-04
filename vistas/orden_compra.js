@@ -125,8 +125,8 @@ function agregarProductoExtra(){
 window.agregarProductoExtra = agregarProductoExtra;
 
 function limpiarDetalleExtraForm(){
-    $("#id_producto_lst").val("");
-    $("#cantidad_txt").val("");
+    $("#id_producto_lst").val("").trigger("change");
+    $("#cantidad_txt").val("").focus();
     $("#precio_unitario_txt").val("");
     $("#subtotal_txt").val("");
 }

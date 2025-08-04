@@ -1,26 +1,34 @@
 <div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="mb-0">Listado de Presupuestos</h4>
-        <button class="btn btn-primary" onclick="mostrarAgregarPresupuesto(); return false;">
-            <i class="bi bi-plus-circle"></i> Agregar
+    <!-- Encabezado -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h3 class="fw-bold text-primary mb-0">
+            <i class="bi bi-file-earmark-text"></i> Presupuestos de Compra
+        </h3>
+        <button class="btn btn-success d-flex align-items-center shadow-sm" onclick="mostrarAgregarPresupuesto(); return false;">
+            <i class="bi bi-plus-circle me-2"></i> Nuevo Presupuesto
         </button>
     </div>
-    <div class="card shadow-sm rounded-4">
+
+    <!-- Card principal -->
+    <div class="card shadow rounded-4 border-0">
         <div class="card-body">
-            <div class="row g-3 align-items-end">
+            <!-- Buscador -->
+            <div class="row g-3 align-items-end mb-3">
                 <div class="col-md-8">
-                    <label for="b_presupuesto" class="form-label">Buscador</label>
-                    <input type="text" id="b_presupuesto" class="form-control" placeholder="Buscar por proveedor...">
+                    <label for="b_presupuesto" class="form-label fw-semibold">Buscar presupuesto</label>
+                    <input type="text" id="b_presupuesto" class="form-control form-control-lg" placeholder="Escribe el nombre del proveedor...">
                 </div>
                 <div class="col-md-4">
-                    <button class="btn btn-secondary w-100" onclick="buscarPresupuesto(); return false;">
-                        <i class="bi bi-search"></i> Buscar
+                    <button class="btn btn-outline-primary btn-lg w-100 shadow-sm" onclick="buscarPresupuesto(); return false;">
+                        <i class="bi bi-search me-2"></i> Buscar
                     </button>
                 </div>
             </div>
-            <div class="table-responsive mt-4">
-                <table class="table table-bordered table-hover align-middle text-center">
-                    <thead class="table-light">
+
+            <!-- Tabla -->
+            <div class="table-responsive">
+                <table class="table table-striped table-hover align-middle text-center">
+                    <thead class="table-primary text-nowrap">
                         <tr>
                             <th>#</th>
                             <th>Proveedor</th>
@@ -31,7 +39,7 @@
                         </tr>
                     </thead>
                     <tbody id="datos_tb">
-                        <!-- Contenido dinámico -->
+                        <!-- Filas dinámicas -->
                     </tbody>
                 </table>
             </div>

@@ -94,10 +94,11 @@ if (isset($_POST['leer_descripcion'])) {
      FROM orden_compra o
      LEFT JOIN proveedor pr ON o.id_proveedor = pr.id_proveedor
      LEFT JOIN detalle_orden_compra d ON o.id_orden = d.id_orden
+     WHERE pr.razon_social LIKE :filtro
      GROUP BY o.id_orden, o.fecha_emision, o.id_presupuesto, 
               o.id_proveedor, pr.razon_social, o.estado
      ORDER BY o.id_orden DESC"
-);
+    );
 
     $query->execute(['filtro' => $f]);
     if ($query->rowCount()) {

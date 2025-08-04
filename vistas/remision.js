@@ -1,6 +1,4 @@
 
-
-
 (function(){
  let detallesRemision = [];
 let listaClientes = [];
