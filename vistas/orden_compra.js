@@ -378,6 +378,7 @@ function renderTablaOrden(arr){
     let tbody = $("#orden_datos_tb");
     tbody.html("");
     arr.forEach(function(o){
+        const disabled = o.estado === 'ANULADO' ? 'disabled' : '';
         tbody.append(`<tr>
             <td>${o.id_orden}</td>
             <td>${formatearFechaDMA(o.fecha_emision)}</td>
@@ -385,15 +386,16 @@ function renderTablaOrden(arr){
             <td>${formatearPY(o.total)}</td>
             <td>${badgeEstado(o.estado)}</td>
             <td>
-                <button class="btn btn-warning btn-sm editar-orden" data-id="${o.id_orden}" title="Editar"><i class="bi bi-pencil"></i></button>
-                <button class="btn btn-danger btn-sm anular-orden" data-id="${o.id_orden}" title="Anular"><i class="bi bi-x-circle"></i></button>
-                <button class="btn btn-secondary btn-sm imprimir-orden" data-id="${o.id_orden}" title="Imprimir"><i class="bi bi-printer"></i></button>
+                <button class="btn btn-warning btn-sm editar-orden" ${disabled} data-id="${o.id_orden}" title="Editar"><i class="bi bi-pencil"></i></button>
+                <button class="btn btn-danger btn-sm anular-orden" ${disabled} data-id="${o.id_orden}" title="Anular"><i class="bi bi-x-circle"></i></button>
+                <button class="btn btn-secondary btn-sm imprimir-orden" ${disabled} data-id="${o.id_orden}" title="Imprimir"><i class="bi bi-printer"></i></button>
             </td>
         </tr>`);
     });
 }
 
 $(document).on('click','.editar-orden',function(){
+    if($(this).prop('disabled')) return;
     let id = $(this).data('id');
     let datos = ejecutarAjax("controladores/orden_compra.php","leer_id="+id);
     if(datos === "0"){ alert("No se encontró la orden"); return; }
@@ -416,6 +418,7 @@ $(document).on('click','.editar-orden',function(){
 });
 
 $(document).on('click','.anular-orden',function(){
+    if($(this).prop('disabled')) return;
     if(confirm('¿Desea anular?')){
         let id = $(this).data('id');
         ejecutarAjax("controladores/orden_compra.php","anular="+id);
@@ -424,6 +427,7 @@ $(document).on('click','.anular-orden',function(){
 });
 
 $(document).on('click','.imprimir-orden',function(){
+    if($(this).prop('disabled')) return;
     let id = $(this).data('id');
     imprimirOrden(id);
 });
