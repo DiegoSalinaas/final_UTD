@@ -1,10 +1,6 @@
-(function(){
-  let detallesOC = [];
-  let listaPresupuestos = [];
-  let listaProductos = [];
-
-  // ... resto de funciones privadas que usan esas variables
-})();
+let detallesOC = [];
+let listaPresupuestos = [];
+let listaProductos = [];
 function mostrarListarOrdenes(){
     console.log("Entró en mostrarListarOrdenes()");
     let contenido = dameContenido("paginas/referenciales/orden_compra/listar.php");
@@ -357,7 +353,8 @@ function renderTablaOrden(arr){
             <td>${badgeEstado(o.estado)}</td>
             <td>
                 <button class="btn btn-warning btn-sm editar-orden" data-id="${o.id_orden}" title="Editar"><i class="bi bi-pencil"></i></button>
-                <button class="btn btn-danger btn-sm eliminar-orden" data-id="${o.id_orden}" title="Eliminar"><i class="bi bi-trash"></i></button>
+                <button class="btn btn-danger btn-sm anular-orden" data-id="${o.id_orden}" title="Anular"><i class="bi bi-x-circle"></i></button>
+                <button class="btn btn-secondary btn-sm imprimir-orden" data-id="${o.id_orden}" title="Imprimir"><i class="bi bi-printer"></i></button>
             </td>
         </tr>`);
     });
@@ -370,16 +367,32 @@ $(document).on('click','.editar-orden',function(){
     let json = JSON.parse(datos);
     mostrarAgregarOrden();
     $("#id_orden").val(json.id_orden);
-    $("#id_presupuesto_lst").val(json.id_presupuesto).trigger('change');
+    let sel = $("#id_presupuesto_lst");
+    if(sel.find(`option[value='${json.id_presupuesto}']`).length === 0){
+        sel.append(`<option value="${json.id_presupuesto}" data-prov="${json.id_proveedor}" data-prov-nombre="${json.proveedor || ''}">Presupuesto #${json.id_presupuesto}</option>`);
+    }
+    sel.val(json.id_presupuesto);
+    $("#proveedor_txt").val(json.proveedor || json.id_proveedor);
+    $("#id_proveedor").val(json.id_proveedor);
     $("#fecha_txt").val(json.fecha_emision);
+    let det = ejecutarAjax("controladores/detalle_orden_compra.php","leer=1&id_orden="+id);
+    if(det !== "0"){
+        detallesOC = JSON.parse(det).map(d => ({id_producto:d.id_producto,producto:d.producto,cantidad:d.cantidad,precio_unitario:d.precio_unitario,subtotal:d.subtotal}));
+        renderDetallesOC();
+    }
 });
 
-$(document).on('click','.eliminar-orden',function(){
-    if(confirm('¿Desea eliminar?')){
+$(document).on('click','.anular-orden',function(){
+    if(confirm('¿Desea anular?')){
         let id = $(this).data('id');
-        ejecutarAjax("controladores/orden_compra.php","eliminar="+id);
+        ejecutarAjax("controladores/orden_compra.php","anular="+id);
         cargarTablaOrden();
     }
+});
+
+$(document).on('click','.imprimir-orden',function(){
+    let id = $(this).data('id');
+    imprimirOrden(id);
 });
 
 function buscarOrden(){

@@ -40,6 +40,13 @@ if (isset($_POST['eliminar'])) {
     $query->execute(['id' => $_POST['eliminar']]);
 }
 
+// ANULAR ORDEN
+if (isset($_POST['anular'])) {
+    $db = new DB();
+    $query = $db->conectar()->prepare("UPDATE orden_compra SET estado = 'ANULADO' WHERE id_orden = :id");
+    $query->execute(['id' => $_POST['anular']]);
+}
+
 // LEER TODAS LAS ORDENES
 if (isset($_POST['leer'])) {
     $db = new DB();
@@ -71,6 +78,7 @@ if (isset($_POST['leer_id'])) {
      FROM orden_compra o
      LEFT JOIN proveedor pr ON o.id_proveedor = pr.id_proveedor
      LEFT JOIN detalle_orden_compra d ON o.id_orden = d.id_orden
+     WHERE o.id_orden = :id
      GROUP BY o.id_orden, o.fecha_emision, o.id_presupuesto, 
               o.id_proveedor, pr.razon_social, o.estado
      ORDER BY o.id_orden DESC"
