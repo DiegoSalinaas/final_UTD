@@ -141,13 +141,21 @@ function guardarProducto(){
 
     if($("#producto_id").val() === "0"){
         let res = ejecutarAjax("controladores/productos.php","guardar="+JSON.stringify(datos));
+        if(res === "duplicado"){
+            mensaje_dialogo_info_ERROR("El producto ya existe", "ERROR");
+            return;
+        }
         mensaje_confirmacion("REALIZADO", "Guardado correctamente");
         mostrarListarProductos();
         limpiarProducto();
     }else{
         datos = {...datos, producto_id: $("#producto_id").val()};
         let res = ejecutarAjax("controladores/productos.php","actualizar="+JSON.stringify(datos));
-       mensaje_confirmacion("REALIZADO", "Actualizado correctamente");
+        if(res === "duplicado"){
+            mensaje_dialogo_info_ERROR("El producto ya existe", "ERROR");
+            return;
+        }
+        mensaje_confirmacion("REALIZADO", "Actualizado correctamente");
         mostrarListarProductos();
         limpiarProducto();
     }
