@@ -5,8 +5,8 @@ $base_datos = new DB();
 $db = $base_datos->conectar();
 
 if (isset($_POST['guardar'])) {
-    $datos = json_decode($_POST['guardar'], true);
-
+ 
+ $datos = array_map('trim', json_decode($_POST['guardar'], true));
     // Verificar si el RUC ya existe
     $query = $db->prepare("SELECT COUNT(*) FROM proveedor WHERE ruc = :ruc");
     $query->execute(['ruc' => $datos['ruc']]);
