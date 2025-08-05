@@ -61,4 +61,15 @@ if (isset($_POST['leer_id'])) {
     echo $query->rowCount() ? json_encode($query->fetch(PDO::FETCH_OBJ)) : '0';
 }
 
-//prueba
+if (isset($_POST['actualizar_estado'])) {
+    $id = $_POST['actualizar_estado'];
+    $db = new DB();
+    $query = $db->conectar()->prepare("UPDATE clientes SET estado = 'INACTIVO' WHERE id_cliente = :id");
+    $query->execute(['id' => $id]);
+}
+if (isset($_POST['validar_ruc'])) {
+    $ruc = $_POST['validar_ruc'];
+    $query = $db->prepare("SELECT COUNT(*) FROM clientes WHERE ruc = :ruc");
+    $query->execute(['ruc' => $ruc]);
+    echo $query->fetchColumn(); // devuelve 0 o 1+
+}

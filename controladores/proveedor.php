@@ -72,3 +72,14 @@ if (isset($_POST['leer_id'])) {
     $query->execute(['id' => $_POST['leer_id']]);
     echo $query->rowCount() ? json_encode($query->fetch(PDO::FETCH_OBJ)) : '0';
 }
+
+if (isset($_POST['actualizar_estado'])) {
+    $id = $_POST['actualizar_estado'];
+    $db = new DB();
+    $query = $db->conectar()->prepare("UPDATE proveedor SET estado = 'INACTIVO' WHERE id_proveedor = :id");
+    $query->execute(['id' => $id]);
+}
+
+
+
+

@@ -19,7 +19,7 @@
         <!-- Precio -->
         <div class="col-md-6">
           <label for="precio_txt" class="form-label fw-semibold">Precio (Gs.)</label>
-          <input type="number" id="precio_txt" class="form-control" min="0" step="0.01" placeholder="0.00">
+          <input type="text" id="precio_txt" class="form-control" placeholder="0.00">
         </div>
 
         <!-- Tipo -->

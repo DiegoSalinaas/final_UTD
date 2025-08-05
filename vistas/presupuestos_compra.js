@@ -16,6 +16,7 @@ function mostrarAgregarPresupuesto(){
     cargarListaProveedores();
     cargarListaProductos();
     limpiarPresupuesto();
+    dameFechaActual("fecha_txt");
 }
 
 function cargarListaProveedores(){

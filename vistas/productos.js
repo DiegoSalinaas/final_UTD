@@ -134,7 +134,7 @@ function guardarProducto(){
     let datos = {
         nombre: $("#nombre_txt").val(),
         descripcion: $("#descripcion_txt").val(),
-        precio: $("#precio_txt").val(),
+        precio: quitarDecimalesConvertir($("#precio_txt").val()),
         tipo: $("#tipo_lst").val(),
         estado: $("#estado_lst").val()
     };
@@ -152,6 +152,18 @@ function guardarProducto(){
         limpiarProducto();
     }
 }
+
+
+$(document).on("keyup", "#precio_txt", function (evt) {
+    $(this).val(formatearNumero($(this).val()));
+});
+
+
+//para que no ingrese letras
+$(document).on('input', '#precio_txt', function () {
+  $(this).val($(this).val().replace(/\D/g, ''));
+});
+
 
 function cargarTablaProductos(){
     let datos = ejecutarAjax("controladores/productos.php","leer=1");
@@ -196,6 +208,34 @@ $(document).on("click",".editar-producto",function(){
     });
 });
 
+//$(document).on("click", ".eliminar-producto", function () {
+//    let id = $(this).closest("tr").find("td:eq(0)").text();
+//
+//    Swal.fire({
+//        title: "¿Estás seguro?",
+//        text: "El producto será eliminado permanentemente.",
+//        icon: "warning",
+//        showCancelButton: true,
+//        confirmButtonText: "Sí, eliminar",
+//        cancelButtonText: "Cancelar",
+//        confirmButtonColor: "#d33",
+//        cancelButtonColor: "#6c757d",
+//        reverseButtons: true
+//    }).then((result) => {
+//        if (result.isConfirmed) {
+//            let res = ejecutarAjax("controladores/productos.php", "eliminar=" + id);
+//            console.log(res);
+//            Swal.fire({
+//                icon: "success",
+//                title: "Producto eliminado correctamente",
+//                showConfirmButton: false,
+//                timer: 1500
+//            });
+//            cargarTablaProductos();
+//        }
+//    });
+//});
+
 $(document).on("click", ".eliminar-producto", function () {
     let id = $(this).closest("tr").find("td:eq(0)").text();
 
@@ -212,12 +252,26 @@ $(document).on("click", ".eliminar-producto", function () {
     }).then((result) => {
         if (result.isConfirmed) {
             let res = ejecutarAjax("controladores/productos.php", "eliminar=" + id);
-            Swal.fire({
-                icon: "success",
-                title: "Producto eliminado correctamente",
-                showConfirmButton: false,
-                timer: 1500
-            });
+
+            if (res.includes("foreign key constraint fails")) {
+                // El producto está relacionado. Se cambia el estado a INACTIVO
+                let r2 = ejecutarAjax("controladores/productos.php", "actualizar_estado=" + id);
+                Swal.fire({
+                    icon: "info",
+                    title: "Producto relacionado",
+                    text: "El producto está vinculado a otros registros y fue desactivado.",
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            } else {
+                Swal.fire({
+                    icon: "success",
+                    title: "Producto eliminado correctamente",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+
             cargarTablaProductos();
         }
     });

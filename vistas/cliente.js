@@ -194,19 +194,33 @@ $(document).on("click", ".eliminar-cliente", function () {
         cancelButtonColor: "#6c757d",
         reverseButtons: true
     }).then((result) => {
-        if (result.isConfirmed) {
-            // Elimina el cliente
-            let res = ejecutarAjax("controladores/cliente.php", "eliminar=" + id);
+        if (!result.isConfirmed) return;
+
+        let res = ejecutarAjax("controladores/cliente.php", "eliminar=" + id);
+
+        if (res.includes("foreign key constraint")) {
+            // El cliente está relacionado → solo desactivar
+            ejecutarAjax("controladores/cliente.php", "actualizar_estado=" + id);
+            Swal.fire({
+                icon: "info",
+                title: "Cliente relacionado",
+                text: "Fue desactivado automáticamente.",
+                showConfirmButton: false,
+                timer: 2000
+            });
+        } else {
             Swal.fire({
                 icon: "success",
                 title: "Eliminado correctamente",
                 showConfirmButton: false,
                 timer: 1500
             });
-            cargarTablaCliente();
         }
+
+        cargarTablaCliente();
     });
 });
+
 
 
 $(document).on("keyup","#b_cliente",function(){

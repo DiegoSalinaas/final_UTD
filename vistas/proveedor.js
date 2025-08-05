@@ -200,7 +200,7 @@ $(document).on("click",".editar-proveedor",function(){
 $(document).on("click", ".eliminar-proveedor", function () {
     let fila = $(this).closest("tr");
     let id = fila.find("td:eq(0)").text();
-    let nombre = fila.find("td:eq(1)").text(); // Obtener la razón social del proveedor
+    let nombre = fila.find("td:eq(1)").text(); // razón social del proveedor
 
     Swal.fire({
         title: `¿Eliminar proveedor "${nombre}"?`,
@@ -215,16 +215,31 @@ $(document).on("click", ".eliminar-proveedor", function () {
     }).then((result) => {
         if (result.isConfirmed) {
             let res = ejecutarAjax("controladores/proveedor.php", "eliminar=" + id);
-            Swal.fire({
-                icon: "success",
-                title: "Proveedor eliminado correctamente",
-                showConfirmButton: false,
-                timer: 1500
-            });
+
+            if (res.includes("foreign key constraint fails")) {
+                // El proveedor está relacionado. Se cambia el estado a INACTIVO
+                let r2 = ejecutarAjax("controladores/proveedor.php", "actualizar_estado=" + id);
+                Swal.fire({
+                    icon: "info",
+                    title: "Proveedor relacionado",
+                    text: "El proveedor está vinculado a otros registros y fue desactivado.",
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            } else {
+                Swal.fire({
+                    icon: "success",
+                    title: "Proveedor eliminado correctamente",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+
             cargarTablaProveedor();
         }
     });
 });
+
 
 
 $(document).on("keyup","#b_proveedor",function(){
