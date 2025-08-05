@@ -31,23 +31,31 @@ function guardarDepartamento(){
     
     console.log(datos);
     if($("#id_departamento").val() === "0"){
-        
-        let res =  ejecutarAjax("controladores/departamento.php", 
+
+        let res =  ejecutarAjax("controladores/departamento.php",
         "guardar="+JSON.stringify(datos));
+        if(res === "duplicado"){
+            mensaje_dialogo_info_ERROR("El departamento ya existe", "ERROR");
+            return;
+        }
         console.log(res);
-        alert("Guardado correctamente");
+        mensaje_dialogo_correcto("Guardado correctamente", "GUARDADO");
         mostrarListarDepartamento();
         limpiarDepartamento();
     }else{
         datos = {...datos, "id_departamento" : $("#id_departamento").val()};
-        
-        let res =  ejecutarAjax("controladores/departamento.php", 
+
+        let res =  ejecutarAjax("controladores/departamento.php",
         "actualizar="+JSON.stringify(datos));
+        if(res === "duplicado"){
+            mensaje_dialogo_info_ERROR("El departamento ya existe", "ERROR");
+            return;
+        }
         console.log(res);
-        alert("Actualizado correctamente");
+        mensaje_dialogo_correcto("Actualizado correctamente", "ACTUALIZADO");
         mostrarListarDepartamento();
         limpiarDepartamento();
-        
+
     }
     
 }
