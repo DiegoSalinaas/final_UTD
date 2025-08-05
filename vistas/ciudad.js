@@ -101,6 +101,10 @@ function guardarCiudad(){
 
         let res = ejecutarAjax("controladores/ciudad.php",
         "guardar="+JSON.stringify(datos));
+        if(res === "duplicado"){
+            mensaje_dialogo_info_ERROR("La ciudad ya existe", "ERROR");
+            return;
+        }
         console.log(res);
         mensaje_dialogo_correcto("Guardado correctamente", "GUARDADO");
         mostrarListarCiudad();
@@ -110,6 +114,10 @@ function guardarCiudad(){
 
         let res = ejecutarAjax("controladores/ciudad.php",
         "actualizar="+JSON.stringify(datos));
+        if(res === "duplicado"){
+            mensaje_dialogo_info_ERROR("La ciudad ya existe", "ERROR");
+            return;
+        }
         console.log(res);
         mensaje_dialogo_correcto("Actualizado correctamente", "ACTUALIZADO");
         mostrarListarCiudad();
@@ -253,7 +261,7 @@ $(document).on("keyup", "#b_ciudad", function (evt) {
                             <b style="font-size: 17px;">${item.descripcion}</b>
                         </div>
                         <div class="col-8">
-                            <i>${item.departamento}</i>
+                            <i>${item.departamentos}</i>
                         </div>
                         <div class="col-4">
                             ${badgeEstado(item.estado)}
