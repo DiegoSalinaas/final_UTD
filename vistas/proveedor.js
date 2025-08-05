@@ -38,34 +38,75 @@ function imprimirProveedores() {
             </tr>`;
     });
 
-    let ventana = window.open('', '', 'width=900,height=700');
+    let ventana = window.open('', '', 'width=1000,height=800');
     ventana.document.write(`
         <html>
         <head>
             <title>Reporte de Proveedores</title>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
             <style>
-                body { padding: 30px; font-size: 14px; font-family: Arial, sans-serif; }
-                h2 { color: #0d6efd; margin-bottom: 20px; }
+                body {
+                    padding: 40px;
+                    font-family: 'Segoe UI', sans-serif;
+                    background: #fff;
+                    color: #000;
+                }
+                h2 {
+                    color: #0d6efd;
+                    font-weight: bold;
+                    margin-bottom: 10px;
+                }
+                .subtitulo {
+                    margin-bottom: 30px;
+                    font-size: 0.95rem;
+                    color: #6c757d;
+                }
                 table {
                     width: 100%;
                     border-collapse: collapse;
+                    font-size: 0.9rem;
                 }
-                th {
-                    background-color: #0d6efd;
+                thead tr {
+                    background-color: #0d6efd !important;
+                    -webkit-print-color-adjust: exact;
+                    print-color-adjust: exact;
                     color: white;
+                }
+                th, td {
+                    border: 1px solid #dee2e6;
+                    padding: 10px;
                     text-align: center;
                 }
-                td, th {
-                    border: 1px solid #dee2e6;
-                    padding: 8px;
+                tr:nth-child(even) {
+                    background-color: #f8f9fa;
+                }
+                .footer {
+                    margin-top: 40px;
+                    font-size: 0.85rem;
+                    color: #6c757d;
+                    text-align: center;
+                }
+                .logo {
+                    width: 100px;
+                    margin-bottom: 20px;
+                }
+
+                @media print {
+                    thead tr {
+                        background-color: #0d6efd !important;
+                        color: white !important;
+                        -webkit-print-color-adjust: exact;
+                        print-color-adjust: exact;
+                    }
                 }
             </style>
         </head>
         <body>
-            <h2>📑 Reporte de Proveedores</h2>
-            <small>Fecha de impresión: ${fechaHoy}</small>
-            <hr>
+            <div class="text-center">
+                <!-- <img src="images/logo.png" class="logo" alt="Logo"> -->
+                <h2>📑 Reporte de Proveedores</h2>
+                <div class="subtitulo">Fecha de impresión: ${fechaHoy}</div>
+            </div>
             <table class="table table-bordered">
                 <thead>
                     <tr>
@@ -82,6 +123,7 @@ function imprimirProveedores() {
                     ${filasTabla}
                 </tbody>
             </table>
+           
         </body>
         </html>
     `);
@@ -235,7 +277,7 @@ $(document).on("click",".editar-proveedor",function(){
 $(document).on("click", ".eliminar-proveedor", function () {
     let fila = $(this).closest("tr");
     let id = fila.find("td:eq(0)").text();
-    let nombre = fila.find("td:eq(1)").text(); // razón social del proveedor
+    let nombre = fila.find("td:eq(1)").text();
 
     Swal.fire({
         title: `¿Eliminar proveedor "${nombre}"?`,

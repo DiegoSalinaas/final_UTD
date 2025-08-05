@@ -128,17 +128,45 @@ function limpiarDepartamento(){
 //-------------------------------------------------------------------
 //-------------------------------------------------------------------
 //-------------------------------------------------------------------
-$(document).on("click", ".eliminar-departamento", function (evt) {
-    let id = ($(this).closest("tr").find("td:eq(0)").text());
-    
-    let departamento = ejecutarAjax("controladores/departamento.php", 
-    "eliminar="+id);
-    
-    console.log(departamento);
-    alert("Eliminado");
-    
-    cargarTablaDepartamento();
+$(document).on("click", ".eliminar-departamento", function () {
+    let id = $(this).closest("tr").find("td:eq(0)").text();
+
+    Swal.fire({
+        title: "¿Eliminar departamento?",
+        text: "Esta acción no se puede deshacer.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#6c757d",
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            let departamento = ejecutarAjax("controladores/departamento.php", "eliminar=" + id);
+
+            if (departamento.includes("foreign key constraint fails")) {
+                Swal.fire({
+                    icon: "info",
+                    title: "Departamento relacionado",
+                    text: "Este departamento está asociado a otros registros y no puede eliminarse.",
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            } else {
+                Swal.fire({
+                    icon: "success",
+                    title: "Departamento eliminado correctamente",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
+
+            cargarTablaDepartamento();
+        }
+    });
 });
+
 //---------------------------------------------------------------
 //---------------------------------------------------------------
 //---------------------------------------------------------------

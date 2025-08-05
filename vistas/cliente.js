@@ -23,6 +23,7 @@ function imprimirClientes() {
 
     let json = JSON.parse(datos);
     let filasTabla = "";
+    const fechaHoy = new Date().toLocaleDateString();
 
     json.forEach(c => {
         filasTabla += `
@@ -38,21 +39,69 @@ function imprimirClientes() {
         `;
     });
 
-    let ventana = window.open('', '', 'width=900,height=700');
+    let ventana = window.open('', '', 'width=1000,height=800');
     ventana.document.write(`
         <html>
         <head>
             <title>Reporte de Clientes</title>
             <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
             <style>
-                body { padding: 30px; font-size: 14px; }
-                table { width: 100%; border-collapse: collapse; }
-                th, td { padding: 8px; border: 1px solid #ccc; text-align: left; }
-                th { background-color: #f8f9fa; }
+                body {
+                    padding: 40px;
+                    font-family: 'Segoe UI', sans-serif;
+                    background: #fff;
+                    color: #000;
+                }
+                h2 {
+                    color: #0d6efd;
+                    font-weight: bold;
+                    margin-bottom: 10px;
+                }
+                .subtitulo {
+                    margin-bottom: 30px;
+                    font-size: 0.95rem;
+                    color: #6c757d;
+                }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    font-size: 0.9rem;
+                }
+                thead tr {
+                    background-color: #0d6efd !important;
+                    -webkit-print-color-adjust: exact;
+                    print-color-adjust: exact;
+                    color: white;
+                }
+                th, td {
+                    border: 1px solid #dee2e6;
+                    padding: 10px;
+                    text-align: center;
+                }
+                tr:nth-child(even) {
+                    background-color: #f8f9fa;
+                }
+                .footer {
+                    margin-top: 40px;
+                    font-size: 0.85rem;
+                    color: #6c757d;
+                    text-align: center;
+                }
+                @media print {
+                    thead tr {
+                        background-color: #0d6efd !important;
+                        color: white !important;
+                        -webkit-print-color-adjust: exact;
+                        print-color-adjust: exact;
+                    }
+                }
             </style>
         </head>
         <body>
-            <h3 class="mb-4">👥 Reporte de Clientes</h3>
+            <div class="text-center">
+                <h2>👥 Reporte de Clientes</h2>
+                <div class="subtitulo">Fecha de impresión: ${fechaHoy}</div>
+            </div>
             <table class="table table-bordered">
                 <thead>
                     <tr>
@@ -69,6 +118,7 @@ function imprimirClientes() {
                     ${filasTabla}
                 </tbody>
             </table>
+            
         </body>
         </html>
     `);
@@ -76,6 +126,7 @@ function imprimirClientes() {
     ventana.focus();
     ventana.print();
 }
+
 
 function cargarListaCiudad(componente){
     let datos = ejecutarAjax("controladores/ciudad.php","leer=1");

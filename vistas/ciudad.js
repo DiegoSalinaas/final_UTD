@@ -222,17 +222,45 @@ function limpiarCiudad(){
 //-------------------------------------------------------------------
 //-------------------------------------------------------------------
 //-------------------------------------------------------------------
-$(document).on("click", ".eliminar-ciudad", function (evt) {
-    let id = ($(this).closest(".card").find(".id_ciudad_edicion").text());
+$(document).on("click", ".eliminar-ciudad", function () {
+    let id = $(this).closest(".card").find(".id_ciudad_edicion").text();
 
-    let ciudad = ejecutarAjax("controladores/ciudad.php",
-    "eliminar="+id);
+    Swal.fire({
+        title: "¿Eliminar ciudad?",
+        text: "Esta acción no se puede deshacer.",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "#d33",
+        cancelButtonColor: "#6c757d",
+        reverseButtons: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            let ciudad = ejecutarAjax("controladores/ciudad.php", "eliminar=" + id);
 
-    console.log(ciudad);
-    mensaje_confirmacion("Eliminado Correctamente", "ELIMINADO");
+            if (ciudad.includes("foreign key constraint fails")) {
+                Swal.fire({
+                    icon: "info",
+                    title: "Ciudad relacionada",
+                    text: "La ciudad está asociada a otros registros y no puede eliminarse.",
+                    showConfirmButton: false,
+                    timer: 2000
+                });
+            } else {
+                Swal.fire({
+                    icon: "success",
+                    title: "Ciudad eliminada correctamente",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
 
-    cargarTablaCiudad();
+            cargarTablaCiudad();
+        }
+    });
 });
+
 //---------------------------------------------------------------
 //---------------------------------------------------------------
 //---------------------------------------------------------------
