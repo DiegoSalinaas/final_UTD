@@ -19,16 +19,16 @@
     <div class="card border-0 bg-light bg-opacity-75 rounded-4 shadow-sm mb-4">
       <div class="card-body">
         <div class="row g-3 align-items-end">
-          <div class="col-md-8">
+          <div class="col-md-12">
             <label for="b_cliente" class="form-label fw-semibold">
               <i class="bi bi-search me-2"></i> Buscar cliente
             </label>
             <input type="text" id="b_cliente" class="form-control form-control-lg" placeholder="Buscar por nombre, RUC o ciudad...">
           </div>
           <div class="col-md-4">
-            <button class="btn btn-outline-primary btn-lg w-100 shadow-sm" onclick="buscarCliente(); return false;">
+<!--            <button class="btn btn-outline-primary btn-lg w-100 shadow-sm" onclick="buscarCliente(); return false;">
               <i class="bi bi-search me-2"></i> Buscar
-            </button>
+            </button>-->
           </div>
         </div>
       </div>

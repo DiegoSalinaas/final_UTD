@@ -19,25 +19,26 @@
     <div class="card border-0 bg-light bg-opacity-75 rounded-4 shadow-sm mb-4">
       <div class="card-body">
         <div class="row g-3 align-items-end">
-          <div class="col-md-5">
+          <div class="col-md-8">
             <label for="b_producto" class="form-label fw-semibold">
               <i class="bi bi-search me-2"></i> Buscar producto
             </label>
-            <input type="text" id="b_producto" class="form-control form-control-lg" placeholder="Buscar por nombre o estado...">
+            <input type="text" id="b_producto" class="form-control form-control-lg" placeholder="Buscar por nombre o descripción...">
           </div>
-          <div class="col-md-4">
-            <label for="tipo_filtro" class="form-label fw-semibold">Tipo</label>
-            <select id="tipo_filtro" class="form-select form-select-lg">
+          <div class="col-md-4 ms-auto">
+             <label for="tipo_filtro" class="form-label fw-semibold">Tipo</label>
+             <select id="tipo_filtro" class="form-select form-select-lg">
               <option value="">Todos</option>
               <option value="PRODUCTO">Producto</option>
               <option value="SERVICIO">Servicio</option>
-            </select>
-          </div>
-          <div class="col-md-3">
+             </select>
+            </div>
+
+<!--          <div class="col-md-3">
             <button class="btn btn-outline-primary btn-lg w-100 shadow-sm" onclick="buscarProducto(); return false;">
               <i class="bi bi-search me-2"></i> Buscar
             </button>
-          </div>
+          </div>-->
         </div>
       </div>
     </div>
