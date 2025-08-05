@@ -113,22 +113,30 @@ function guardarCliente(){
     }
 
     let datos={
-        nombre_apellido: $("#nombre_txt").val(),
-        ruc: $("#ruc_txt").val(),
-        direccion: $("#direccion_txt").val(),
+        nombre_apellido: $("#nombre_txt").val().trim(),
+        ruc: $("#ruc_txt").val().trim(),
+        direccion: $("#direccion_txt").val().trim(),
         id_ciudad: $("#ciudad_lst").val(),
-        telefono: $("#telefono_txt").val(),
+        telefono: $("#telefono_txt").val().trim(),
         estado: $("#estado_lst").val()
     };
 
     if($("#id_cliente").val()==="0"){
         let res = ejecutarAjax("controladores/cliente.php","guardar="+JSON.stringify(datos));
+        if(res === "duplicado"){
+            mensaje_dialogo_info_ERROR("El RUC ya existe", "ATENCION");
+            return;
+        }
         mensaje_confirmacion("Guardado correctamente");
         mostrarListarCliente();
         limpiarCliente();
     }else{
         datos = {...datos, id_cliente: $("#id_cliente").val()};
         let res = ejecutarAjax("controladores/cliente.php","actualizar="+JSON.stringify(datos));
+        if(res === "duplicado"){
+            mensaje_dialogo_info_ERROR("El RUC ya existe", "ATENCION");
+            return;
+        }
         mensaje_confirmacion("Actualizado correctamente");
         mostrarListarCliente();
         limpiarCliente();
