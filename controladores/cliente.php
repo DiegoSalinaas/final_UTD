@@ -5,7 +5,8 @@ $base_datos = new DB();
 $db = $base_datos->conectar();
 
 if (isset($_POST['guardar'])) {
-    $datos = json_decode($_POST['guardar'], true);
+    // Limpiar espacios en blanco
+    $datos = array_map('trim', json_decode($_POST['guardar'], true));
 
     // Verificar si el RUC ya existe
     $query = $db->prepare("SELECT COUNT(*) FROM clientes WHERE ruc = :ruc");
@@ -24,7 +25,8 @@ if (isset($_POST['guardar'])) {
 }
 
 if (isset($_POST['actualizar'])) {
-    $datos = json_decode($_POST['actualizar'], true);
+    // Limpiar espacios en blanco
+    $datos = array_map('trim', json_decode($_POST['actualizar'], true));
 
     // Verificar si el RUC ya existe para otro cliente
     $query = $db->prepare("SELECT COUNT(*) FROM clientes WHERE ruc = :ruc AND id_cliente <> :id_cliente");
