@@ -6,21 +6,44 @@ $db = $base_datos->conectar();
 
 if (isset($_POST['guardar'])) {
     $datos = json_decode($_POST['guardar'], true);
+
+    // Verificar si el RUC ya existe
+    $query = $db->prepare("SELECT COUNT(*) FROM clientes WHERE ruc = :ruc");
+    $query->execute(['ruc' => $datos['ruc']]);
+    if ($query->fetchColumn() > 0) {
+        echo 'duplicado';
+        return;
+    }
+
     $query = $db->prepare(
         "INSERT INTO clientes (nombre_apellido, ruc, direccion, id_ciudad, telefono, estado) " .
         "VALUES (:nombre_apellido, :ruc, :direccion, :id_ciudad, :telefono, :estado)"
     );
     $query->execute($datos);
+    echo 'ok';
 }
 
 if (isset($_POST['actualizar'])) {
     $datos = json_decode($_POST['actualizar'], true);
+
+    // Verificar si el RUC ya existe para otro cliente
+    $query = $db->prepare("SELECT COUNT(*) FROM clientes WHERE ruc = :ruc AND id_cliente <> :id_cliente");
+    $query->execute([
+        'ruc' => $datos['ruc'],
+        'id_cliente' => $datos['id_cliente']
+    ]);
+    if ($query->fetchColumn() > 0) {
+        echo 'duplicado';
+        return;
+    }
+
     $query = $db->prepare(
         "UPDATE clientes SET nombre_apellido = :nombre_apellido, ruc = :ruc, " .
         "direccion = :direccion, id_ciudad = :id_ciudad, telefono = :telefono, estado = :estado " .
         "WHERE id_cliente = :id_cliente"
     );
     $query->execute($datos);
+    echo 'ok';
 }
 
 if (isset($_POST['eliminar'])) {

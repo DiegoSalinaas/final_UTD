@@ -6,21 +6,44 @@ $db = $base_datos->conectar();
 
 if (isset($_POST['guardar'])) {
     $datos = json_decode($_POST['guardar'], true);
+
+    // Verificar si el nombre ya existe (ignorando mayúsculas y minúsculas)
+    $query = $db->prepare("SELECT COUNT(*) FROM productos WHERE LOWER(nombre) = LOWER(:nombre)");
+    $query->execute(['nombre' => $datos['nombre']]);
+    if ($query->fetchColumn() > 0) {
+        echo 'duplicado';
+        return;
+    }
+
     $query = $db->prepare(
         "INSERT INTO productos (nombre, descripcion, precio, tipo, estado) " .
         "VALUES (:nombre, :descripcion, :precio, :tipo, :estado)"
     );
     $query->execute($datos);
+    echo 'ok';
 }
 
 if (isset($_POST['actualizar'])) {
     $datos = json_decode($_POST['actualizar'], true);
+
+    // Verificar si el nombre ya existe para otro producto
+    $query = $db->prepare("SELECT COUNT(*) FROM productos WHERE LOWER(nombre) = LOWER(:nombre) AND producto_id <> :producto_id");
+    $query->execute([
+        'nombre' => $datos['nombre'],
+        'producto_id' => $datos['producto_id']
+    ]);
+    if ($query->fetchColumn() > 0) {
+        echo 'duplicado';
+        return;
+    }
+
     $query = $db->prepare(
         "UPDATE productos SET nombre = :nombre, descripcion = :descripcion, " .
         "precio = :precio, tipo = :tipo, estado = :estado " .
         "WHERE producto_id = :producto_id"
     );
     $query->execute($datos);
+    echo 'ok';
 }
 
 if (isset($_POST['eliminar'])) {
@@ -80,6 +103,13 @@ if (isset($_POST['actualizar_estado'])) {
     $db = new DB();
     $query = $db->conectar()->prepare("UPDATE productos SET estado = 'INACTIVO' WHERE producto_id = :id");
     $query->execute(['id' => $id]);
+}
+
+if (isset($_POST['validar_nombre'])) {
+    $nombre = $_POST['validar_nombre'];
+    $query = $db->prepare("SELECT COUNT(*) FROM productos WHERE LOWER(nombre) = LOWER(:nombre)");
+    $query->execute(['nombre' => $nombre]);
+    echo $query->fetchColumn();
 }
 
 ?>
