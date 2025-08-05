@@ -6,21 +6,44 @@ $db = $base_datos->conectar();
 
 if (isset($_POST['guardar'])) {
     $datos = json_decode($_POST['guardar'], true);
+
+    // Verificar si el RUC ya existe
+    $query = $db->prepare("SELECT COUNT(*) FROM proveedor WHERE ruc = :ruc");
+    $query->execute(['ruc' => $datos['ruc']]);
+    if ($query->fetchColumn() > 0) {
+        echo 'duplicado';
+        return;
+    }
+
     $query = $db->prepare(
         "INSERT INTO proveedor (razon_social, ruc, direccion, id_ciudad, telefono, estado) " .
         "VALUES (:razon_social, :ruc, :direccion, :id_ciudad, :telefono, :estado)"
     );
     $query->execute($datos);
+    echo 'ok';
 }
 
 if (isset($_POST['actualizar'])) {
     $datos = json_decode($_POST['actualizar'], true);
+
+    // Verificar si el RUC ya existe para otro proveedor
+    $query = $db->prepare("SELECT COUNT(*) FROM proveedor WHERE ruc = :ruc AND id_proveedor <> :id_proveedor");
+    $query->execute([
+        'ruc' => $datos['ruc'],
+        'id_proveedor' => $datos['id_proveedor']
+    ]);
+    if ($query->fetchColumn() > 0) {
+        echo 'duplicado';
+        return;
+    }
+
     $query = $db->prepare(
         "UPDATE proveedor SET razon_social = :razon_social, ruc = :ruc, " .
         "direccion = :direccion, id_ciudad = :id_ciudad, telefono = :telefono, estado = :estado " .
         "WHERE id_proveedor = :id_proveedor"
     );
     $query->execute($datos);
+    echo 'ok';
 }
 
 if (isset($_POST['eliminar'])) {

@@ -198,7 +198,7 @@ INSERT INTO `producto` (`id_producto`, `nombre`, `descripcion`, `precio`, `stock
 CREATE TABLE `proveedor` (
   `id_proveedor` int(11) NOT NULL,
   `razon_social` varchar(100) NOT NULL,
-  `ruc` varchar(50) NOT NULL,
+  `ruc` varchar(50) NOT NULL UNIQUE,
   `direccion` varchar(150) NOT NULL,
   `id_ciudad` int(11) NOT NULL,
   `telefono` varchar(50) NOT NULL,

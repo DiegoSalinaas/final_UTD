@@ -138,14 +138,22 @@ function guardarProveedor(){
         estado: $("#estado_lst").val()
     };
 
-    if($("#id_proveedor").val()==="0"){
+    if($("#id_proveedor").val()==="0"){ 
         let res = ejecutarAjax("controladores/proveedor.php","guardar="+JSON.stringify(datos));
+        if(res === "duplicado"){
+            mensaje_dialogo_info_ERROR("El RUC ya se encuentra registrado", "ATENCION");
+            return;
+        }
         mensaje_dialogo_correcto("Guardado correctamente", 'GUARDADO');
         mostrarListarProveedor();
         limpiarProveedor();
     }else{
         datos = {...datos, id_proveedor: $("#id_proveedor").val()};
         let res = ejecutarAjax("controladores/proveedor.php","actualizar="+JSON.stringify(datos));
+        if(res === "duplicado"){
+            mensaje_dialogo_info_ERROR("El RUC ya se encuentra registrado", "ATENCION");
+            return;
+        }
         mensaje_dialogo_correcto("Actualizado correctamente", 'ACTUALIZADO');
         mostrarListarProveedor();
         limpiarProveedor();
