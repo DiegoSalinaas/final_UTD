@@ -14,11 +14,11 @@
         <div class="card-body">
             <!-- Buscador -->
             <div class="row g-3 align-items-end mb-3">
-                <div class="col-md-5">
+                <div class="col-md-8">
                     <label for="b_presupuesto" class="form-label fw-semibold">Buscar presupuesto</label>
                     <input type="text" id="b_presupuesto" class="form-control form-control-lg" placeholder="Escribe el nombre del proveedor...">
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-4 ms-auto">
                     <label for="estado_filtro" class="form-label fw-semibold">Estado</label>
                     <select id="estado_filtro" class="form-select form-select-lg">
                         <option value="">Todos</option>
@@ -27,11 +27,11 @@
                         <option value="ANULADO">Anulados</option>
                     </select>
                 </div>
-                <div class="col-md-3">
+<!--                <div class="col-md-3">
                     <button class="btn btn-outline-primary btn-lg w-100 shadow-sm" onclick="buscarPresupuesto(); return false;">
                         <i class="bi bi-search me-2"></i> Buscar
                     </button>
-                </div>
+                </div>-->
             </div>
 
             <!-- Tabla -->
