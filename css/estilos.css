@@ -43,8 +43,9 @@ h1, h2, h3, .brand-text {
     border-color: #001f3f;
 }
 .app-sidebar {
-    background-color: #2b4c7e !important; /* azul menos fuerte */
+    background-color: #ffffff !important;
 }
+
 
 
 .app-sidebar .nav-link {
@@ -68,8 +69,7 @@ body {
   margin-bottom: 1.5em;
 }
 
-/*-----------------------------------------------------------*/
-/* Fondo abstracto con patrón de circuito */
+
 .seccion-con-banner {
   position: relative;
 
@@ -78,7 +78,7 @@ body {
   border-radius: 1rem;
   padding: 2rem;
   margin-bottom: 2rem;
-  color: #1f2937; /* texto oscuro */
+  color: #1f2937;
   overflow: hidden;
 }
 
@@ -86,24 +86,24 @@ body {
   content: "";
   position: absolute;
   inset: 0;
-  background: rgba(255, 255, 255, 0.85); /* baja opacidad para no distraer */
+  background: rgba(255, 255, 255, 0.85);
   z-index: 0;
 }
 
-/* Contenido encima del banner */
+
 .seccion-con-banner > * {
   position: relative;
   z-index: 1;
 }
 
-/* Iconos grandes tipo tecnología */
+
 .icono-tecnologia {
   font-size: 1.75rem;
   color: #0d6efd;
   margin-right: 0.5rem;
 }
 
-/* Botón agregar personalizado */
+
 .boton-agregar {
   background-color: #0d6efd;
   color: white;

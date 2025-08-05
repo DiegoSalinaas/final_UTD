@@ -275,13 +275,13 @@
         <!--begin::Sidebar Brand-->
 <div class="sidebar-brand text-center">
   <!--begin::Brand Link-->
-  <a href="./index.html" class="brand-link d-flex flex-column align-items-center py-2">
+  <a href="http://localhost/final_utd/#" class="brand-link d-flex flex-column align-items-center py-2">
     <!--begin::Brand Image-->
     <img
       src="images/logo.png"
       alt="Logo"
       class="shadow"
-      style="height: 150px; max-width: 100%; object-fit: contain;"
+      style="height: 130px; max-width: 100%; object-fit: contain;"
     />
     <!--end::Brand Image-->
   </a>
