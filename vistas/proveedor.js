@@ -128,6 +128,19 @@ function guardarProveedor(){
         mensaje_dialogo_info_ERROR("Debes seleccionar la ciudad");
         return;
     }
+    
+    const ruc = $("#ruc_txt").val().trim();
+if (!/^[0-9\-]+$/.test(ruc)) {
+    mensaje_dialogo_info_ERROR("El RUC solo debe contener números y guiones (-)", "ATENCIÓN");
+    return;
+}
+
+const telefono = $("#telefono_txt").val().trim();
+if (!/^[0-9+]+$/.test(telefono)) {
+    mensaje_dialogo_info_ERROR("El teléfono solo debe contener números y el símbolo +", "ATENCIÓN");
+    return;
+}
+
 
     let datos={
         razon_social: $("#razon_txt").val(),
@@ -159,6 +172,20 @@ function guardarProveedor(){
         limpiarProveedor();
     }
 }
+$(document).on("keypress", "#ruc_txt", function (e) {
+    const char = String.fromCharCode(e.which);
+    if (!/[0-9\-]/.test(char)) {
+        e.preventDefault();
+    }
+});
+
+$(document).on("keypress", "#telefono_txt", function (e) {
+    const char = String.fromCharCode(e.which);
+    if (!/[0-9+]/.test(char)) {
+        e.preventDefault();
+    }
+});
+
 
 function cargarTablaProveedor(){
     let datos = ejecutarAjax("controladores/proveedor.php","leer=1");

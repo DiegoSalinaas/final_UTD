@@ -82,11 +82,7 @@ function imprimirProductos() {
                     <h2>📦 Reporte de Productos</h2>
                     <small>Fecha de impresión: ${fechaHoy}</small>
                 </div>
-                <div>
-               
-             <img src="/UTCDP1MENU/images/LOGO.png" width="100">
-
-                </div>
+             
             </div>
             <table class="table table-bordered table-hover table-striped tabla-productos">
                 <thead>
@@ -122,10 +118,13 @@ function guardarProducto(){
          mensaje_dialogo_info_ERROR("Debes ingresar el Nombre", "ERROR");
         return;
     }
-    if($("#precio_txt").val().trim().length===0){
-        mensaje_dialogo_info_ERROR("Debes ingresar el Precio", "ERROR");
-        return;
-    }
+        let precioSinFormato = quitarDecimalesConvertir($("#precio_txt").val().trim());
+
+        if ($("#precio_txt").val().trim().length === 0 || precioSinFormato <= 0) {
+         mensaje_dialogo_info_ERROR("El precio debe ser mayor a 0", "ERROR");
+         return;
+     }
+
     if($("#tipo_lst").val()==="0"){
         mensaje_dialogo_info_ERROR("Debes Seleccionar el tipo", "ERROR");
         return;
