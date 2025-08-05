@@ -124,7 +124,7 @@ function guardarCliente(){
     if($("#id_cliente").val()==="0"){
         let res = ejecutarAjax("controladores/cliente.php","guardar="+JSON.stringify(datos));
         if(res === "duplicado"){
-            mensaje_dialogo_info_ERROR("El RUC ya existe", "ATENCION");
+            mensaje_dialogo_info_ERROR("El RUC ya esta registrado con otro cliente", "ATENCION");
             return;
         }
         mensaje_confirmacion("Guardado correctamente");
@@ -134,7 +134,7 @@ function guardarCliente(){
         datos = {...datos, id_cliente: $("#id_cliente").val()};
         let res = ejecutarAjax("controladores/cliente.php","actualizar="+JSON.stringify(datos));
         if(res === "duplicado"){
-            mensaje_dialogo_info_ERROR("El RUC ya existe", "ATENCION");
+            mensaje_dialogo_info_ERROR("El RUC ya esta registrado con otro cliente", "ATENCION");
             return;
         }
         mensaje_confirmacion("Actualizado correctamente");
