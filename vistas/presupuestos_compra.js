@@ -202,8 +202,8 @@ function cargarTablaPresupuesto(){
                     <td>${formatearPY(it.total_estimado)}</td>
                     <td>${badgeEstado(it.estado)}</td>
                     <td>
-                        <button class="btn btn-info ver-detalle" ${disabled} title="Imprimir">
-                            <i class="bi bi-printer"></i>
+                        <button class="btn btn-info ver-detalle" title="Imprimir">
+                           <i class="bi bi-printer"></i>
                         </button>
                         <button class="btn btn-warning editar-presupuesto" ${disabled} title="Editar">
                             <i class="bi bi-pencil-square"></i>

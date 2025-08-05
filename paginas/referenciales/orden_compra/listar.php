@@ -1,7 +1,7 @@
 <div class="container mt-4">
     <!-- Encabezado -->
     <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="mb-0 text-primary fw-bold">
+        <h3 class="fw-bold text-primary mb-0">
             <i class="bi bi-bag-check-fill me-2"></i> Órdenes de Compra
         </h3>
         <button class="btn btn-success d-flex align-items-center shadow-sm" onclick="mostrarAgregarOrden(); return false;">
@@ -9,7 +9,7 @@
         </button>
     </div>
 
-    <!-- Tarjeta principal -->
+    <!-- Card principal -->
     <div class="card shadow rounded-4 border-0">
         <div class="card-body">
             <!-- Buscador -->
@@ -18,15 +18,11 @@
                     <label for="b_orden" class="form-label fw-semibold">Buscar orden</label>
                     <input type="text" id="b_orden" class="form-control form-control-lg" placeholder="Buscar por proveedor...">
                 </div>
-                <div class="col-md-4">
-                    <button class="btn btn-outline-primary btn-lg w-100 shadow-sm" onclick="buscarOrden(); return false;">
-                        <i class="bi bi-search me-2"></i> Buscar
-                    </button>
-                </div>
+                
             </div>
 
-            <!-- Tabla de órdenes -->
-            <div class="table-responsive mt-4">
+            <!-- Tabla -->
+            <div class="table-responsive">
                 <table class="table table-striped table-hover align-middle text-center">
                     <thead class="table-primary text-nowrap">
                         <tr>
