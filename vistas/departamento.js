@@ -16,7 +16,7 @@ function mostrarAgregarDepartamento(){
 function guardarDepartamento(){
     
     if($("#descripcion_txt").val().trim().length === 0){
-        alert("debes ingresar una descripcion");
+        mensaje_dialogo_info_ERROR("debes ingresar una descripcion", "ERROR");
         return;
     }
     

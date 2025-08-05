@@ -79,11 +79,11 @@ function imprimirCiudades() {
 function guardarCiudad(){
 
     if($("#descripcion_txt").val().trim().length === 0){
-        alert("debes ingresar una descripcion");
+       mensaje_dialogo_info_ERROR("debes ingresar una descripcion", "ERROR");
         return;
     }
     if($("#departamento_lst").val() === "0"){
-        alert("debes seleecionar un departamento");
+        mensaje_dialogo_info_ERROR("debes seleccionar un Departamento", "ERROR");
         return;
     }
 
@@ -102,7 +102,7 @@ function guardarCiudad(){
         let res = ejecutarAjax("controladores/ciudad.php",
         "guardar="+JSON.stringify(datos));
         console.log(res);
-        alert("Guardado correctamente");
+        mensaje_dialogo_correcto("Guardado correctamente", "GUARDADO");
         mostrarListarCiudad();
         limpiarCiudad();
     }else{
@@ -111,7 +111,7 @@ function guardarCiudad(){
         let res = ejecutarAjax("controladores/ciudad.php",
         "actualizar="+JSON.stringify(datos));
         console.log(res);
-        alert("Actualizado correctamente");
+        mensaje_dialogo_correcto("Actualizado correctamente", "ACTUALIZADO");
         mostrarListarCiudad();
         limpiarCiudad();
 
@@ -221,7 +221,7 @@ $(document).on("click", ".eliminar-ciudad", function (evt) {
     "eliminar="+id);
 
     console.log(ciudad);
-    alert("Eliminado");
+    mensaje_confirmacion("Eliminado Correctamente", "ELIMINADO");
 
     cargarTablaCiudad();
 });
