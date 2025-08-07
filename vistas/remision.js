@@ -184,7 +184,7 @@ function cargarTablaRemision(){
                     <td>${badgeEstado(it.estado)}</td>
                     <td>
                         <button class="btn btn-warning btn-sm editar-remision" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                        <button class="btn btn-danger btn-sm eliminar-remision" title="Eliminar"><i class="bi bi-trash"></i></button>
+                        <button class="btn btn-danger btn-sm anular-remision" title="Anular"><i class="bi bi-x-circle"></i></button>
                     </td>
                 </tr>`);
         });
@@ -209,7 +209,7 @@ function buscarRemision(){
                     <td>${badgeEstado(it.estado)}</td>
                     <td>
                         <button class="btn btn-warning btn-sm editar-remision" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                        <button class="btn btn-danger btn-sm eliminar-remision" title="Eliminar"><i class="bi bi-trash"></i></button>
+                        <button class="btn btn-danger btn-sm anular-remision" title="Anular"><i class="bi bi-x-circle"></i></button>
                     </td>
                 </tr>`);
         });
@@ -239,23 +239,22 @@ $(document).on("click",".editar-remision",function(){
     },100);
 });
 
-$(document).on("click",".eliminar-remision",function(){
+$(document).on("click",".anular-remision",function(){
     let id=$(this).closest("tr").find("td:eq(0)").text();
     Swal.fire({
-        title:"¿Estás seguro?",
-        text:"Esta acción no se puede deshacer.",
+        title:"¿Anular remisión?",
+        text:"Esta acción marcará la remisión como anulada.",
         icon:"warning",
         showCancelButton:true,
-        confirmButtonText:"Sí, eliminar",
+        confirmButtonText:"Sí, anular",
         cancelButtonText:"Cancelar",
         confirmButtonColor:"#dc3545",
         cancelButtonColor:"#6c757d",
         reverseButtons:true
     }).then((result)=>{
         if(result.isConfirmed){
-            ejecutarAjax("controladores/remision.php","eliminar="+id);
-            ejecutarAjax("controladores/detalle_remision.php","eliminar_por_remision="+id);
-            mensaje_confirmacion("Eliminado correctamente");
+            ejecutarAjax("controladores/remision.php","anular="+id);
+            mensaje_confirmacion("Anulado correctamente");
             cargarTablaRemision();
         }
     });
