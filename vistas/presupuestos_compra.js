@@ -74,8 +74,16 @@ function agregarDetalle(){
         mensaje_dialogo_info_ERROR("Debe ingresar la cantidad", "ERROR");
         return;
     }
+    if(parseFloat($("#cantidad_txt").val()) <= 0){
+        mensaje_dialogo_info_ERROR("La cantidad debe ser mayor a cero", "ERROR");
+        return;
+    }
     if($("#precio_unitario_txt").val().trim().length === 0){
         mensaje_dialogo_info_ERROR("Debe ingresar el costo", "ERROR");
+        return;
+    }
+    if(parseFloat($("#precio_unitario_txt").val()) <= 0){
+        mensaje_dialogo_info_ERROR("El costo debe ser mayor a cero", "ERROR");
         return;
     }
 
@@ -140,6 +148,10 @@ function guardarPresupuesto(){
     }
     if(detalles.length === 0){
         mensaje_dialogo_info_ERROR("Debe agregar al menos un producto", "ERROR");
+        return;
+    }
+    if(detalles.some(d => parseFloat(d.cantidad) <= 0 || parseFloat(d.precio_unitario) <= 0)){
+        mensaje_dialogo_info_ERROR("Los productos deben tener cantidad y costo mayores a cero", "ERROR");
         return;
     }
     let datos = {
