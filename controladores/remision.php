@@ -24,12 +24,12 @@ if (isset($_POST['actualizar'])) {
     $query->execute($datos);
 }
 
-// ELIMINAR REMISION
-if (isset($_POST['eliminar'])) {
+// ANULAR REMISION
+if (isset($_POST['anular'])) {
     $db = new DB();
     $cn = $db->conectar();
-    $query = $cn->prepare("DELETE FROM remision WHERE id_remision = :id");
-    $query->execute(['id' => $_POST['eliminar']]);
+    $query = $cn->prepare("UPDATE remision SET estado = 'ANULADO' WHERE id_remision = :id");
+    $query->execute(['id' => $_POST['anular']]);
 }
 
 // LEER TODAS LAS REMISIONES
