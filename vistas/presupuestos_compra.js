@@ -66,22 +66,28 @@ function filtrarProductos(texto){
 }
 
 function agregarDetalle(){
-    if($("#id_producto_lst").val() === ""){ 
-        mensaje_dialogo_info_ERROR("Debe seleccionar un producto", "ERROR"); 
-        return; 
+    if($("#id_producto_lst").val() === ""){
+        mensaje_dialogo_info_ERROR("Debe seleccionar un producto", "ERROR");
+        return;
     }
-    if($("#cantidad_txt").val().trim().length === 0){ 
-        mensaje_dialogo_info_ERROR("Debe ingresar la cantidad", "ERROR"); 
-        return; 
+    if($("#cantidad_txt").val().trim().length === 0){
+        mensaje_dialogo_info_ERROR("Debe ingresar la cantidad", "ERROR");
+        return;
     }
-    if($("#precio_unitario_txt").val().trim().length === 0){ 
-        mensaje_dialogo_info_ERROR("Debe ingresar el costo", "ERROR"); 
-        return; 
+    if($("#precio_unitario_txt").val().trim().length === 0){
+        mensaje_dialogo_info_ERROR("Debe ingresar el costo", "ERROR");
+        return;
+    }
+
+    let idProducto = $("#id_producto_lst").val();
+    if(detalles.some(d => d.id_producto === idProducto)){
+        mensaje_dialogo_info_ERROR("El producto ya está cargado", "ERROR");
+        return;
     }
 
     let detalle = {
         id_detalle: 0,
-        id_producto: $("#id_producto_lst").val(),
+        id_producto: idProducto,
         producto: $("#id_producto_lst option:selected").text(),
         cantidad: $("#cantidad_txt").val(),
         precio_unitario: $("#precio_unitario_txt").val(),
