@@ -105,25 +105,6 @@ function agregarProductoExtra(){
 
     detallesOC.push(detalle);
     renderDetallesOC();
-
-    let idPresupuesto = $("#id_presupuesto_lst").val();
-    let detPres = {
-        id_presupuesto: idPresupuesto,
-        id_producto: detalle.id_producto,
-        cantidad: detalle.cantidad,
-        precio_unitario: detalle.precio_unitario,
-        subtotal: detalle.subtotal
-    };
-    ejecutarAjax("controladores/detalle_presupuesto.php","guardar="+JSON.stringify(detPres));
-
-    let presObj = listaPresupuestos.find(p => p.id_presupuesto == idPresupuesto);
-    if(presObj){
-        let nuevoTotal = (parseFloat(presObj.total_estimado) || 0) + parseFloat(detalle.subtotal);
-        let upd = {id_presupuesto:idPresupuesto, fecha: presObj.fecha, id_proveedor: presObj.id_proveedor, total_estimado:nuevoTotal};
-        ejecutarAjax("controladores/presupuestos_compra.php","actualizar="+JSON.stringify(upd));
-        presObj.total_estimado = nuevoTotal;
-    }
-
     limpiarDetalleExtraForm();
 }
 window.agregarProductoExtra = agregarProductoExtra;
@@ -157,23 +138,8 @@ $(document).on('click','.eliminar-detalle',function(){
     let idProducto = $(this).data('id');
     let idx = detallesOC.findIndex(d => d.id_producto == idProducto);
     if(idx !== -1){
-        let detalle = detallesOC[idx];
         detallesOC.splice(idx,1);
         renderDetallesOC();
-        let idPresupuesto = $("#id_presupuesto_lst").val();
-        if(idPresupuesto){
-            let datos = {id_presupuesto:idPresupuesto, id_producto:idProducto};
-            ejecutarAjax("controladores/detalle_presupuesto.php","eliminar_producto="+JSON.stringify(datos));
-            let presData = ejecutarAjax("controladores/presupuestos_compra.php","leer_id="+idPresupuesto);
-            if(presData !== "0"){
-                let pres = JSON.parse(presData);
-                let nuevoTotal = (parseFloat(pres.total_estimado) || 0) - parseFloat(detalle.subtotal);
-                let upd = {id_presupuesto:idPresupuesto, fecha: pres.fecha, id_proveedor: pres.id_proveedor, total_estimado:nuevoTotal};
-                ejecutarAjax("controladores/presupuestos_compra.php","actualizar="+JSON.stringify(upd));
-                let presObj = listaPresupuestos.find(p => p.id_presupuesto == idPresupuesto);
-                if(presObj){ presObj.total_estimado = nuevoTotal; }
-            }
-        }
     }
 });
 
