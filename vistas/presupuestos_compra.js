@@ -79,7 +79,7 @@ function agregarDetalle(){
         return;
     }
 
-    let idProducto = $("#id_producto_lst").val();
+    let idProducto = parseInt($("#id_producto_lst").val());
     if(detalles.some(d => d.id_producto === idProducto)){
         mensaje_dialogo_info_ERROR("El producto ya está cargado", "ERROR");
         return;
@@ -237,7 +237,7 @@ $(document).on("click",".editar-presupuesto",function(){
     // Cargar datos del detalle asociado
     let det = ejecutarAjax("controladores/detalle_presupuesto.php","leer=1&id_presupuesto="+id);
     if(det !== "0"){
-        detalles = JSON.parse(det);
+        detalles = JSON.parse(det).map(d => ({...d, id_producto: parseInt(d.id_producto)}));
         renderDetalles();
     }
 });

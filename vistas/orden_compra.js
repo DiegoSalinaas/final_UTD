@@ -73,8 +73,8 @@ $(document).on('change','#id_presupuesto_lst',function(){
        $("#proveedor_txt").val(p.proveedor || p.id_proveedor);
        $("#id_proveedor").val(p.id_proveedor);
        let det = ejecutarAjax("controladores/detalle_presupuesto.php","leer=1&id_presupuesto="+id);
-       if(det !== "0"){
-           detallesOC = JSON.parse(det).map(d => ({id_producto:d.id_producto,producto:d.producto,cantidad:d.cantidad,precio_unitario:d.precio_unitario,subtotal:d.subtotal}));
+       if(det !== "0"){       
+           detallesOC = JSON.parse(det).map(d => ({id_producto: parseInt(d.id_producto), producto:d.producto, cantidad:d.cantidad, precio_unitario:d.precio_unitario, subtotal:d.subtotal}));
        }else{
            detallesOC = [];
        }
@@ -95,7 +95,7 @@ function agregarProductoExtra(){
     if($("#cantidad_txt").val().trim().length === 0){mensaje_dialogo_info_ERROR("Debe ingresar la cantidad","ERROR");return;}
     if($("#precio_unitario_txt").val().trim().length === 0){mensaje_dialogo_info_ERROR("Debe ingresar el costo","ERROR");return;}
 
-    let idProducto = $("#id_producto_lst").val();
+    let idProducto = parseInt($("#id_producto_lst").val());
     if(detallesOC.some(d => d.id_producto === idProducto)){
         mensaje_dialogo_info_ERROR("El producto ya está cargado","ERROR");
         return;
@@ -390,8 +390,8 @@ $(document).on('click','.editar-orden',function(){
     $("#id_proveedor").val(json.id_proveedor);
     $("#fecha_txt").val(json.fecha_emision);
     let det = ejecutarAjax("controladores/detalle_orden_compra.php","leer=1&id_orden="+id);
-    if(det !== "0"){
-        detallesOC = JSON.parse(det).map(d => ({id_producto:d.id_producto,producto:d.producto,cantidad:d.cantidad,precio_unitario:d.precio_unitario,subtotal:d.subtotal}));
+    if(det !== "0"){       
+        detallesOC = JSON.parse(det).map(d => ({id_producto: parseInt(d.id_producto), producto:d.producto, cantidad:d.cantidad, precio_unitario:d.precio_unitario, subtotal:d.subtotal}));
         renderDetallesOC();
     }
 });
