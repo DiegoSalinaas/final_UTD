@@ -31,12 +31,6 @@
                     <select id="id_producto_lst" class="form-select"></select>
                 </div>
 
-                <!-- Total estimado -->
-                <div class="col-md-6">
-                    <label for="total_txt" class="form-label fw-semibold">Total Estimado</label>
-                    <input type="number" step="0.01" id="total_txt" class="form-control" placeholder="0.00">
-                </div>
-
                 <!-- Cantidad -->
                 <div class="col-md-3">
                     <label for="cantidad_txt" class="form-label fw-semibold">Cantidad</label>
@@ -98,6 +92,16 @@
                     </tbody>
                 </table>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Total estimado -->
+<div class="container mt-3">
+    <div class="row justify-content-end">
+        <div class="col-md-3">
+            <label for="total_txt" class="form-label fw-semibold">Total Estimado</label>
+            <input type="number" step="0.01" id="total_txt" class="form-control bg-light" placeholder="0.00" readonly>
         </div>
     </div>
 </div>
