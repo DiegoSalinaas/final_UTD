@@ -7,6 +7,9 @@ $cn = $db->conectar();
 // GUARDAR DETALLE
 if (isset($_POST['guardar'])) {
     $datos = json_decode($_POST['guardar'], true);
+    if (floatval($datos['cantidad']) <= 0 || floatval($datos['precio_unitario']) <= 0) {
+        exit('Cantidad y precio_unitario deben ser mayores a cero');
+    }
     $query = $cn->prepare(
         "INSERT INTO detalle_presupuesto (id_presupuesto, id_producto, cantidad, precio_unitario, subtotal) " .
         "VALUES (:id_presupuesto, :id_producto, :cantidad, :precio_unitario, :subtotal)"
@@ -17,6 +20,9 @@ if (isset($_POST['guardar'])) {
 // ACTUALIZAR DETALLE
 if (isset($_POST['actualizar'])) {
     $datos = json_decode($_POST['actualizar'], true);
+    if (floatval($datos['cantidad']) <= 0 || floatval($datos['precio_unitario']) <= 0) {
+        exit('Cantidad y precio_unitario deben ser mayores a cero');
+    }
     $query = $cn->prepare(
         "UPDATE detalle_presupuesto SET id_presupuesto = :id_presupuesto, id_producto = :id_producto, " .
         "cantidad = :cantidad, precio_unitario = :precio_unitario, subtotal = :subtotal " .
