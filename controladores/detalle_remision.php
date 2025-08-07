@@ -8,9 +8,14 @@ $cn = $db->conectar();
 if (isset($_POST['guardar'])) {
     $datos = json_decode($_POST['guardar'], true);
 
+    if (floatval($datos['precio_unitario']) <= 0) {
+        echo 'PRECIO_INVALIDO';
+        return;
+    }
+
     $query = $cn->prepare(
-        "INSERT INTO detalle_remision 
-        (id_remision, id_producto, cantidad, precio_unitario, subtotal) 
+        "INSERT INTO detalle_remision
+        (id_remision, id_producto, cantidad, precio_unitario, subtotal)
         VALUES (:id_remision, :id_producto, :cantidad, :precio_unitario, :subtotal)"
     );
 
@@ -25,10 +30,13 @@ if (isset($_POST['guardar'])) {
     echo "OK";
 }
 
-
 // ACTUALIZAR DETALLE
 if (isset($_POST['actualizar'])) {
     $datos = json_decode($_POST['actualizar'], true);
+    if (floatval($datos['precio_unitario']) <= 0) {
+        echo 'PRECIO_INVALIDO';
+        return;
+    }
     $query = $cn->prepare(
         "UPDATE detalle_remision SET id_remision = :id_remision, id_producto = :id_producto, cantidad = :cantidad, precio_unitario = :precio_unitario, subtotal = :subtotal WHERE id_detalle_remision = :id_detalle_remision"
     );

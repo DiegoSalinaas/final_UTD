@@ -31,7 +31,7 @@
                 </div>
                 <div class="col-md-2">
                     <label for="precio_unitario_txt" class="form-label">Precio Unitario</label>
-                    <input type="number" id="precio_unitario_txt" class="form-control">
+                    <input type="number" id="precio_unitario_txt" class="form-control" min="0.01" step="0.01">
                 </div>
                 <div class="col-md-2">
                     <label for="subtotal_txt" class="form-label">Subtotal</label>
