@@ -162,6 +162,7 @@ function cargarTablaRecepcion(){
                     <td>${it.direccion}</td>
                     <td>${badgeEstado(it.estado)}</td>
                     <td>
+                        <button class="btn btn-info btn-sm imprimir-recepcion" title="Imprimir"><i class="bi bi-printer"></i></button>
                         <button class="btn btn-warning btn-sm editar-recepcion" title="Editar"><i class="bi bi-pencil-square"></i></button>
                         <button class="btn btn-danger btn-sm cerrar-recepcion" title="Cerrar"><i class="bi bi-x-circle"></i></button>
                     </td>
@@ -188,6 +189,7 @@ function buscarRecepcion(){
                     <td>${it.direccion}</td>
                     <td>${badgeEstado(it.estado)}</td>
                     <td>
+                        <button class="btn btn-info btn-sm imprimir-recepcion" title="Imprimir"><i class="bi bi-printer"></i></button>
                         <button class="btn btn-warning btn-sm editar-recepcion" title="Editar"><i class="bi bi-pencil-square"></i></button>
                         <button class="btn btn-danger btn-sm cerrar-recepcion" title="Cerrar"><i class="bi bi-x-circle"></i></button>
                     </td>
@@ -196,6 +198,77 @@ function buscarRecepcion(){
     }
 }
 window.buscarRecepcion = buscarRecepcion;
+
+function imprimirRecepcion(id){
+    let datos = ejecutarAjax("controladores/recepcion.php","leer_id="+id);
+    if(datos === "0"){ alert("Recepción no encontrada"); return; }
+    let rec = JSON.parse(datos);
+    let detData = ejecutarAjax("controladores/detalle_recepcion.php","leer=1&id_recepcion="+id);
+    let detalles = detData === "0" ? [] : JSON.parse(detData);
+
+    let filas = detalles.map((d,i)=>`<tr>
+            <td>${i+1}</td>
+            <td>${d.marca}</td>
+            <td>${d.modelo}</td>
+            <td>${d.numero_serie}</td>
+            <td>${d.falla_reportada}</td>
+            <td>${d.accesorios_entregados}</td>
+            <td>${d.diagnostico_preliminar}</td>
+            <td>${d.observaciones_detalle}</td>
+        </tr>`).join('');
+
+    let win = window.open('', '', 'width=900,height=700');
+    win.document.write(`
+    <html>
+    <head>
+        <title>Recepción #${rec.id_recepcion}</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            body{padding:40px;font-size:13pt;font-family:'Segoe UI',sans-serif;color:#000;}
+            .titulo{text-align:center;margin-bottom:20px;}
+            .info{margin-bottom:20px;}
+            table{width:100%;border-collapse:collapse;}
+            th,td{border:1px solid #ccc;padding:8px;text-align:center;}
+            th{background-color:#f0f0f0;}
+            @media print{.no-print{display:none;}}
+        </style>
+    </head>
+    <body>
+        <div class="titulo">
+            <h2>Recepción N° ${rec.id_recepcion}</h2>
+            <p><small>Fecha: ${formatearFechaDMA(rec.fecha_recepcion)}</small></p>
+        </div>
+        <div class="info">
+            <strong>Cliente:</strong> ${rec.nombre_cliente}<br>
+            <strong>Teléfono:</strong> ${rec.telefono}<br>
+            <strong>Dirección:</strong> ${rec.direccion}<br>
+            <strong>Estado:</strong> ${rec.estado}<br>
+            <strong>Observaciones:</strong> ${rec.observaciones || ''}<br>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Marca</th>
+                    <th>Modelo</th>
+                    <th>N° Serie</th>
+                    <th>Falla Reportada</th>
+                    <th>Accesorios</th>
+                    <th>Diagnóstico</th>
+                    <th>Observaciones</th>
+                </tr>
+            </thead>
+            <tbody>${filas}</tbody>
+        </table>
+    </body>
+    </html>
+    `);
+    win.document.close();
+    win.focus();
+    win.print();
+}
+
+window.imprimirRecepcion = imprimirRecepcion;
 
 $(document).on("click",".editar-recepcion",function(){
     let id=$(this).closest("tr").find("td:eq(0)").text();
@@ -216,6 +289,11 @@ $(document).on("click",".editar-recepcion",function(){
         }
         renderDetallesRecepcion();
     },100);
+});
+
+$(document).on("click",".imprimir-recepcion",function(){
+    let id=$(this).closest("tr").find("td:eq(0)").text();
+    imprimirRecepcion(id);
 });
 
 $(document).on("click",".cerrar-recepcion",function(){
