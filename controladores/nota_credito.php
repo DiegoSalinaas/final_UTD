@@ -7,12 +7,10 @@ if (isset($_POST['guardar'])) {
     $db = new DB();
     $cn = $db->conectar();
 
-    $query = $cn->prepare("INSERT INTO nota_credito (fecha_emision, motivo_general, referencia_tipo, referencia_id, id_cliente, ruc_cliente, estado, total, numero_nota) VALUES (:fecha_emision, :motivo_general, :referencia_tipo, :referencia_id, :id_cliente, :ruc_cliente, :estado, :total, '')");
+    $query = $cn->prepare("INSERT INTO nota_credito (fecha_emision, motivo_general, id_cliente, ruc_cliente, estado, total, numero_nota) VALUES (:fecha_emision, :motivo_general, :id_cliente, :ruc_cliente, :estado, :total, '')");
     $query->execute([
         'fecha_emision' => $datos['fecha_emision'],
         'motivo_general' => $datos['motivo_general'],
-        'referencia_tipo' => $datos['referencia_tipo'],
-        'referencia_id' => $datos['referencia_id'],
         'id_cliente' => $datos['id_cliente'],
         'ruc_cliente' => $datos['ruc_cliente'],
         'estado' => $datos['estado'],
@@ -29,7 +27,7 @@ if (isset($_POST['actualizar'])) {
     $datos = json_decode($_POST['actualizar'], true);
     $db = new DB();
     $cn = $db->conectar();
-    $query = $cn->prepare("UPDATE nota_credito SET fecha_emision = :fecha_emision, motivo_general = :motivo_general, referencia_tipo = :referencia_tipo, referencia_id = :referencia_id, id_cliente = :id_cliente, ruc_cliente = :ruc_cliente, estado = :estado, total = :total WHERE id_nota_credito = :id_nota_credito");
+    $query = $cn->prepare("UPDATE nota_credito SET fecha_emision = :fecha_emision, motivo_general = :motivo_general, id_cliente = :id_cliente, ruc_cliente = :ruc_cliente, estado = :estado, total = :total WHERE id_nota_credito = :id_nota_credito");
     $query->execute($datos);
 }
 
@@ -54,7 +52,7 @@ if (isset($_POST['leer'])) {
 if (isset($_POST['leer_id'])) {
     $db = new DB();
     $cn = $db->conectar();
-    $query = $cn->prepare("SELECT n.id_nota_credito, n.fecha_emision, n.numero_nota, n.id_cliente, c.nombre_apellido AS cliente, n.motivo_general, n.referencia_tipo, n.referencia_id, n.ruc_cliente, n.estado, n.total FROM nota_credito n LEFT JOIN clientes c ON n.id_cliente = c.id_cliente WHERE n.id_nota_credito = :id");
+    $query = $cn->prepare("SELECT n.id_nota_credito, n.fecha_emision, n.numero_nota, n.id_cliente, c.nombre_apellido AS cliente, n.motivo_general, n.ruc_cliente, n.estado, n.total FROM nota_credito n LEFT JOIN clientes c ON n.id_cliente = c.id_cliente WHERE n.id_nota_credito = :id");
     $query->execute(['id' => $_POST['leer_id']]);
     echo $query->rowCount() ? json_encode($query->fetch(PDO::FETCH_OBJ)) : '0';
 }

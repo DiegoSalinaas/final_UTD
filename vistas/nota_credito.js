@@ -119,6 +119,87 @@ function eliminarDetalleNota(index){
 }
 window.eliminarDetalleNota = eliminarDetalleNota;
 
+function imprimirNotaCredito(id){
+    let datos = ejecutarAjax("controladores/nota_credito.php","leer_id="+id);
+    if(datos === "0"){ alert("No se encontró la nota de crédito"); return; }
+    let nota = JSON.parse(datos);
+    let detData = ejecutarAjax("controladores/detalle_nota_credito.php","leer=1&id_nota_credito="+id);
+    let detalles = detData === "0" ? [] : JSON.parse(detData);
+
+    let filas = detalles.map((d,i)=>`<tr>
+            <td>${i+1}</td>
+            <td>${d.producto || d.id_producto}</td>
+            <td>${d.cantidad}</td>
+            <td>${formatearPY(d.precio_unitario)}</td>
+            <td>${formatearPY(d.total_linea)}</td>
+            <td>${d.motivo || ''}</td>
+        </tr>`).join('');
+
+    let win = window.open('', '', 'width=900,height=700');
+    win.document.write(`
+    <html>
+    <head>
+        <title>Nota de Crédito #${nota.id_nota_credito}</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <style>
+            body{padding:40px;font-size:13pt;font-family:'Segoe UI',sans-serif;color:#000;}
+            .titulo{border-bottom:2px solid #000;padding-bottom:10px;margin-bottom:20px;text-align:center;}
+            .info{display:flex;justify-content:space-between;margin-bottom:20px;}
+            .info div{width:48%;}
+            table{width:100%;border-collapse:collapse;margin-top:20px;}
+            th,td{border:1px solid #ccc;padding:8px;text-align:center;}
+            th{background-color:#f0f0f0;}
+            .total{margin-top:20px;text-align:right;font-size:16pt;font-weight:bold;}
+            @media print{.no-print{display:none;}}
+        </style>
+    </head>
+    <body>
+        <div class="titulo">
+            <h2>Nota de Crédito N° ${nota.numero_nota}</h2>
+            <p><small>Documento generado automáticamente</small></p>
+        </div>
+
+        <div class="info">
+            <div>
+                <strong>Cliente:</strong> ${nota.cliente || nota.id_cliente}<br>
+                <strong>RUC:</strong> ${nota.ruc_cliente}<br>
+                <strong>Fecha de Emisión:</strong> ${formatearFechaDMA(nota.fecha_emision)}<br>
+                <strong>Motivo General:</strong> ${nota.motivo_general}
+            </div>
+            <div>
+                <strong>Estado:</strong> ${nota.estado}<br>
+                <strong>Total:</strong> ${formatearPY(nota.total)}
+            </div>
+        </div>
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Precio Unitario</th>
+                    <th>Subtotal</th>
+                    <th>Motivo</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${filas}
+            </tbody>
+        </table>
+
+        <div class="total">
+            Total General: ${formatearPY(nota.total)}
+        </div>
+    </body>
+    </html>
+    `);
+    win.document.close();
+    win.focus();
+    win.print();
+}
+window.imprimirNotaCredito = imprimirNotaCredito;
+
 function guardarNotaCredito(){
     if($("#id_cliente_lst").val() === ""){mensaje_dialogo_info_ERROR("Debe seleccionar un cliente","ERROR");return;}
     if($("#fecha_txt").val().trim().length === 0){mensaje_dialogo_info_ERROR("Debe ingresar la fecha","ERROR");return;}
@@ -129,8 +210,6 @@ function guardarNotaCredito(){
     let datos = {
         fecha_emision: $("#fecha_txt").val(),
         motivo_general: $("#motivo_general_txt").val(),
-        referencia_tipo: $("#referencia_tipo_txt").val(),
-        referencia_id: $("#referencia_id_txt").val(),
         id_cliente: $("#id_cliente_lst").val(),
         ruc_cliente: $("#ruc_cliente_txt").val(),
         estado: $("#estado_txt").val(),
@@ -175,6 +254,7 @@ function cargarTablaNotaCredito(){
                     <td>${formatearPY(it.total)}</td>
                     <td>${badgeEstado(it.estado)}</td>
                     <td>
+                        <button class="btn btn-info btn-sm imprimir-nota" title="Imprimir"><i class="bi bi-printer"></i></button>
                         <button class="btn btn-warning btn-sm editar-nota" title="Editar"><i class="bi bi-pencil-square"></i></button>
                         <button class="btn btn-danger btn-sm anular-nota" title="Anular"><i class="bi bi-x-circle"></i></button>
                     </td>
@@ -202,6 +282,7 @@ function buscarNotaCredito(){
                     <td>${formatearPY(it.total)}</td>
                     <td>${badgeEstado(it.estado)}</td>
                     <td>
+                        <button class="btn btn-info btn-sm imprimir-nota" title="Imprimir"><i class="bi bi-printer"></i></button>
                         <button class="btn btn-warning btn-sm editar-nota" title="Editar"><i class="bi bi-pencil-square"></i></button>
                         <button class="btn btn-danger btn-sm anular-nota" title="Anular"><i class="bi bi-x-circle"></i></button>
                     </td>
@@ -210,6 +291,11 @@ function buscarNotaCredito(){
     }
 }
 window.buscarNotaCredito = buscarNotaCredito;
+
+$(document).on("click",".imprimir-nota",function(){
+    let id=$(this).closest("tr").find("td:eq(0)").text();
+    imprimirNotaCredito(id);
+});
 
 $(document).on("click",".editar-nota",function(){
     let id=$(this).closest("tr").find("td:eq(0)").text();
@@ -221,8 +307,6 @@ $(document).on("click",".editar-nota",function(){
         $("#id_cliente_lst").val(json.id_cliente).trigger('change');
         $("#fecha_txt").val(json.fecha_emision);
         $("#motivo_general_txt").val(json.motivo_general);
-        $("#referencia_tipo_txt").val(json.referencia_tipo);
-        $("#referencia_id_txt").val(json.referencia_id);
         $("#numero_nota_txt").val(json.numero_nota);
         $("#ruc_cliente_txt").val(json.ruc_cliente);
         $("#estado_txt").val(json.estado);

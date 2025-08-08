@@ -25,19 +25,11 @@
                 </div>
             </div>
             <div class="row g-3 mt-3">
-                <div class="col-md-3">
-                    <label for="referencia_tipo_txt" class="form-label">Referencia Tipo</label>
-                    <input type="text" id="referencia_tipo_txt" class="form-control">
-                </div>
-                <div class="col-md-3">
-                    <label for="referencia_id_txt" class="form-label">Referencia ID</label>
-                    <input type="number" id="referencia_id_txt" class="form-control" min="0">
-                </div>
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <label for="numero_nota_txt" class="form-label">Número Nota</label>
                     <input type="text" id="numero_nota_txt" class="form-control" readonly>
                 </div>
-                <div class="col-md-3">
+                <div class="col-md-6">
                     <label for="total_general_txt" class="form-label">Total</label>
                     <input type="text" id="total_general_txt" class="form-control" readonly value="0">
                 </div>
