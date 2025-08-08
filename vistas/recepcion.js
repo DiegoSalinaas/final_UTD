@@ -17,18 +17,21 @@ function mostrarAgregarRecepcion(){
 }
 window.mostrarAgregarRecepcion = mostrarAgregarRecepcion;
 
-function cargarListaClientes(){
+function cargarListaClientes(selectedId = ""){
     let datos = ejecutarAjax("controladores/cliente.php","leer=1");
     if(datos !== "0"){
         listaClientes = JSON.parse(datos);
-        renderListaClientes(listaClientes);
+        renderListaClientes(listaClientes, selectedId);
     }
 }
 
-function renderListaClientes(arr){
+function renderListaClientes(arr, selectedId = ""){
     let select = $("#id_cliente_lst");
     select.html('<option value="">-- Seleccione un cliente --</option>');
     arr.forEach(c => select.append(`<option value="${c.id_cliente}" data-telefono="${c.telefono}" data-direccion="${c.direccion}">${c.nombre_apellido}</option>`));
+    if(selectedId !== ""){
+        select.val(selectedId).trigger('change');
+    }
 }
 
 $(document).on('change','#id_cliente_lst', function(){
@@ -186,12 +189,7 @@ $(document).on("click",".editar-recepcion",function(){
         $("#fecha_txt").val(json.fecha_recepcion);
         $("#observaciones_txt").val(json.observaciones);
         $("#estado_lst").val(json.estado);
-        cargarListaClientes();
-        setTimeout(function(){
-            $("#id_cliente_lst").val(json.id_cliente);
-            $("#telefono_txt").val(json.telefono);
-            $("#direccion_txt").val(json.direccion);
-        },100);
+        cargarListaClientes(json.id_cliente);
         let det = ejecutarAjax("controladores/detalle_recepcion.php","leer=1&id_recepcion="+id);
         if(det !== "0"){
             detallesRecepcion = JSON.parse(det);
