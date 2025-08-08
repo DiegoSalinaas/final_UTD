@@ -613,3 +613,65 @@ COMMIT;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+-- --------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `nota_credito`
+--
+CREATE TABLE `nota_credito` (
+  `id_nota_credito` int(11) NOT NULL AUTO_INCREMENT,
+  `fecha_emision` date NOT NULL,
+  `numero_nota` varchar(20) NOT NULL,
+  `motivo_general` varchar(255) DEFAULT NULL,
+  `referencia_tipo` varchar(50) DEFAULT NULL,
+  `referencia_id` int(11) DEFAULT NULL,
+  `id_cliente` int(11) NOT NULL,
+  `ruc_cliente` varchar(20) DEFAULT NULL,
+  `estado` varchar(20) DEFAULT 'ACTIVO',
+  `total` decimal(12,2) DEFAULT 0,
+  PRIMARY KEY (`id_nota_credito`),
+  KEY `id_cliente` (`id_cliente`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `detalle_nota_credito`
+--
+CREATE TABLE `detalle_nota_credito` (
+  `id_detalle` int(11) NOT NULL AUTO_INCREMENT,
+  `id_nota_credito` int(11) NOT NULL,
+  `id_producto` int(11) NOT NULL,
+  `descripcion` varchar(255) DEFAULT NULL,
+  `cantidad` int(11) NOT NULL,
+  `precio_unitario` decimal(12,2) NOT NULL,
+  `subtotal` decimal(12,2) NOT NULL,
+  `total_linea` decimal(12,2) NOT NULL,
+  PRIMARY KEY (`id_detalle`),
+  KEY `id_nota_credito` (`id_nota_credito`),
+  KEY `id_producto` (`id_producto`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `motivo_item_nota_credito`
+--
+CREATE TABLE `motivo_item_nota_credito` (
+  `id_motivo_item` int(11) NOT NULL AUTO_INCREMENT,
+  `id_detalle` int(11) NOT NULL,
+  `motivo` varchar(255) NOT NULL,
+  `observacion` text DEFAULT NULL,
+  PRIMARY KEY (`id_motivo_item`),
+  KEY `id_detalle` (`id_detalle`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+--
+-- Filtros para las tablas nuevas
+--
+ALTER TABLE `nota_credito`
+  ADD CONSTRAINT `nota_credito_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `clientes` (`id_cliente`);
+ALTER TABLE `detalle_nota_credito`
+  ADD CONSTRAINT `detalle_nota_credito_ibfk_1` FOREIGN KEY (`id_nota_credito`) REFERENCES `nota_credito` (`id_nota_credito`),
+  ADD CONSTRAINT `detalle_nota_credito_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `productos` (`producto_id`);
+ALTER TABLE `motivo_item_nota_credito`
+  ADD CONSTRAINT `motivo_item_nota_credito_ibfk_1` FOREIGN KEY (`id_detalle`) REFERENCES `detalle_nota_credito` (`id_detalle`);
