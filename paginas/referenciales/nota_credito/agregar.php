@@ -24,11 +24,11 @@
                     <input type="text" id="motivo_general_txt" class="form-control">
                 </div>
             </div>
-            <div class="row g-3 mt-3">
+<!--            <div class="row g-3 mt-3">
                 <div class="col-md-6">
                     <label for="numero_nota_txt" class="form-label">Número Nota</label>
                     <input type="text" id="numero_nota_txt" class="form-control" readonly>
-                </div>
+                </div>-->
                 <div class="col-md-6">
                     <label for="total_general_txt" class="form-label">Total</label>
                     <input type="text" id="total_general_txt" class="form-control" readonly value="0">
