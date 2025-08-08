@@ -8,6 +8,11 @@ $cn = $db->conectar();
 if (isset($_POST['guardar'])) {
     $datos = json_decode($_POST['guardar'], true);
 
+    if (floatval($datos['cantidad']) <= 0) {
+        echo 'CANTIDAD_INVALIDA';
+        return;
+    }
+
     if (floatval($datos['precio_unitario']) <= 0) {
         echo 'PRECIO_INVALIDO';
         return;
@@ -33,6 +38,10 @@ if (isset($_POST['guardar'])) {
 // ACTUALIZAR DETALLE
 if (isset($_POST['actualizar'])) {
     $datos = json_decode($_POST['actualizar'], true);
+    if (floatval($datos['cantidad']) <= 0) {
+        echo 'CANTIDAD_INVALIDA';
+        return;
+    }
     if (floatval($datos['precio_unitario']) <= 0) {
         echo 'PRECIO_INVALIDO';
         return;

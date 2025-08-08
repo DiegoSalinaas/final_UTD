@@ -27,7 +27,7 @@
                 </div>
                 <div class="col-md-2">
                     <label for="cantidad_txt" class="form-label">Cantidad</label>
-                    <input type="number" id="cantidad_txt" class="form-control" min="0">
+                    <input type="number" id="cantidad_txt" class="form-control" min="1">
                 </div>
                 <div class="col-md-2">
                     <label for="precio_unitario_txt" class="form-label">Precio Unitario</label>
