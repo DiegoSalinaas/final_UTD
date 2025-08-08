@@ -448,7 +448,7 @@
 </li>
 
 <li class="nav-item">
-  <a href="#" class="nav-link" onclick="mostrarListarNotaCredito(); return false;">
+  <a href="#" class="nav-link" onclick=; return false;">
     <i class="nav-icon bi bi-file-earmark-text"></i>
     <p>Diagnostico</p>
   </a>
