@@ -675,3 +675,48 @@ ALTER TABLE `detalle_nota_credito`
   ADD CONSTRAINT `detalle_nota_credito_ibfk_2` FOREIGN KEY (`id_producto`) REFERENCES `productos` (`producto_id`);
 ALTER TABLE `motivo_item_nota_credito`
   ADD CONSTRAINT `motivo_item_nota_credito_ibfk_1` FOREIGN KEY (`id_detalle`) REFERENCES `detalle_nota_credito` (`id_detalle`);
+
+-- --------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `recepcion`
+--
+CREATE TABLE `recepcion` (
+  `id_recepcion` int(11) NOT NULL AUTO_INCREMENT,
+  `fecha_recepcion` date NOT NULL,
+  `id_cliente` int(11) NOT NULL,
+  `nombre_cliente` varchar(100) NOT NULL,
+  `telefono` varchar(20) DEFAULT NULL,
+  `direccion` varchar(255) DEFAULT NULL,
+  `estado` varchar(20) NOT NULL,
+  `observaciones` text DEFAULT NULL,
+  PRIMARY KEY (`id_recepcion`),
+  KEY `id_cliente` (`id_cliente`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `recepcion_detalle`
+--
+CREATE TABLE `recepcion_detalle` (
+  `id_detalle` int(11) NOT NULL AUTO_INCREMENT,
+  `id_recepcion` int(11) NOT NULL,
+  `marca` varchar(50) DEFAULT NULL,
+  `modelo` varchar(50) DEFAULT NULL,
+  `numero_serie` varchar(100) DEFAULT NULL,
+  `falla_reportada` text DEFAULT NULL,
+  `accesorios_entregados` text DEFAULT NULL,
+  `diagnostico_preliminar` text DEFAULT NULL,
+  `estado_equipo` varchar(20) DEFAULT NULL,
+  `observaciones_detalle` text DEFAULT NULL,
+  PRIMARY KEY (`id_detalle`),
+  KEY `id_recepcion` (`id_recepcion`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+--
+-- Filtros para las tablas de recepcion
+--
+ALTER TABLE `recepcion`
+  ADD CONSTRAINT `recepcion_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `clientes` (`id_cliente`);
+ALTER TABLE `recepcion_detalle`
+  ADD CONSTRAINT `recepcion_detalle_ibfk_1` FOREIGN KEY (`id_recepcion`) REFERENCES `recepcion` (`id_recepcion`);
