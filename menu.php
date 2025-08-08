@@ -422,7 +422,7 @@
 </li>
 
 <li class="nav-item">
-  <a href="#" class="nav-link ">
+  <a href="#" class="nav-link" onclick="mostrarListarNotaCredito(); return false;">
     <i class="nav-icon bi bi-file-earmark-text"></i>
     <p>Nota de Credito</p>
   </a>
@@ -448,7 +448,7 @@
 </li>
 
 <li class="nav-item">
-  <a href="#" class="nav-link ">
+  <a href="#" class="nav-link" onclick="mostrarListarNotaCredito(); return false;">
     <i class="nav-icon bi bi-file-earmark-text"></i>
     <p>Diagnostico</p>
   </a>
@@ -773,6 +773,7 @@
     <script src="vistas/cliente.js"></script>
     <script src="vistas/productos.js"></script>
     <script src="vistas/remision.js"></script>
+    <script src="vistas/nota_credito.js"></script>
     <!--end::Script-->
   </body>
   <!--end::Body-->
