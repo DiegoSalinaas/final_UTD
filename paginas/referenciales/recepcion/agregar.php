@@ -61,14 +61,6 @@
                     <input type="text" id="diagnostico_txt" class="form-control">
                 </div>
                 <div class="col-md-3">
-                    <label for="estado_equipo_lst" class="form-label">Estado del Equipo</label>
-                    <select id="estado_equipo_lst" class="form-select">
-                        <option value="">-- Seleccione --</option>
-                        <option value="En diagnóstico">En diagnóstico</option>
-                        <option value="Listo">Listo</option>
-                    </select>
-                </div>
-                <div class="col-md-3">
                     <label for="observaciones_detalle_txt" class="form-label">Observaciones</label>
                     <input type="text" id="observaciones_detalle_txt" class="form-control">
                 </div>
@@ -98,7 +90,6 @@
                     <th>Marca</th>
                     <th>Modelo</th>
                     <th>N° Serie</th>
-                    <th>Estado</th>
                     <th>Acción</th>
                 </tr>
             </thead>

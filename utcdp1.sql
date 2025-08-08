@@ -706,7 +706,6 @@ CREATE TABLE `recepcion_detalle` (
   `falla_reportada` text DEFAULT NULL,
   `accesorios_entregados` text DEFAULT NULL,
   `diagnostico_preliminar` text DEFAULT NULL,
-  `estado_equipo` varchar(20) DEFAULT NULL,
   `observaciones_detalle` text DEFAULT NULL,
   PRIMARY KEY (`id_detalle`),
   KEY `id_recepcion` (`id_recepcion`)
