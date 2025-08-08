@@ -8,8 +8,7 @@ $cn = $db->conectar();
 if (isset($_POST['guardar'])) {
     $datos = json_decode($_POST['guardar'], true);
     $query = $cn->prepare(
-        "INSERT INTO recepcion_detalle (id_recepcion, marca, modelo, numero_serie, falla_reportada, accesorios_entregados, diagnostico_preliminar, estado_equipo, observaciones_detalle)
-        VALUES (:id_recepcion, :marca, :modelo, :numero_serie, :falla_reportada, :accesorios_entregados, :diagnostico_preliminar, :estado_equipo, :observaciones_detalle)"
+        "INSERT INTO recepcion_detalle (id_recepcion, marca, modelo, numero_serie, falla_reportada, accesorios_entregados, diagnostico_preliminar, observaciones_detalle) VALUES (:id_recepcion, :marca, :modelo, :numero_serie, :falla_reportada, :accesorios_entregados, :diagnostico_preliminar, :observaciones_detalle)"
     );
     $query->execute($datos);
     echo 'OK';
@@ -19,7 +18,7 @@ if (isset($_POST['guardar'])) {
 if (isset($_POST['actualizar'])) {
     $datos = json_decode($_POST['actualizar'], true);
     $query = $cn->prepare(
-        "UPDATE recepcion_detalle SET id_recepcion = :id_recepcion, marca = :marca, modelo = :modelo, numero_serie = :numero_serie, falla_reportada = :falla_reportada, accesorios_entregados = :accesorios_entregados, diagnostico_preliminar = :diagnostico_preliminar, estado_equipo = :estado_equipo, observaciones_detalle = :observaciones_detalle WHERE id_detalle = :id_detalle"
+        "UPDATE recepcion_detalle SET id_recepcion = :id_recepcion, marca = :marca, modelo = :modelo, numero_serie = :numero_serie, falla_reportada = :falla_reportada, accesorios_entregados = :accesorios_entregados, diagnostico_preliminar = :diagnostico_preliminar, observaciones_detalle = :observaciones_detalle WHERE id_detalle = :id_detalle"
     );
     $query->execute($datos);
 }
@@ -38,7 +37,7 @@ if (isset($_POST['eliminar_por_recepcion'])) {
 
 // LISTAR DETALLES
 if (isset($_POST['leer'])) {
-    $sql = "SELECT id_detalle, id_recepcion, marca, modelo, numero_serie, falla_reportada, accesorios_entregados, diagnostico_preliminar, estado_equipo, observaciones_detalle FROM recepcion_detalle";
+    $sql = "SELECT id_detalle, id_recepcion, marca, modelo, numero_serie, falla_reportada, accesorios_entregados, diagnostico_preliminar, observaciones_detalle FROM recepcion_detalle";
     $params = [];
     if (!empty($_POST['id_recepcion'])) {
         $sql .= " WHERE id_recepcion = :id_recepcion";
@@ -53,7 +52,7 @@ if (isset($_POST['leer'])) {
 // LEER POR ID
 if (isset($_POST['leer_id'])) {
     $query = $cn->prepare(
-        "SELECT id_detalle, id_recepcion, marca, modelo, numero_serie, falla_reportada, accesorios_entregados, diagnostico_preliminar, estado_equipo, observaciones_detalle FROM recepcion_detalle WHERE id_detalle = :id"
+        "SELECT id_detalle, id_recepcion, marca, modelo, numero_serie, falla_reportada, accesorios_entregados, diagnostico_preliminar, observaciones_detalle FROM recepcion_detalle WHERE id_detalle = :id"
     );
     $query->execute(['id' => $_POST['leer_id']]);
     echo $query->rowCount() ? json_encode($query->fetch(PDO::FETCH_OBJ)) : '0';
@@ -62,7 +61,7 @@ if (isset($_POST['leer_id'])) {
 // BUSCAR
 if (isset($_POST['leer_descripcion'])) {
     $filtro = '%' . $_POST['leer_descripcion'] . '%';
-    $sql = "SELECT id_detalle, id_recepcion, marca, modelo, numero_serie, falla_reportada, accesorios_entregados, diagnostico_preliminar, estado_equipo, observaciones_detalle FROM recepcion_detalle WHERE CONCAT(marca, modelo, numero_serie, estado_equipo) LIKE :filtro";
+    $sql = "SELECT id_detalle, id_recepcion, marca, modelo, numero_serie, falla_reportada, accesorios_entregados, diagnostico_preliminar, observaciones_detalle FROM recepcion_detalle WHERE CONCAT(marca, modelo, numero_serie) LIKE :filtro";
     $params = ['filtro' => $filtro];
     if (!empty($_POST['id_recepcion'])) {
         $sql .= " AND id_recepcion = :id_recepcion";
@@ -74,3 +73,4 @@ if (isset($_POST['leer_descripcion'])) {
     echo $query->rowCount() ? json_encode($query->fetchAll(PDO::FETCH_OBJ)) : '0';
 }
 ?>
+

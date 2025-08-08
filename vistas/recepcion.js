@@ -51,7 +51,6 @@ function agregarDetalleRecepcion(){
         falla_reportada: $("#falla_txt").val().trim(),
         accesorios_entregados: $("#accesorios_txt").val().trim(),
         diagnostico_preliminar: $("#diagnostico_txt").val().trim(),
-        estado_equipo: $("#estado_equipo_lst").val(),
         observaciones_detalle: $("#observaciones_detalle_txt").val().trim()
     };
     detallesRecepcion.push(detalle);
@@ -67,7 +66,6 @@ function limpiarDetalleRecepcionForm(){
     $("#falla_txt").val('');
     $("#accesorios_txt").val('');
     $("#diagnostico_txt").val('');
-    $("#estado_equipo_lst").val('');
     $("#observaciones_detalle_txt").val('');
 }
 
@@ -79,7 +77,6 @@ function renderDetallesRecepcion(){
             <td>${d.marca}</td>
             <td>${d.modelo}</td>
             <td>${d.numero_serie}</td>
-            <td>${d.estado_equipo}</td>
             <td><button class="btn btn-danger btn-sm" onclick="eliminarDetalleRecepcion(${i}); return false;"><i class="bi bi-trash"></i></button></td>
         </tr>`);
     });
