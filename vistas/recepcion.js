@@ -25,21 +25,38 @@ function cargarListaClientes(selectedId = ""){
     }
 }
 
-function renderListaClientes(arr, selectedId = ""){
-    let select = $("#id_cliente_lst");
-    select.html('<option value="">-- Seleccione un cliente --</option>');
-    arr.forEach(c => select.append(`<option value="${c.id_cliente}" data-telefono="${c.telefono}" data-direccion="${c.direccion}">${c.nombre_apellido}</option>`));
-    if(selectedId !== ""){
-        select.val(selectedId).trigger('change');
-    }
+function renderListaClientes(arr, selectedId = "") {
+  const $sel = $("#id_cliente_lst");
+  $sel.html('<option value="">-- Seleccione un cliente --</option>');
+  arr.forEach(c => {
+    const id  = c.id_cliente ?? c.cod_cliente ?? c.id;
+    const nom = c.nombre_apellido ?? c.nombre_cliente ?? c.nombre;
+    $sel.append(`<option value="${id}">${nom}</option>`);
+  });
+  if (selectedId) $sel.val(selectedId).trigger('change'); // prellena al editar
 }
 
-$(document).on('change','#id_cliente_lst', function(){
-    let tel = $("#id_cliente_lst option:selected").data('telefono') || '';
-    let dir = $("#id_cliente_lst option:selected").data('direccion') || '';
-    $("#telefono_txt").val(tel);
-    $("#direccion_txt").val(dir);
+
+
+$(document).on('change', '#id_cliente_lst', function () {
+  const id = $(this).val();
+  if (!id) {
+    $('#telefono_txt').val('');
+    $('#direccion_txt').val('');
+    return;
+  }
+  // Busca el cliente en el arreglo ya cargado
+  const c = listaClientes.find(x => 
+    String(x.id_cliente ?? x.cod_cliente ?? x.id) === String(id)
+  );
+
+  const tel = c?.telefono ?? c?.telefono_cliente ?? '';
+  const dir = c?.direccion ?? c?.direccion_cliente ?? '';
+  $('#telefono_txt').val(tel);
+  $('#direccion_txt').val(dir);
 });
+
+
 
 function agregarDetalleRecepcion(){
     if($("#marca_txt").val().trim().length===0){mensaje_dialogo_info_ERROR("Debe ingresar la marca","ERROR");return;}
@@ -97,14 +114,15 @@ function guardarRecepcion(){
     if(detallesRecepcion.length===0){mensaje_dialogo_info_ERROR("Debe agregar al menos un equipo","ERROR");return;}
 
     let datos = {
-        fecha_recepcion: $("#fecha_txt").val(),
-        id_cliente: $("#id_cliente_lst").val(),
-        nombre_cliente: $("#id_cliente_lst option:selected").text(),
-        telefono: $("#telefono_txt").val(),
-        direccion: $("#direccion_txt").val(),
-        estado: $("#estado_lst").val(),
-        observaciones: $("#observaciones_txt").val()
-    };
+  fecha_recepcion: $("#fecha_txt").val(),
+  id_cliente: $("#id_cliente_lst").val(),
+  nombre_cliente: $("#id_cliente_lst option:selected").text().trim(),
+  telefono: $("#telefono_txt").val(),
+  direccion: $("#direccion_txt").val(),
+  estado: $("#estado_lst").val(),
+  observaciones: $("#observaciones_txt").val()
+};
+
 
     let idRecepcion = $("#id_recepcion").val();
     if(idRecepcion === "0"){
