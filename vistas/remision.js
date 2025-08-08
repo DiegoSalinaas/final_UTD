@@ -61,6 +61,7 @@ $(document).on('input','#cantidad_txt, #precio_unitario_txt', function(){
 function agregarDetalleRemision(){
     if($("#id_producto_lst").val() === ""){mensaje_dialogo_info_ERROR("Debe seleccionar un producto","ERROR");return;}
     if($("#cantidad_txt").val().trim().length === 0){mensaje_dialogo_info_ERROR("Debe ingresar la cantidad","ERROR");return;}
+    if(parseFloat($("#cantidad_txt").val()) <= 0){mensaje_dialogo_info_ERROR("La cantidad debe ser mayor que 0","ERROR");return;}
     if($("#precio_unitario_txt").val().trim().length === 0){mensaje_dialogo_info_ERROR("Debe ingresar el precio","ERROR");return;}
     if(parseFloat($("#precio_unitario_txt").val()) <= 0){mensaje_dialogo_info_ERROR("El precio debe ser mayor que 0","ERROR");return;}
 
