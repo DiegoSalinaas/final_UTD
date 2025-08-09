@@ -8,7 +8,7 @@
       <div class="table-responsive">
         <table class="table table-bordered table-hover align-middle text-center">
           <thead class="table-light">
-            <tr><th>#</th><th>Recepción</th><th>N°</th><th>Fecha</th><th>Estado</th><th>Operaciones</th></tr>
+            <tr><th>#</th><th>Recepción</th><th>Fecha</th><th>Estado</th><th>Operaciones</th></tr>
           </thead>
           <tbody id="diagnostico_datos_tb"></tbody>
         </table>

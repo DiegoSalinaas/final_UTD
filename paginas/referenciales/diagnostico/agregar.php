@@ -4,7 +4,6 @@
   <div class="card-header bg-primary text-white rounded-top-4"><h4 class="mb-0">Agregar / Editar Diagnóstico</h4></div>
   <div class="card-body">
    <div class="row g-3">
-    <div class="col-md-3"><label for="nro_diag_txt" class="form-label">N° Diagnóstico</label><input type="text" id="nro_diag_txt" class="form-control"></div>
     <div class="col-md-3"><label for="id_recepcion_lst" class="form-label">Recepción</label><select id="id_recepcion_lst" class="form-select"></select></div>
     <div class="col-md-3"><label for="id_detalle_lst" class="form-label">Equipo</label><select id="id_detalle_lst" class="form-select"></select></div>
     <div class="col-md-3"><label for="estado_lst" class="form-label">Estado</label><select id="estado_lst" class="form-select"><option value="PENDIENTE">Pendiente</option><option value="EN_PROCESO">En proceso</option><option value="APROBADO">Aprobado</option><option value="RECHAZADO">Rechazado</option><option value="CERRADO">Cerrado</option></select></div>
