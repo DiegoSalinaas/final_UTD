@@ -340,13 +340,13 @@
                       <p>Ciudades</p>
                     </a>
                   </li>
-                  <li class="nav-item">
+   <!--               <li class="nav-item">
   <a href="#" class="nav-link" onclick="mostrarListarUsuarioss(); return false;">
     <i class="nav-icon bi bi-people"></i>
     <p>Tecnicos</p>
   </a>
 </li>
-<!--
+
 <li class="nav-item">
   <a href="#" class="nav-link" onclick="mostrarListarEbooks(); return false;">
     <i class="nav-icon bi-book-fill"></i>
@@ -453,6 +453,26 @@
     <p>Diagnostico</p>
   </a>
 </li>
+                </ul>
+              </li>
+              <li class="nav-item menu-open">
+                <a href="#" class="nav-link active">
+                  <i class="nav-icon bi bi-bag"></i>
+                  <p>
+                    Reportes
+                    <i class="nav-arrow bi bi-chevron-right"></i>
+                  </p>
+                </a>
+                <ul class="nav nav-treeview">
+                
+                  
+<li class="nav-item">
+  <a href="#" class="nav-link" onclick=; return false;">
+    <i class="nav-icon bi bi-file-earmark-text"></i>
+    <p>Reportes</p>
+  </a>
+</li>
+
                 </ul>
               </li>
               
