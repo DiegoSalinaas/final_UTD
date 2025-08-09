@@ -25,6 +25,7 @@
   </div>
   <div class="card-footer text-end">
    <button class="btn btn-success me-2" onclick="guardarDiagnostico(); return false;"><i class="bi bi-save"></i> Guardar</button>
+   <button class="btn btn-secondary me-2" onclick="imprimirDiagnostico(); return false;"><i class="bi bi-printer"></i> Imprimir</button>
    <button class="btn btn-danger" onclick="mostrarListarDiagnostico(); return false;"><i class="bi bi-x-circle"></i> Cancelar</button>
   </div>
  </div>
