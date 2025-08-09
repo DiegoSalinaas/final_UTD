@@ -720,3 +720,57 @@ ALTER TABLE `recepcion`
   ADD CONSTRAINT `recepcion_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `clientes` (`id_cliente`);
 ALTER TABLE `recepcion_detalle`
   ADD CONSTRAINT `recepcion_detalle_ibfk_1` FOREIGN KEY (`id_recepcion`) REFERENCES `recepcion` (`id_recepcion`);
+
+-- --------------------------------------------------------
+-- Estructura de tabla para la tabla `diagnostico`
+CREATE TABLE `diagnostico` (
+  `id_diagnostico` int(11) NOT NULL AUTO_INCREMENT,
+  `id_recepcion` int(11) NOT NULL,
+  `id_detalle_recepcion` int(11) DEFAULT NULL,
+  `nro_diagnostico` varchar(30) UNIQUE,
+  `fecha_inicio` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `fecha_fin` datetime DEFAULT NULL,
+  `estado` varchar(20) NOT NULL DEFAULT 'PENDIENTE',
+  `tecnico_asignado` int(11) DEFAULT NULL,
+  `prioridad` varchar(10) NOT NULL DEFAULT 'MEDIA',
+  `severidad` varchar(10) NOT NULL DEFAULT 'MEDIA',
+  `descripcion_falla` text NOT NULL,
+  `causa_probable` text DEFAULT NULL,
+  `pruebas_realizadas` text DEFAULT NULL,
+  `resultado_pruebas` text DEFAULT NULL,
+  `tiempo_estimado_horas` decimal(10,2) NOT NULL DEFAULT 0.00,
+  `costo_mano_obra_estimado` decimal(14,2) NOT NULL DEFAULT 0.00,
+  `costo_repuestos_estimado` decimal(14,2) NOT NULL DEFAULT 0.00,
+  `costo_total_estimado` decimal(14,2) NOT NULL DEFAULT 0.00,
+  `aplica_garantia` tinyint(1) NOT NULL DEFAULT 0,
+  `observaciones` text DEFAULT NULL,
+  `creado_por` int(11) NOT NULL,
+  `creado_en` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `modificado_por` int(11) DEFAULT NULL,
+  `modificado_en` datetime DEFAULT NULL,
+  PRIMARY KEY (`id_diagnostico`),
+  KEY `idx_diag_recepcion` (`id_recepcion`),
+  KEY `idx_diag_detalle` (`id_detalle_recepcion`),
+  KEY `idx_diag_estado` (`estado`,`prioridad`,`severidad`),
+  CONSTRAINT `fk_diag_recepcion` FOREIGN KEY (`id_recepcion`) REFERENCES `recepcion` (`id_recepcion`) ON UPDATE CASCADE ON DELETE RESTRICT,
+  CONSTRAINT `fk_diag_detalle_recepcion` FOREIGN KEY (`id_detalle_recepcion`) REFERENCES `recepcion_detalle` (`id_detalle`) ON UPDATE CASCADE ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+-- Estructura de tabla para la tabla `diagnostico_detalle`
+CREATE TABLE `diagnostico_detalle` (
+  `id_detalle_diag` int(11) NOT NULL AUTO_INCREMENT,
+  `id_diagnostico` int(11) NOT NULL,
+  `componente` varchar(120) NOT NULL,
+  `estado_componente` varchar(20) NOT NULL DEFAULT 'OK',
+  `hallazgo` text NOT NULL,
+  `accion_recomendada` text NOT NULL,
+  `id_repuesto` int(11) DEFAULT NULL,
+  `cantidad_repuesto` decimal(12,2) NOT NULL DEFAULT 0.00,
+  `costo_unitario_estimado` decimal(14,2) NOT NULL DEFAULT 0.00,
+  `costo_linea_estimado` decimal(14,2) NOT NULL DEFAULT 0.00,
+  `nota_adicional` text DEFAULT NULL,
+  PRIMARY KEY (`id_detalle_diag`),
+  KEY `idx_det_diag` (`id_diagnostico`),
+  CONSTRAINT `fk_det_diag` FOREIGN KEY (`id_diagnostico`) REFERENCES `diagnostico` (`id_diagnostico`) ON UPDATE CASCADE ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
