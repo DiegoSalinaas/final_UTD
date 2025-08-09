@@ -185,6 +185,7 @@ function cargarTablaRemision(){
                     <td>${formatearPY(it.total)}</td>
                     <td>${badgeEstado(it.estado)}</td>
                     <td>
+                        <button class="btn btn-info btn-sm imprimir-remision" title="Imprimir"><i class="bi bi-printer"></i></button>
                         <button class="btn btn-warning btn-sm editar-remision" title="Editar"><i class="bi bi-pencil-square"></i></button>
                         <button class="btn btn-danger btn-sm anular-remision" title="Anular"><i class="bi bi-x-circle"></i></button>
                     </td>
@@ -210,6 +211,7 @@ function buscarRemision(){
                     <td>${formatearPY(it.total)}</td>
                     <td>${badgeEstado(it.estado)}</td>
                     <td>
+                        <button class="btn btn-info btn-sm imprimir-remision" title="Imprimir"><i class="bi bi-printer"></i></button>
                         <button class="btn btn-warning btn-sm editar-remision" title="Editar"><i class="bi bi-pencil-square"></i></button>
                         <button class="btn btn-danger btn-sm anular-remision" title="Anular"><i class="bi bi-x-circle"></i></button>
                     </td>
@@ -218,6 +220,56 @@ function buscarRemision(){
     }
 }
 window.buscarRemision = buscarRemision;
+
+function imprimirRemision(id){
+    let datos = ejecutarAjax("controladores/remision.php","leer_id="+id);
+    if(datos === "0"){ alert("Remisión no encontrada"); return; }
+    let rem = JSON.parse(datos);
+    let detData = ejecutarAjax("controladores/detalle_remision.php","leer=1&id_remision="+id);
+    let detalles = detData === "0" ? [] : JSON.parse(detData);
+    let filas = detalles.map((d,i)=>`<tr>
+            <td>${i+1}</td>
+            <td>${d.producto}</td>
+            <td>${d.cantidad}</td>
+            <td>${formatearPY(d.precio_unitario)}</td>
+            <td>${formatearPY(d.subtotal)}</td>
+        </tr>`).join('');
+    let win = window.open('', '', 'width=900,height=700');
+    win.document.write(`
+    <html>
+    <head>
+        <title>Remisión #${rem.id_remision}</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    </head>
+    <body>
+        <div class="container mt-4">
+            <h2 class="text-center mb-4">Remisión N° ${rem.id_remision}</h2>
+            <p><strong>Fecha:</strong> ${rem.fecha_remision}</p>
+            <p><strong>Cliente:</strong> ${rem.cliente}</p>
+            <p><strong>Observación:</strong> ${rem.observacion || ''}</p>
+            <p><strong>Estado:</strong> ${rem.estado}</p>
+            <table class="table table-bordered mt-4">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Producto</th>
+                        <th>Cantidad</th>
+                        <th>Precio</th>
+                        <th>Subtotal</th>
+                    </tr>
+                </thead>
+                <tbody>${filas}</tbody>
+            </table>
+            <h4 class="text-end">Total: ${formatearPY(rem.total)}</h4>
+        </div>
+    </body>
+    </html>
+    `);
+    win.document.close();
+    win.focus();
+    win.print();
+}
+window.imprimirRemision = imprimirRemision;
 
 $(document).on("click",".editar-remision",function(){
     let id=$(this).closest("tr").find("td:eq(0)").text();
@@ -260,4 +312,9 @@ $(document).on("click",".anular-remision",function(){
             cargarTablaRemision();
         }
     });
+});
+
+$(document).on("click",".imprimir-remision",function(){
+    let id=$(this).closest("tr").find("td:eq(0)").text();
+    imprimirRemision(id);
 });

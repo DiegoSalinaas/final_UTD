@@ -4,12 +4,19 @@ require_once '../conexion/db.php';
 // GUARDAR REMISION
 if (isset($_POST['guardar'])) {
     $datos = json_decode($_POST['guardar'], true);
+    // Siempre guardar la remisión con estado EMITIDO
+    $datos['estado'] = 'EMITIDO';
     $db = new DB();
     $cn = $db->conectar();
     $query = $cn->prepare(
         "INSERT INTO remision (id_cliente, fecha_remision, observacion, estado) VALUES (:id_cliente, :fecha_remision, :observacion, :estado)"
     );
-    $query->execute($datos);
+    $query->execute([
+        'id_cliente' => $datos['id_cliente'],
+        'fecha_remision' => $datos['fecha_remision'],
+        'observacion' => $datos['observacion'],
+        'estado' => $datos['estado']
+    ]);
     echo $cn->lastInsertId();
 }
 

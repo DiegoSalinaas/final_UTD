@@ -1,6 +1,6 @@
 <div class="container mt-4">
     <input type="hidden" id="id_remision" value="0">
-    <input type="hidden" id="estado_txt" value="PENDIENTE">
+    <input type="hidden" id="estado_txt" value="EMITIDO">
     <div class="card shadow rounded-4">
         <div class="card-header bg-primary text-white rounded-top-4">
             <h4 class="mb-0">Agregar / Editar Remisión</h4>
