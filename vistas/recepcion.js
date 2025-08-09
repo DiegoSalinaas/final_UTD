@@ -226,77 +226,127 @@ function buscarRecepcion(){
 window.buscarRecepcion = buscarRecepcion;
 
 function imprimirRecepcion(id){
-    let datos = ejecutarAjax("controladores/recepcion.php","leer_id="+id);
-    if(datos === "0"){ alert("Recepción no encontrada"); return; }
-    let rec = JSON.parse(datos);
-    let detData = ejecutarAjax("controladores/detalle_recepcion.php","leer=1&id_recepcion="+id);
-    let detalles = detData === "0" ? [] : JSON.parse(detData);
+  const datos = ejecutarAjax("controladores/recepcion.php","leer_id="+id);
+  if(datos === "0"){ alert("Recepción no encontrada"); return; }
+  const rec = JSON.parse(datos);
 
-    let filas = detalles.map((d,i)=>`<tr>
-            <td>${i+1}</td>
-            <td>${d.nombre_equipo}</td>
-            <td>${d.marca}</td>
-            <td>${d.modelo}</td>
-            <td>${d.numero_serie}</td>
-            <td>${d.falla_reportada}</td>
-            <td>${d.accesorios_entregados}</td>
-            <td>${d.diagnostico_preliminar}</td>
-            <td>${d.observaciones_detalle}</td>
-        </tr>`).join('');
+  const detData = ejecutarAjax("controladores/detalle_recepcion.php","leer=1&id_recepcion="+id);
+  const detalles = detData === "0" ? [] : JSON.parse(detData);
 
-    let win = window.open('', '', 'width=900,height=700');
-    win.document.write(`
-    <html>
-    <head>
-        <title>Recepción #${rec.id_recepcion}</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-        <style>
-            body{padding:40px;font-size:13pt;font-family:'Segoe UI',sans-serif;color:#000;}
-            .titulo{text-align:center;margin-bottom:20px;}
-            .info{margin-bottom:20px;}
-            table{width:100%;border-collapse:collapse;}
-            th,td{border:1px solid #ccc;padding:8px;text-align:center;}
-            th{background-color:#f0f0f0;}
-            @media print{.no-print{display:none;}}
-        </style>
-    </head>
-    <body>
-        <div class="titulo">
-            <h2>Recepción N° ${rec.id_recepcion}</h2>
-            <p><small>Fecha: ${formatearFechaDMA(rec.fecha_recepcion)}</small></p>
+  let filas = detalles.length
+    ? detalles.map((d,i)=>`
+        <tr>
+          <td>${i+1}</td>
+          <td>${d.nombre_equipo || ""}</td>
+          <td>${d.marca || ""}</td>
+          <td>${d.modelo || ""}</td>
+          <td>${d.numero_serie || ""}</td>
+          <td class="text-start">${(d.falla_reportada || "").toString()}</td>
+          <td class="text-start">${(d.accesorios_entregados || "").toString()}</td>
+          <td class="text-start">${(d.diagnostico_preliminar || "").toString()}</td>
+          <td class="text-start">${(d.observaciones_detalle || "").toString()}</td>
+        </tr>
+      `).join("")
+    : `<tr><td colspan="9">Sin equipos</td></tr>`;
+
+  const estadoTxt = rec.estado || "ACTIVO";
+  const estadoUC  = String(estadoTxt).toUpperCase();
+  const estadoBadge =
+      estadoUC === "ACTIVO"      ? "bg-primary" :
+      estadoUC === "ANULADO"     ? "bg-danger"  :
+      estadoUC === "PENDIENTE"   ? "bg-warning text-dark" :
+                                   "bg-secondary";
+
+  const v = window.open('', '', 'width=1024,height=720');
+  v.document.write(`
+  <html>
+  <head>
+    <title>Recepción #${rec.id_recepcion}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      @page { size: A4; margin: 16mm; }
+      body { color:#111; font-family: "Segoe UI", Arial, sans-serif; }
+      .doc-header { display:flex; align-items:center; border-bottom:2px solid #0d6efd; padding-bottom:10px; margin-bottom:18px; }
+      .doc-logo { flex:0 0 auto; }
+      .doc-logo img { height:110px; }
+      .doc-info { flex:1; padding-left:20px; display:flex; flex-direction:column; justify-content:flex-end; }
+      .doc-title { margin:0; font-weight:800; letter-spacing:.3px; font-size:26px; }
+      .meta { font-size:14px; color:#555; margin-top:6px; }
+      .kpi-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; margin-bottom:20px; }
+      .kpi { border:1px solid #e9ecef; border-radius:12px; padding:14px; background:#f8f9fa; }
+      .kpi .lbl { font-size:12px; color:#6c757d; margin-bottom:4px; text-transform:uppercase; letter-spacing:.3px; }
+      .kpi .val { font-size:15px; font-weight:600; }
+      table { width:100%; border-collapse:collapse; }
+      thead th { background:#e9f2ff; border-bottom:1px solid #cfe2ff !important; font-weight:700; }
+      th, td { border:1px solid #e9ecef; padding:8px; font-size:12.5px; vertical-align:top; text-align:center; }
+      .text-start { text-align:left; }
+      .footer { margin-top:20px; font-size:11px; color:#6c757d; text-align:right; }
+      @media print { .no-print { display:none !important; } }
+    </style>
+  </head>
+  <body>
+    <div class="doc-header">
+      <div class="doc-logo">
+        <img src="images/logo.png" alt="Logo">
+      </div>
+      <div class="doc-info">
+        <h2 class="doc-title">Recepción #${rec.id_recepcion}</h2>
+        <div class="meta">
+          Cliente: <strong>${rec.nombre_cliente || ""}</strong>
+          &nbsp;·&nbsp; Tel.: <strong>${rec.telefono || ""}</strong>
+          &nbsp;·&nbsp; Estado: <span class="badge ${estadoBadge}">${estadoTxt}</span>
+          &nbsp;·&nbsp; Fecha: <strong>${formatearFechaDMA(rec.fecha_recepcion)}</strong>
         </div>
-        <div class="info">
-            <strong>Cliente:</strong> ${rec.nombre_cliente}<br>
-            <strong>Teléfono:</strong> ${rec.telefono}<br>
-            <strong>Dirección:</strong> ${rec.direccion}<br>
-            <strong>Estado:</strong> ${rec.estado}<br>
-            <strong>Observaciones:</strong> ${rec.observaciones || ''}<br>
-        </div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Equipo</th>
-                    <th>Marca</th>
-                    <th>Modelo</th>
-                    <th>N° Serie</th>
-                    <th>Falla Reportada</th>
-                    <th>Accesorios</th>
-                    <th>Diagnóstico</th>
-                    <th>Observaciones</th>
-                </tr>
-            </thead>
-            <tbody>${filas}</tbody>
-        </table>
-    </body>
-    </html>
-    `);
-    win.document.close();
-    win.focus();
-    win.print();
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="lbl">Dirección</div>
+        <div class="val">${rec.direccion || "—"}</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">Observaciones</div>
+        <div class="val">${rec.observaciones || "—"}</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">Total de equipos</div>
+        <div class="val">${detalles.length}</div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Equipo</th>
+          <th>Marca</th>
+          <th>Modelo</th>
+          <th>N° Serie</th>
+          <th>Falla Reportada</th>
+          <th>Accesorios</th>
+          <th>Diagnóstico</th>
+          <th>Observaciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${filas}
+      </tbody>
+    </table>
+
+    <div class="footer">
+      Documento generado automáticamente.
+    </div>
+
+    <script>window.print();</script>
+  </body>
+  </html>
+  `);
+  v.document.close();
+  v.focus();
 }
-
 window.imprimirRecepcion = imprimirRecepcion;
+
 
 $(document).on("click",".editar-recepcion",function(){
     let id=$(this).closest("tr").find("td:eq(0)").text();

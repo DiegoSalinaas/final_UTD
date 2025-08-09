@@ -222,54 +222,118 @@ function buscarRemision(){
 window.buscarRemision = buscarRemision;
 
 function imprimirRemision(id){
-    let datos = ejecutarAjax("controladores/remision.php","leer_id="+id);
-    if(datos === "0"){ alert("Remisión no encontrada"); return; }
-    let rem = JSON.parse(datos);
-    let detData = ejecutarAjax("controladores/detalle_remision.php","leer=1&id_remision="+id);
-    let detalles = detData === "0" ? [] : JSON.parse(detData);
-    let filas = detalles.map((d,i)=>`<tr>
-            <td>${i+1}</td>
-            <td>${d.producto}</td>
-            <td>${d.cantidad}</td>
-            <td>${formatearPY(d.precio_unitario)}</td>
-            <td>${formatearPY(d.subtotal)}</td>
-        </tr>`).join('');
-    let win = window.open('', '', 'width=900,height=700');
-    win.document.write(`
-    <html>
-    <head>
-        <title>Remisión #${rem.id_remision}</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    </head>
-    <body>
-        <div class="container mt-4">
-            <h2 class="text-center mb-4">Remisión N° ${rem.id_remision}</h2>
-            <p><strong>Fecha:</strong> ${rem.fecha_remision}</p>
-            <p><strong>Cliente:</strong> ${rem.cliente}</p>
-            <p><strong>Observación:</strong> ${rem.observacion || ''}</p>
-            <p><strong>Estado:</strong> ${rem.estado}</p>
-            <table class="table table-bordered mt-4">
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>Producto</th>
-                        <th>Cantidad</th>
-                        <th>Precio</th>
-                        <th>Subtotal</th>
-                    </tr>
-                </thead>
-                <tbody>${filas}</tbody>
-            </table>
-            <h4 class="text-end">Total: ${formatearPY(rem.total)}</h4>
+  const datos = ejecutarAjax("controladores/remision.php","leer_id="+id);
+  if(datos === "0"){ alert("Remisión no encontrada"); return; }
+  const rem = JSON.parse(datos);
+
+  const detData = ejecutarAjax("controladores/detalle_remision.php","leer=1&id_remision="+id);
+  const detalles = detData === "0" ? [] : JSON.parse(detData);
+
+  let filas = detalles.length
+    ? detalles.map((d,i)=>`
+      <tr>
+        <td>${i+1}</td>
+        <td>${d.producto || d.id_producto || ""}</td>
+        <td>${d.cantidad}</td>
+        <td>${formatearPY(d.precio_unitario)}</td>
+        <td>${formatearPY(d.subtotal)}</td>
+      </tr>
+    `).join("")
+    : `<tr><td colspan="5">Sin ítems</td></tr>`;
+
+  const estadoTxt = rem.estado || "EMITIDA";
+  const estUC = String(estadoTxt).toUpperCase();
+  const estadoBadge =
+      estUC === "APROBADA" || estUC === "APROBADO" ? "bg-success" :
+      estUC === "ANULADA"  || estUC === "ANULADO"  ? "bg-danger"  :
+      "bg-warning text-dark";
+
+  const v = window.open('', '', 'width=1024,height=720');
+  v.document.write(`
+  <html>
+  <head>
+    <title>Remisión #${rem.id_remision}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      @page { size: A4; margin: 16mm; }
+      body { color:#111; font-family: "Segoe UI", Arial, sans-serif; }
+      .doc-header { display:flex; align-items:center; border-bottom:2px solid #0d6efd; padding-bottom:10px; margin-bottom:18px; }
+      .doc-logo { flex:0 0 auto; }
+      .doc-logo img { height:110px; }
+      .doc-info { flex:1; padding-left:20px; display:flex; flex-direction:column; justify-content:flex-end; }
+      .doc-title { margin:0; font-weight:800; letter-spacing:.3px; font-size:26px; }
+      .meta { font-size:14px; color:#555; margin-top:6px; }
+      .kpi-grid { display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; margin-bottom:20px; }
+      .kpi { border:1px solid #e9ecef; border-radius:12px; padding:14px; background:#f8f9fa; }
+      .kpi .lbl { font-size:12px; color:#6c757d; margin-bottom:4px; text-transform:uppercase; letter-spacing:.3px; }
+      .kpi .val { font-size:15px; font-weight:600; }
+      table { width:100%; border-collapse:collapse; }
+      thead th { background:#e9f2ff; border-bottom:1px solid #cfe2ff !important; font-weight:700; }
+      th, td { border:1px solid #e9ecef; padding:8px; font-size:12.5px; vertical-align:top; text-align:center; }
+      .total { margin-top:20px; font-size:16px; font-weight:700; text-align:right; }
+      .footer { margin-top:20px; font-size:11px; color:#6c757d; text-align:right; }
+      @media print { .no-print { display:none !important; } }
+    </style>
+  </head>
+  <body>
+    <div class="doc-header">
+      <div class="doc-logo">
+        <img src="images/logo.png" alt="Logo">
+      </div>
+      <div class="doc-info">
+        <h2 class="doc-title">Remisión #${rem.id_remision}</h2>
+        <div class="meta">
+          Cliente: <strong>${rem.cliente || rem.id_cliente || ""}</strong>
+          &nbsp;·&nbsp; Estado: <span class="badge ${estadoBadge}">${estadoTxt}</span>
+          &nbsp;·&nbsp; Fecha: <strong>${formatearFechaDMA(rem.fecha_remision)}</strong>
+          ${rem.observacion ? `&nbsp;·&nbsp; Obs.: <strong>${rem.observacion}</strong>` : ""}
         </div>
-    </body>
-    </html>
-    `);
-    win.document.close();
-    win.focus();
-    win.print();
+      </div>
+    </div>
+
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="lbl">Total</div>
+        <div class="val">${formatearPY(rem.total || 0)}</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">Moneda</div>
+        <div class="val">PYG</div>
+      </div>
+    </div>
+
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Precio Unitario</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${filas}
+      </tbody>
+    </table>
+
+    <div class="total">
+      Total General: ${formatearPY(rem.total || 0)}
+    </div>
+
+    <div class="footer">
+      Documento generado automáticamente.
+    </div>
+
+    <script>window.print();</script>
+  </body>
+  </html>
+  `);
+  v.document.close();
+  v.focus();
 }
 window.imprimirRemision = imprimirRemision;
+
 
 $(document).on("click",".editar-remision",function(){
     let id=$(this).closest("tr").find("td:eq(0)").text();
