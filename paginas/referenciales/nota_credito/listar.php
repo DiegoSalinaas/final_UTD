@@ -12,11 +12,7 @@
                     <label for="b_nota_credito" class="form-label">Buscador</label>
                     <input type="text" id="b_nota_credito" class="form-control" placeholder="Buscar por cliente o número...">
                 </div>
-                <div class="col-md-4">
-                    <button class="btn btn-secondary w-100" onclick="buscarNotaCredito(); return false;">
-                        <i class="bi bi-search"></i> Buscar
-                    </button>
-                </div>
+                
             </div>
             <div class="table-responsive mt-4">
                 <table class="table table-bordered table-hover align-middle text-center">
