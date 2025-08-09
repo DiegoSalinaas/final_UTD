@@ -22,7 +22,9 @@ function mostrarAgregarNotaCredito(){
     let hoy = new Date();
     let fechaFormateada = hoy.toISOString().split('T')[0]; 
     $("#fecha_txt").val(fechaFormateada);
+    $("#motivo_general_txt").val("");
 }
+
 window.mostrarAgregarNotaCredito = mostrarAgregarNotaCredito;
 
 function cargarListaClientes(){
@@ -218,6 +220,13 @@ function guardarNotaCredito(){
     if(detallesNota.length === 0){mensaje_dialogo_info_ERROR("Debe agregar al menos un item","ERROR");return;}
 
   
+    const motivoGeneral = $("#motivo_general_txt").val().trim();
+if(motivoGeneral.length === 0){
+    mensaje_dialogo_info_ERROR("Debe ingresar el Motivo General de la nota de crédito","ATENCIÓN");
+    return;
+}
+
+
     const faltantes = detallesNota
         .map((d,i)=>({index:i+1, motivo:(d.motivo||"").trim()}))
         .filter(x=>x.motivo.length === 0);
@@ -227,16 +236,19 @@ function guardarNotaCredito(){
         return;
     }
 
-    let total = detallesNota.reduce((acc,d)=>acc+parseFloat(d.total_linea),0);
+    let total = detallesNota.reduce((acc,d)=>acc+(parseFloat(d.total_linea)||0),0);
 
     let datos = {
         fecha_emision: $("#fecha_txt").val(),
-        motivo_general: $("#motivo_general_txt").val(),
+        motivo_general: motivoGeneral, // ← usa el valor validado
         id_cliente: $("#id_cliente_lst").val(),
         ruc_cliente: $("#ruc_cliente_txt").val(),
         estado: $("#estado_txt").val(),
         total: total
     };
+ 
+
+
 
     let idNota = $("#id_nota_credito").val();
     if(idNota === "0"){
