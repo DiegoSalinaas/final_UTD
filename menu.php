@@ -459,7 +459,7 @@
                 <a href="#" class="nav-link active">
                   <i class="nav-icon bi bi-bag"></i>
                   <p>
-                    Reportes
+                    Auditoria
                     <i class="nav-arrow bi bi-chevron-right"></i>
                   </p>
                 </a>
