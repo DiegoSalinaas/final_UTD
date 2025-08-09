@@ -93,10 +93,26 @@ $(document).on('input','#cantidad_txt, #precio_unitario_txt', function(){
 });
 
 function agregarProductoExtra(){
-    if($("#id_presupuesto_lst").val() === ""){mensaje_dialogo_info_ERROR("Debe seleccionar un presupuesto","ERROR");return;}
-    if($("#id_producto_lst").val() === ""){mensaje_dialogo_info_ERROR("Debe seleccionar un producto","ERROR");return;}
-    if($("#cantidad_txt").val().trim().length === 0){mensaje_dialogo_info_ERROR("Debe ingresar la cantidad","ERROR");return;}
-    if($("#precio_unitario_txt").val().trim().length === 0){mensaje_dialogo_info_ERROR("Debe ingresar el costo","ERROR");return;}
+    if($("#id_presupuesto_lst").val() === ""){
+        mensaje_dialogo_info_ERROR("Debe seleccionar un presupuesto","ERROR");
+        return;
+    }
+    if($("#id_producto_lst").val() === ""){
+        mensaje_dialogo_info_ERROR("Debe seleccionar un producto","ERROR");
+        return;
+    }
+
+    let cantidad = parseFloat($("#cantidad_txt").val()) || 0;
+    let precio = parseFloat($("#precio_unitario_txt").val()) || 0;
+
+    if(cantidad <= 0){
+        mensaje_dialogo_info_ERROR("La cantidad debe ser mayor a 0","ERROR");
+        return;
+    }
+    if(precio <= 0){
+        mensaje_dialogo_info_ERROR("El precio unitario debe ser mayor a 0","ERROR");
+        return;
+    }
 
     let idProducto = parseInt($("#id_producto_lst").val());
     if(detallesOC.some(d => d.id_producto === idProducto)){
@@ -107,15 +123,16 @@ function agregarProductoExtra(){
     let detalle = {
         id_producto: idProducto,
         producto: $("#id_producto_lst option:selected").text(),
-        cantidad: $("#cantidad_txt").val(),
-        precio_unitario: $("#precio_unitario_txt").val(),
-        subtotal: (parseFloat($("#cantidad_txt").val()) || 0) * (parseFloat($("#precio_unitario_txt").val()) || 0)
+        cantidad: cantidad,
+        precio_unitario: precio,
+        subtotal: cantidad * precio
     };
 
     detallesOC.push(detalle);
     renderDetallesOC();
     limpiarDetalleExtraForm();
 }
+
 window.agregarProductoExtra = agregarProductoExtra;
 
 function limpiarDetalleExtraForm(){
