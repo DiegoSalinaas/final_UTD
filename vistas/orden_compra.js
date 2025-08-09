@@ -200,97 +200,89 @@ function guardarOrden(){
 window.guardarOrden = guardarOrden;
 
 function imprimirOrden(id, auto = true){
-    let ordenData = ejecutarAjax("controladores/orden_compra.php","leer=1");
-    if(ordenData === "0"){ alert("No se encontró la orden"); return; }
-    let orden = JSON.parse(ordenData).find(o => o.id_orden == id);
-    if(!orden){ alert("No se encontró la orden"); return; }
-    let detalleData = ejecutarAjax("controladores/detalle_orden_compra.php","leer=1&id_orden="+id);
-    let filas = "";
-    if(detalleData !== "0"){
-        JSON.parse(detalleData).forEach(function(d){
-            filas += `<tr>
-                <td>${d.producto || d.id_producto}</td>
-                <td>${d.cantidad}</td>
-                <td>${formatearPY(d.precio_unitario)}</td>
-                <td>${formatearPY(d.subtotal)}</td>
-            </tr>`;
-        });
-    }
-    let win = window.open('', '', 'width=900,height=700');
- win.document.write(`
+  let ordenData = ejecutarAjax("controladores/orden_compra.php","leer=1");
+  if(ordenData === "0"){ alert("No se encontró la orden"); return; }
+  let orden = JSON.parse(ordenData).find(o => String(o.id_orden) === String(id));
+  if(!orden){ alert("No se encontró la orden"); return; }
+
+  let detalleData = ejecutarAjax("controladores/detalle_orden_compra.php","leer=1&id_orden="+id);
+  let filas = "";
+  if(detalleData !== "0"){
+    JSON.parse(detalleData).forEach(function(d, i){
+      filas += `
+        <tr>
+          <td>${i + 1}</td>
+          <td>${d.producto || d.id_producto}</td>
+          <td>${d.cantidad}</td>
+          <td>${formatearPY(d.precio_unitario)}</td>
+          <td>${formatearPY(d.subtotal)}</td>
+        </tr>`;
+    });
+  } else {
+    filas = `<tr><td colspan="5">Sin ítems</td></tr>`;
+  }
+
+  const estadoTxt = (orden.estado || "GENERADA");
+  const estadoUC = String(estadoTxt).toUpperCase();
+  const estadoBadge =
+      estadoUC === "APROBADA" || estadoUC === "APROBADO" ? "bg-success" :
+      estadoUC === "ANULADA"  || estadoUC === "ANULADO"  ? "bg-danger"  :
+      "bg-warning text-dark";
+
+  const v = window.open('', '', 'width=1024,height=720');
+  v.document.write(`
   <html>
   <head>
     <title>Orden de Compra #${orden.id_orden}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-      body {
-        padding: 40px;
-        font-size: 13pt;
-        font-family: 'Segoe UI', sans-serif;
-        color: #000;
-      }
-      .titulo {
-        border-bottom: 2px solid #000;
-        padding-bottom: 10px;
-        margin-bottom: 20px;
-        text-align: center;
-      }
-      .info {
-        display: flex;
-        justify-content: space-between;
-        margin-bottom: 20px;
-      }
-      .info div {
-        width: 48%;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-      }
-      th, td {
-        border: 1px solid #ccc;
-        padding: 8px;
-        text-align: center;
-      }
-      th {
-        background-color: #f0f0f0;
-      }
-      .total {
-        margin-top: 20px;
-        text-align: right;
-        font-size: 16pt;
-        font-weight: bold;
-      }
-      .footer {
-        margin-top: 40px;
-        text-align: center;
-        font-size: 10pt;
-        color: #555;
-      }
-      @media print {
-        .no-print { display: none; }
-      }
+      @page { size: A4; margin: 16mm; }
+      body { color:#111; font-family: "Segoe UI", Arial, sans-serif; }
+      .doc-header { display:flex; align-items:center; border-bottom:2px solid #0d6efd; padding-bottom:10px; margin-bottom:18px; }
+      .doc-logo { flex:0 0 auto; }
+      .doc-logo img { height:110px; }
+      .doc-info { flex:1; padding-left:20px; display:flex; flex-direction:column; justify-content:flex-end; }
+      .doc-title { margin:0; font-weight:800; letter-spacing:.3px; font-size:26px; }
+      .meta { font-size:14px; color:#555; margin-top:6px; }
+      .kpi-grid { display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; margin-bottom:20px; }
+      .kpi { border:1px solid #e9ecef; border-radius:12px; padding:14px; background:#f8f9fa; }
+      .kpi .lbl { font-size:12px; color:#6c757d; margin-bottom:4px; text-transform:uppercase; letter-spacing:.3px; }
+      .kpi .val { font-size:15px; font-weight:600; }
+      table { width:100%; border-collapse:collapse; }
+      thead th { background:#e9f2ff; border-bottom:1px solid #cfe2ff !important; font-weight:700; }
+      th, td { border:1px solid #e9ecef; padding:8px; font-size:12.5px; vertical-align:top; text-align:center; }
+      .total { margin-top:20px; font-size:16px; font-weight:700; text-align:right; }
+      .footer { margin-top:20px; font-size:11px; color:#6c757d; text-align:right; }
+      @media print { .no-print { display:none !important; } }
     </style>
   </head>
   <body>
-    <div class="titulo">
-      <h2>Orden de Compra N° ${orden.id_orden}</h2>
-      <p><small>Documento generado automáticamente</small></p>
-    </div>
-
-    <div class="info">
-      <div>
-        <strong>Proveedor:</strong> ${orden.proveedor || orden.id_proveedor}<br>
-        <strong>Fecha de Emisión:</strong> ${formatearFechaDMA(orden.fecha_emision)}
+    <div class="doc-header">
+      <div class="doc-logo">
+        <img src="images/logo.png" alt="Logo">
       </div>
-      <div>
-        <strong>Estado:</strong> ${orden.estado || "GENERADA"}<br>
-        <strong>Total:</strong> ${formatearPY(orden.total)}
+      <div class="doc-info">
+        <h2 class="doc-title">Orden de Compra #${orden.id_orden}</h2>
+        <div class="meta">
+          Proveedor: <strong>${orden.proveedor || orden.id_proveedor}</strong>
+          &nbsp;·&nbsp; Estado: <span class="badge ${estadoBadge}">${estadoTxt}</span>
+          &nbsp;·&nbsp; Fecha: <strong>${formatearFechaDMA(orden.fecha_emision)}</strong>
+        </div>
       </div>
     </div>
 
-    <table class="table">
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="lbl">Total</div>
+        <div class="val">${formatearPY(orden.total)}</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">Moneda</div>
+        <div class="val">PYG</div>
+      </div>
+    </div>
+
+    <table>
       <thead>
         <tr>
           <th>#</th>
@@ -301,15 +293,7 @@ function imprimirOrden(id, auto = true){
         </tr>
       </thead>
       <tbody>
-        ${JSON.parse(detalleData).map((d, i) => `
-          <tr>
-            <td>${i + 1}</td>
-            <td>${d.producto || d.id_producto}</td>
-            <td>${d.cantidad}</td>
-            <td>${formatearPY(d.precio_unitario)}</td>
-            <td>${formatearPY(d.subtotal)}</td>
-          </tr>
-        `).join('')}
+        ${filas}
       </tbody>
     </table>
 
@@ -317,16 +301,19 @@ function imprimirOrden(id, auto = true){
       Total General: ${formatearPY(orden.total)}
     </div>
 
-    
+    <div class="footer">
+      Documento generado automáticamente.
+    </div>
+
+    <script>${auto ? "window.print();" : ""}</script>
   </body>
   </html>
-`);
-
-    win.document.close();
-    win.focus();
-    if(auto){ win.print(); }
+  `);
+  v.document.close();
+  v.focus();
 }
 window.imprimirOrden = imprimirOrden;
+
 
 function limpiarOrden(){
     $("#id_orden").val("0");

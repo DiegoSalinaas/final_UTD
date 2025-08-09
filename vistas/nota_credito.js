@@ -134,85 +134,120 @@ function eliminarDetalleNota(index){
 window.eliminarDetalleNota = eliminarDetalleNota;
 
 function imprimirNotaCredito(id){
-    let datos = ejecutarAjax("controladores/nota_credito.php","leer_id="+id);
-    if(datos === "0"){ alert("No se encontró la nota de crédito"); return; }
-    let nota = JSON.parse(datos);
-    let detData = ejecutarAjax("controladores/detalle_nota_credito.php","leer=1&id_nota_credito="+id);
-    let detalles = detData === "0" ? [] : JSON.parse(detData);
+  let datos = ejecutarAjax("controladores/nota_credito.php","leer_id="+id);
+  if(datos === "0"){ alert("No se encontró la nota de crédito"); return; }
+  let nota = JSON.parse(datos);
 
-    let filas = detalles.map((d,i)=>`<tr>
-            <td>${i+1}</td>
-            <td>${d.producto || d.id_producto}</td>
-            <td>${d.cantidad}</td>
-            <td>${formatearPY(d.precio_unitario)}</td>
-            <td>${formatearPY(d.total_linea)}</td>
-            <td>${d.motivo || ''}</td>
-        </tr>`).join('');
+  let detData = ejecutarAjax("controladores/detalle_nota_credito.php","leer=1&id_nota_credito="+id);
+  let detalles = detData === "0" ? [] : JSON.parse(detData);
 
-    let win = window.open('', '', 'width=900,height=700');
-    win.document.write(`
-    <html>
-    <head>
-        <title>Nota de Crédito #${nota.id_nota_credito}</title>
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-        <style>
-            body{padding:40px;font-size:13pt;font-family:'Segoe UI',sans-serif;color:#000;}
-            .titulo{border-bottom:2px solid #000;padding-bottom:10px;margin-bottom:20px;text-align:center;}
-            .info{display:flex;justify-content:space-between;margin-bottom:20px;}
-            .info div{width:48%;}
-            table{width:100%;border-collapse:collapse;margin-top:20px;}
-            th,td{border:1px solid #ccc;padding:8px;text-align:center;}
-            th{background-color:#f0f0f0;}
-            .total{margin-top:20px;text-align:right;font-size:16pt;font-weight:bold;}
-            @media print{.no-print{display:none;}}
-        </style>
-    </head>
-    <body>
-        <div class="titulo">
-            <h2>Nota de Crédito N° ${nota.numero_nota}</h2>
-            <p><small>Documento generado automáticamente</small></p>
+  let filas = detalles.length
+    ? detalles.map((d,i)=>`
+      <tr>
+        <td>${i+1}</td>
+        <td>${d.producto || d.id_producto}</td>
+        <td>${d.cantidad}</td>
+        <td>${formatearPY(d.precio_unitario)}</td>
+        <td>${formatearPY(d.total_linea)}</td>
+        <td>${d.motivo || ''}</td>
+      </tr>
+    `).join('')
+    : `<tr><td colspan="6">Sin ítems</td></tr>`;
+
+  const estadoTxt = (nota.estado || "GENERADA");
+  const estadoUC = String(estadoTxt).toUpperCase();
+  const estadoBadge =
+      estadoUC === "APROBADA" || estadoUC === "APROBADO" ? "bg-success" :
+      estadoUC === "ANULADA"  || estadoUC === "ANULADO"  ? "bg-danger"  :
+      "bg-warning text-dark";
+
+  const v = window.open('', '', 'width=1024,height=720');
+  v.document.write(`
+  <html>
+  <head>
+    <title>Nota de Crédito #${nota.id_nota_credito}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      @page { size: A4; margin: 16mm; }
+      body { color:#111; font-family: "Segoe UI", Arial, sans-serif; }
+      .doc-header { display:flex; align-items:center; border-bottom:2px solid #0d6efd; padding-bottom:10px; margin-bottom:18px; }
+      .doc-logo { flex:0 0 auto; }
+      .doc-logo img { height:110px; }
+      .doc-info { flex:1; padding-left:20px; display:flex; flex-direction:column; justify-content:flex-end; }
+      .doc-title { margin:0; font-weight:800; letter-spacing:.3px; font-size:26px; }
+      .meta { font-size:14px; color:#555; margin-top:6px; }
+      .kpi-grid { display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; margin-bottom:20px; }
+      .kpi { border:1px solid #e9ecef; border-radius:12px; padding:14px; background:#f8f9fa; }
+      .kpi .lbl { font-size:12px; color:#6c757d; margin-bottom:4px; text-transform:uppercase; letter-spacing:.3px; }
+      .kpi .val { font-size:15px; font-weight:600; }
+      table { width:100%; border-collapse:collapse; }
+      thead th { background:#e9f2ff; border-bottom:1px solid #cfe2ff !important; font-weight:700; }
+      th, td { border:1px solid #e9ecef; padding:8px; font-size:12.5px; vertical-align:top; text-align:center; }
+      .total { margin-top:20px; font-size:16px; font-weight:700; text-align:right; }
+      .footer { margin-top:20px; font-size:11px; color:#6c757d; text-align:right; }
+      @media print { .no-print { display:none !important; } }
+    </style>
+  </head>
+  <body>
+    <div class="doc-header">
+      <div class="doc-logo">
+        <img src="images/logo.png" alt="Logo">
+      </div>
+      <div class="doc-info">
+        <h2 class="doc-title">Nota de Crédito #${nota.numero_nota}</h2>
+        <div class="meta">
+          Cliente: <strong>${nota.cliente || nota.id_cliente}</strong>
+          &nbsp;·&nbsp; RUC: <strong>${nota.ruc_cliente || ""}</strong>
+          &nbsp;·&nbsp; Estado: <span class="badge ${estadoBadge}">${estadoTxt}</span>
+          &nbsp;·&nbsp; Fecha: <strong>${formatearFechaDMA(nota.fecha_emision)}</strong>
         </div>
+      </div>
+    </div>
 
-        <div class="info">
-            <div>
-                <strong>Cliente:</strong> ${nota.cliente || nota.id_cliente}<br>
-                <strong>RUC:</strong> ${nota.ruc_cliente}<br>
-                <strong>Fecha de Emisión:</strong> ${formatearFechaDMA(nota.fecha_emision)}<br>
-                <strong>Motivo General:</strong> ${nota.motivo_general}
-            </div>
-            <div>
-                <strong>Estado:</strong> ${nota.estado}<br>
-                <strong>Total:</strong> ${formatearPY(nota.total)}
-            </div>
-        </div>
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="lbl">Motivo General</div>
+        <div class="val">${nota.motivo_general || ""}</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">Total</div>
+        <div class="val">${formatearPY(nota.total)}</div>
+      </div>
+    </div>
 
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>#</th>
-                    <th>Producto</th>
-                    <th>Cantidad</th>
-                    <th>Precio Unitario</th>
-                    <th>Subtotal</th>
-                    <th>Motivo</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${filas}
-            </tbody>
-        </table>
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Producto</th>
+          <th>Cantidad</th>
+          <th>Precio Unitario</th>
+          <th>Subtotal</th>
+          <th>Motivo</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${filas}
+      </tbody>
+    </table>
 
-        <div class="total">
-            Total General: ${formatearPY(nota.total)}
-        </div>
-    </body>
-    </html>
-    `);
-    win.document.close();
-    win.focus();
-    win.print();
+    <div class="total">
+      Total General: ${formatearPY(nota.total)}
+    </div>
+
+    <div class="footer">
+      Documento generado automáticamente.
+    </div>
+
+    <script>window.print();</script>
+  </body>
+  </html>
+  `);
+  v.document.close();
+  v.focus();
 }
 window.imprimirNotaCredito = imprimirNotaCredito;
+
 
 function guardarNotaCredito(){
     if($("#id_cliente_lst").val() === ""){mensaje_dialogo_info_ERROR("Debe seleccionar un cliente","ERROR");return;}
