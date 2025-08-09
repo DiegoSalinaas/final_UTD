@@ -46,7 +46,7 @@ $(document).on('change', '#id_cliente_lst', function () {
     return;
   }
   // Busca el cliente en el arreglo ya cargado
-  const c = listaClientes.find(x => 
+  const c = listaClientes.find(x =>
     String(x.id_cliente ?? x.cod_cliente ?? x.id) === String(id)
   );
 
@@ -54,6 +54,20 @@ $(document).on('change', '#id_cliente_lst', function () {
   const dir = c?.direccion ?? c?.direccion_cliente ?? '';
   $('#telefono_txt').val(tel);
   $('#direccion_txt').val(dir);
+});
+
+// Manejo dinámico de accesorios
+$(document).on('click', '#add_accesorio_btn', function () {
+  const html = `
+    <div class="input-group mb-2 accesorio-item">
+      <input type="text" class="form-control accesorios_txt">
+      <button class="btn btn-outline-danger remove-accesorio-btn" type="button"><i class="bi bi-dash"></i></button>
+    </div>`;
+  $('#accesorios_container').append(html);
+});
+
+$(document).on('click', '.remove-accesorio-btn', function () {
+  $(this).closest('.accesorio-item').remove();
 });
 
 
@@ -65,13 +79,19 @@ function agregarDetalleRecepcion(){
     if($("#numero_serie_txt").val().trim().length===0){mensaje_dialogo_info_ERROR("Debe ingresar el número de serie","ERROR");return;}
     if($("#falla_txt").val().trim().length===0){mensaje_dialogo_info_ERROR("Debe ingresar la falla reportada","ERROR");return;}
 
+    const accesorios = [];
+    $("#accesorios_container .accesorios_txt").each(function(){
+        const val = $(this).val().trim();
+        if(val.length>0) accesorios.push(val);
+    });
+
     let detalle = {
         nombre_equipo: $("#nombre_equipo_txt").val().trim(),
         marca: $("#marca_txt").val().trim(),
         modelo: $("#modelo_txt").val().trim(),
         numero_serie: $("#numero_serie_txt").val().trim(),
         falla_reportada: $("#falla_txt").val().trim(),
-        accesorios_entregados: $("#accesorios_txt").val().trim(),
+        accesorios_entregados: accesorios.join(", "),
         diagnostico_preliminar: $("#diagnostico_txt").val().trim(),
         observaciones_detalle: $("#observaciones_detalle_txt").val().trim()
     };
@@ -87,7 +107,9 @@ function limpiarDetalleRecepcionForm(){
     $("#modelo_txt").val('');
     $("#numero_serie_txt").val('');
     $("#falla_txt").val('');
-    $("#accesorios_txt").val('');
+    const cont = $("#accesorios_container");
+    cont.find('.accesorio-item:not(:first)').remove();
+    cont.find('.accesorio-item:first input').val('');
     $("#diagnostico_txt").val('');
     $("#observaciones_detalle_txt").val('');
 }

@@ -57,8 +57,13 @@
                     <input type="text" id="falla_txt" class="form-control">
                 </div>
                 <div class="col-md-3">
-                    <label for="accesorios_txt" class="form-label">Accesorios Entregados</label>
-                    <input type="text" id="accesorios_txt" class="form-control">
+                    <label class="form-label">Accesorios Entregados</label>
+                    <div id="accesorios_container">
+                        <div class="input-group mb-2 accesorio-item">
+                            <input type="text" class="form-control accesorios_txt">
+                            <button class="btn btn-outline-primary" type="button" id="add_accesorio_btn"><i class="bi bi-plus"></i></button>
+                        </div>
+                    </div>
                 </div>
                 <div class="col-md-3">
                     <label for="diagnostico_txt" class="form-label">Diagnóstico Preliminar</label>
