@@ -1,28 +1,32 @@
+// ========================= Variables globales =========================
 let detallesRecepcion = [];
 let listaClientes = [];
 
+// ========================= Navegación =========================
 function mostrarListarRecepcion(){
-    let contenido = dameContenido("paginas/referenciales/recepcion/listar.php");
-    $("#contenido-principal").html(contenido);
-    cargarTablaRecepcion();
+  let contenido = dameContenido("paginas/referenciales/recepcion/listar.php");
+  $("#contenido-principal").html(contenido);
+  cargarTablaRecepcion();
 }
 window.mostrarListarRecepcion = mostrarListarRecepcion;
 
 function mostrarAgregarRecepcion(){
-    let contenido = dameContenido("paginas/referenciales/recepcion/agregar.php");
-    $("#contenido-principal").html(contenido);
-    cargarListaClientes();
-    detallesRecepcion = [];
-    renderDetallesRecepcion();
+  let contenido = dameContenido("paginas/referenciales/recepcion/agregar.php");
+  $("#contenido-principal").html(contenido);
+  cargarListaClientes();
+  detallesRecepcion = [];
+  renderDetallesRecepcion();
+  initAccesoriosUI(); // Inicializa chips de accesorios
 }
 window.mostrarAgregarRecepcion = mostrarAgregarRecepcion;
 
+// ========================= Clientes =========================
 function cargarListaClientes(selectedId = ""){
-    let datos = ejecutarAjax("controladores/cliente.php","leer=1");
-    if(datos !== "0"){
-        listaClientes = JSON.parse(datos);
-        renderListaClientes(listaClientes, selectedId);
-    }
+  let datos = ejecutarAjax("controladores/cliente.php","leer=1");
+  if(datos !== "0"){
+    listaClientes = JSON.parse(datos);
+    renderListaClientes(listaClientes, selectedId);
+  }
 }
 
 function renderListaClientes(arr, selectedId = "") {
@@ -36,8 +40,6 @@ function renderListaClientes(arr, selectedId = "") {
   if (selectedId) $sel.val(selectedId).trigger('change'); // prellena al editar
 }
 
-
-
 $(document).on('change', '#id_cliente_lst', function () {
   const id = $(this).val();
   if (!id) {
@@ -45,186 +47,220 @@ $(document).on('change', '#id_cliente_lst', function () {
     $('#direccion_txt').val('');
     return;
   }
-  // Busca el cliente en el arreglo ya cargado
   const c = listaClientes.find(x =>
     String(x.id_cliente ?? x.cod_cliente ?? x.id) === String(id)
   );
-
   const tel = c?.telefono ?? c?.telefono_cliente ?? '';
   const dir = c?.direccion ?? c?.direccion_cliente ?? '';
   $('#telefono_txt').val(tel);
   $('#direccion_txt').val(dir);
 });
 
-// Manejo dinámico de accesorios
-$(document).on('click', '#add_accesorio_btn', function () {
-  const html = `
-    <div class="input-group mb-2 accesorio-item">
-      <input type="text" class="form-control accesorios_txt">
-      <button class="btn btn-outline-danger remove-accesorio-btn" type="button"><i class="bi bi-dash"></i></button>
-    </div>`;
-  $('#accesorios_container').append(html);
+// ========================= Accesorios entregados (chips) =========================
+let accesoriosTmp = []; // array temporal de accesorios para el equipo en edición
+
+function renderAccesoriosChips(){
+  const $wrap = $("#accesorios_chips");
+  if(accesoriosTmp.length === 0){
+    $wrap.html('<span class="text-muted">Sin accesorios agregados.</span>');
+    return;
+  }
+  const chips = accesoriosTmp.map((a,i)=>`
+    <span class="badge bg-light text-dark border me-2 mb-2">
+      ${a}
+      <button type="button" class="btn btn-sm btn-link text-danger p-0 ms-1 remove-chip" data-i="${i}" title="Quitar">
+        <i class="bi bi-x-circle"></i>
+      </button>
+    </span>
+  `).join("");
+  $wrap.html(chips);
+}
+
+function normalizarAccesorio(txt){ return txt.replace(/\s+/g,' ').trim(); }
+
+function agregarAccesorioDesdeInput(){
+  const raw = $("#accesorio_input").val() || "";
+  const candidatos = raw.split(",").map(normalizarAccesorio).filter(Boolean);
+
+  let agregados = 0;
+  candidatos.forEach(item=>{
+    const dup = accesoriosTmp.some(x => x.toLowerCase() === item.toLowerCase());
+    if(!dup){ accesoriosTmp.push(item); agregados++; }
+  });
+
+  if(agregados === 0 && candidatos.length > 0){
+    mensaje_dialogo_info_ERROR("Ese accesorio ya fue agregado o es inválido.","ATENCIÓN");
+  }
+  $("#accesorio_input").val("");
+  renderAccesoriosChips();
+}
+
+// Click en botón Agregar
+$(document).on("click", "#add_accesorio_btn", agregarAccesorioDesdeInput);
+
+// Enter en el input
+$(document).on("keydown", "#accesorio_input", function(e){
+  if(e.key === "Enter"){ e.preventDefault(); agregarAccesorioDesdeInput(); }
 });
 
-$(document).on('click', '.remove-accesorio-btn', function () {
-  $(this).closest('.accesorio-item').remove();
+// Quitar chip
+$(document).on("click", ".remove-chip", function(){
+  accesoriosTmp.splice($(this).data("i"),1);
+  renderAccesoriosChips();
 });
 
+// Inicializar UI de accesorios (al abrir el formulario o tras guardar un equipo)
+function initAccesoriosUI(){
+  accesoriosTmp = [];
+  $("#accesorio_input").val("");
+  renderAccesoriosChips();
+}
 
-
+// ========================= Detalle de recepción (equipos) =========================
 function agregarDetalleRecepcion(){
-    if($("#nombre_equipo_txt").val().trim().length===0){mensaje_dialogo_info_ERROR("Debe ingresar el nombre del equipo","ERROR");return;}
-    if($("#marca_txt").val().trim().length===0){mensaje_dialogo_info_ERROR("Debe ingresar la marca","ERROR");return;}
-    if($("#modelo_txt").val().trim().length===0){mensaje_dialogo_info_ERROR("Debe ingresar el modelo","ERROR");return;}
-    if($("#numero_serie_txt").val().trim().length===0){mensaje_dialogo_info_ERROR("Debe ingresar el número de serie","ERROR");return;}
-    if($("#falla_txt").val().trim().length===0){mensaje_dialogo_info_ERROR("Debe ingresar la falla reportada","ERROR");return;}
+  if($("#nombre_equipo_txt").val().trim().length===0){mensaje_dialogo_info_ERROR("Debe ingresar el nombre del equipo","ERROR");return;}
+  if($("#marca_txt").val().trim().length===0){mensaje_dialogo_info_ERROR("Debe ingresar la marca","ERROR");return;}
+  if($("#modelo_txt").val().trim().length===0){mensaje_dialogo_info_ERROR("Debe ingresar el modelo","ERROR");return;}
+  if($("#numero_serie_txt").val().trim().length===0){mensaje_dialogo_info_ERROR("Debe ingresar el número de serie","ERROR");return;}
+  if($("#falla_txt").val().trim().length===0){mensaje_dialogo_info_ERROR("Debe ingresar la falla reportada","ERROR");return;}
 
-    const accesorios = [];
-    $("#accesorios_container .accesorios_txt").each(function(){
-        const val = $(this).val().trim();
-        if(val.length>0) accesorios.push(val);
-    });
+  const detalle = {
+    nombre_equipo: $("#nombre_equipo_txt").val().trim(),
+    marca: $("#marca_txt").val().trim(),
+    modelo: $("#modelo_txt").val().trim(),
+    numero_serie: $("#numero_serie_txt").val().trim(),
+    falla_reportada: $("#falla_txt").val().trim(),
+    accesorios_entregados: accesoriosTmp.join(", "), // chips -> string
+    diagnostico_preliminar: $("#diagnostico_txt").val().trim(),
+    observaciones_detalle: $("#observaciones_detalle_txt").val().trim()
+  };
 
-    let detalle = {
-        nombre_equipo: $("#nombre_equipo_txt").val().trim(),
-        marca: $("#marca_txt").val().trim(),
-        modelo: $("#modelo_txt").val().trim(),
-        numero_serie: $("#numero_serie_txt").val().trim(),
-        falla_reportada: $("#falla_txt").val().trim(),
-        accesorios_entregados: accesorios.join(", "),
-        diagnostico_preliminar: $("#diagnostico_txt").val().trim(),
-        observaciones_detalle: $("#observaciones_detalle_txt").val().trim()
-    };
-    detallesRecepcion.push(detalle);
-    renderDetallesRecepcion();
-    limpiarDetalleRecepcionForm();
+  detallesRecepcion.push(detalle);
+  renderDetallesRecepcion();
+
+  // limpiar para el siguiente equipo
+  $("#nombre_equipo_txt, #marca_txt, #modelo_txt, #numero_serie_txt, #falla_txt, #diagnostico_txt, #observaciones_detalle_txt").val('');
+  initAccesoriosUI();
 }
 window.agregarDetalleRecepcion = agregarDetalleRecepcion;
 
-function limpiarDetalleRecepcionForm(){
-    $("#nombre_equipo_txt").val('');
-    $("#marca_txt").val('');
-    $("#modelo_txt").val('');
-    $("#numero_serie_txt").val('');
-    $("#falla_txt").val('');
-    const cont = $("#accesorios_container");
-    cont.find('.accesorio-item:not(:first)').remove();
-    cont.find('.accesorio-item:first input').val('');
-    $("#diagnostico_txt").val('');
-    $("#observaciones_detalle_txt").val('');
-}
-
 function renderDetallesRecepcion(){
-    let tbody = $("#detalle_recepcion_tb");
-    tbody.html('');
-    detallesRecepcion.forEach((d,i)=>{
-        tbody.append(`<tr>
-            <td>${d.nombre_equipo}</td>
-            <td>${d.marca}</td>
-            <td>${d.modelo}</td>
-            <td>${d.numero_serie}</td>
-            <td><button class="btn btn-danger btn-sm" onclick="eliminarDetalleRecepcion(${i}); return false;"><i class="bi bi-trash"></i></button></td>
-        </tr>`);
-    });
+  let tbody = $("#detalle_recepcion_tb");
+  tbody.html('');
+  detallesRecepcion.forEach((d,i)=>{
+    tbody.append(`<tr>
+      <td>${d.nombre_equipo}</td>
+      <td>${d.marca}</td>
+      <td>${d.modelo}</td>
+      <td>${d.numero_serie}</td>
+      <td>
+        <button class="btn btn-danger btn-sm" onclick="eliminarDetalleRecepcion(${i}); return false;">
+          <i class="bi bi-trash"></i>
+        </button>
+      </td>
+    </tr>`);
+  });
 }
 
 function eliminarDetalleRecepcion(index){
-    detallesRecepcion.splice(index,1);
-    renderDetallesRecepcion();
+  detallesRecepcion.splice(index,1);
+  renderDetallesRecepcion();
 }
 window.eliminarDetalleRecepcion = eliminarDetalleRecepcion;
 
+// ========================= Guardar recepción =========================
 function guardarRecepcion(){
-    if($("#id_cliente_lst").val()===""){mensaje_dialogo_info_ERROR("Debe seleccionar un cliente","ERROR");return;}
-    if($("#fecha_txt").val().trim().length===0){mensaje_dialogo_info_ERROR("Debe ingresar la fecha","ERROR");return;}
-    if(detallesRecepcion.length===0){mensaje_dialogo_info_ERROR("Debe agregar al menos un equipo","ERROR");return;}
+  if($("#id_cliente_lst").val()===""){mensaje_dialogo_info_ERROR("Debe seleccionar un cliente","ERROR");return;}
+  if($("#fecha_txt").val().trim().length===0){mensaje_dialogo_info_ERROR("Debe ingresar la fecha","ERROR");return;}
+  if(detallesRecepcion.length===0){mensaje_dialogo_info_ERROR("Debe agregar al menos un equipo","ERROR");return;}
 
-    let datos = {
-  fecha_recepcion: $("#fecha_txt").val(),
-  id_cliente: $("#id_cliente_lst").val(),
-  nombre_cliente: $("#id_cliente_lst option:selected").text().trim(),
-  telefono: $("#telefono_txt").val(),
-  direccion: $("#direccion_txt").val(),
-  estado: $("#estado_lst").val(),
-  observaciones: $("#observaciones_txt").val()
-};
+  let datos = {
+    fecha_recepcion: $("#fecha_txt").val(),
+    id_cliente: $("#id_cliente_lst").val(),
+    nombre_cliente: $("#id_cliente_lst option:selected").text().trim(),
+    telefono: $("#telefono_txt").val(),
+    direccion: $("#direccion_txt").val(),
+    estado: $("#estado_lst").val(),
+    observaciones: $("#observaciones_txt").val()
+  };
 
-
-    let idRecepcion = $("#id_recepcion").val();
-    if(idRecepcion === "0"){
-        idRecepcion = ejecutarAjax("controladores/recepcion.php","guardar="+JSON.stringify(datos));
-        detallesRecepcion.forEach(function(d){
-            let det = {...d, id_recepcion:idRecepcion};
-            ejecutarAjax("controladores/detalle_recepcion.php","guardar="+JSON.stringify(det));
-        });
-    }else{
-        datos = {...datos, id_recepcion:idRecepcion};
-        ejecutarAjax("controladores/recepcion.php","actualizar="+JSON.stringify(datos));
-        ejecutarAjax("controladores/detalle_recepcion.php","eliminar_por_recepcion="+idRecepcion);
-        detallesRecepcion.forEach(function(d){
-            let det = {...d, id_recepcion:idRecepcion};
-            ejecutarAjax("controladores/detalle_recepcion.php","guardar="+JSON.stringify(det));
-        });
-    }
-    mensaje_confirmacion("Guardado correctamente");
-    mostrarListarRecepcion();
+  let idRecepcion = $("#id_recepcion").val();
+  if(idRecepcion === "0"){
+    idRecepcion = ejecutarAjax("controladores/recepcion.php","guardar="+JSON.stringify(datos));
+    detallesRecepcion.forEach(function(d){
+      let det = {...d, id_recepcion:idRecepcion};
+      ejecutarAjax("controladores/detalle_recepcion.php","guardar="+JSON.stringify(det));
+    });
+  }else{
+    datos = {...datos, id_recepcion:idRecepcion};
+    ejecutarAjax("controladores/recepcion.php","actualizar="+JSON.stringify(datos));
+    ejecutarAjax("controladores/detalle_recepcion.php","eliminar_por_recepcion="+idRecepcion);
+    detallesRecepcion.forEach(function(d){
+      let det = {...d, id_recepcion:idRecepcion};
+      ejecutarAjax("controladores/detalle_recepcion.php","guardar="+JSON.stringify(det));
+    });
+  }
+  mensaje_confirmacion("Guardado correctamente");
+  mostrarListarRecepcion();
 }
 window.guardarRecepcion = guardarRecepcion;
 
+// ========================= Tabla / Búsqueda =========================
 function cargarTablaRecepcion(){
-    let datos = ejecutarAjax("controladores/recepcion.php","leer=1");
-    if(datos === "0"){
-        $("#recepcion_datos_tb").html("NO HAY REGISTROS");
-    }else{
-        let json = JSON.parse(datos);
-        $("#recepcion_datos_tb").html('');
-        json.map(function(it){
-            $("#recepcion_datos_tb").append(`
-                <tr>
-                    <td>${it.id_recepcion}</td>
-                    <td>${it.fecha_recepcion}</td>
-                    <td>${it.nombre_cliente}</td>
-                    <td>${it.telefono}</td>
-                    <td>${it.direccion}</td>
-                    <td>${badgeEstado(it.estado)}</td>
-                    <td>
-                        <button class="btn btn-info btn-sm imprimir-recepcion" title="Imprimir"><i class="bi bi-printer"></i></button>
-                        <button class="btn btn-warning btn-sm editar-recepcion" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                        <button class="btn btn-danger btn-sm cerrar-recepcion" title="Cerrar"><i class="bi bi-x-circle"></i></button>
-                    </td>
-                </tr>`);
-        });
-    }
+  let datos = ejecutarAjax("controladores/recepcion.php","leer=1");
+  if(datos === "0"){
+    $("#recepcion_datos_tb").html("NO HAY REGISTROS");
+  }else{
+    let json = JSON.parse(datos);
+    $("#recepcion_datos_tb").html('');
+    json.map(function(it){
+      $("#recepcion_datos_tb").append(`
+        <tr>
+          <td>${it.id_recepcion}</td>
+          <td>${it.fecha_recepcion}</td>
+          <td>${it.nombre_cliente}</td>
+          <td>${it.telefono}</td>
+          <td>${it.direccion}</td>
+          <td>${badgeEstado(it.estado)}</td>
+          <td>
+            <button class="btn btn-info btn-sm imprimir-recepcion" title="Imprimir"><i class="bi bi-printer"></i></button>
+            <button class="btn btn-warning btn-sm editar-recepcion" title="Editar"><i class="bi bi-pencil-square"></i></button>
+            <button class="btn btn-danger btn-sm cerrar-recepcion" title="Cerrar"><i class="bi bi-x-circle"></i></button>
+          </td>
+        </tr>`);
+    });
+  }
 }
 
 function buscarRecepcion(){
-    let b = $("#b_recepcion").val();
-    let datos = ejecutarAjax("controladores/recepcion.php","leer_descripcion="+b);
-    if(datos === "0"){
-        $("#recepcion_datos_tb").html("NO HAY REGISTROS");
-    }else{
-        let json = JSON.parse(datos);
-        $("#recepcion_datos_tb").html('');
-        json.map(function(it){
-            $("#recepcion_datos_tb").append(`
-                <tr>
-                    <td>${it.id_recepcion}</td>
-                    <td>${it.fecha_recepcion}</td>
-                    <td>${it.nombre_cliente}</td>
-                    <td>${it.telefono}</td>
-                    <td>${it.direccion}</td>
-                    <td>${badgeEstado(it.estado)}</td>
-                    <td>
-                        <button class="btn btn-info btn-sm imprimir-recepcion" title="Imprimir"><i class="bi bi-printer"></i></button>
-                        <button class="btn btn-warning btn-sm editar-recepcion" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                        <button class="btn btn-danger btn-sm cerrar-recepcion" title="Cerrar"><i class="bi bi-x-circle"></i></button>
-                    </td>
-                </tr>`);
-        });
-    }
+  let b = $("#b_recepcion").val();
+  let datos = ejecutarAjax("controladores/recepcion.php","leer_descripcion="+b);
+  if(datos === "0"){
+    $("#recepcion_datos_tb").html("NO HAY REGISTROS");
+  }else{
+    let json = JSON.parse(datos);
+    $("#recepcion_datos_tb").html('');
+    json.map(function(it){
+      $("#recepcion_datos_tb").append(`
+        <tr>
+          <td>${it.id_recepcion}</td>
+          <td>${it.fecha_recepcion}</td>
+          <td>${it.nombre_cliente}</td>
+          <td>${it.telefono}</td>
+          <td>${it.direccion}</td>
+          <td>${badgeEstado(it.estado)}</td>
+          <td>
+            <button class="btn btn-info btn-sm imprimir-recepcion" title="Imprimir"><i class="bi bi-printer"></i></button>
+            <button class="btn btn-warning btn-sm editar-recepcion" title="Editar"><i class="bi bi-pencil-square"></i></button>
+            <button class="btn btn-danger btn-sm cerrar-recepcion" title="Cerrar"><i class="bi bi-x-circle"></i></button>
+          </td>
+        </tr>`);
+    });
+  }
 }
 window.buscarRecepcion = buscarRecepcion;
 
+// ========================= Impresión =========================
 function imprimirRecepcion(id){
   const datos = ejecutarAjax("controladores/recepcion.php","leer_id="+id);
   if(datos === "0"){ alert("Recepción no encontrada"); return; }
@@ -347,50 +383,51 @@ function imprimirRecepcion(id){
 }
 window.imprimirRecepcion = imprimirRecepcion;
 
-
+// ========================= Acciones tabla =========================
 $(document).on("click",".editar-recepcion",function(){
-    let id=$(this).closest("tr").find("td:eq(0)").text();
-    mostrarAgregarRecepcion();
-    setTimeout(function(){
-        let datos = ejecutarAjax("controladores/recepcion.php","leer_id="+id);
-        let json = JSON.parse(datos);
-        $("#id_recepcion").val(json.id_recepcion);
-        $("#fecha_txt").val(json.fecha_recepcion);
-        $("#observaciones_txt").val(json.observaciones);
-        $("#estado_lst").val(json.estado);
-        cargarListaClientes(json.id_cliente);
-        let det = ejecutarAjax("controladores/detalle_recepcion.php","leer=1&id_recepcion="+id);
-        if(det !== "0"){
-            detallesRecepcion = JSON.parse(det);
-        }else{
-            detallesRecepcion = [];
-        }
-        renderDetallesRecepcion();
-    },100);
+  let id=$(this).closest("tr").find("td:eq(0)").text();
+  mostrarAgregarRecepcion();
+  setTimeout(function(){
+    let datos = ejecutarAjax("controladores/recepcion.php","leer_id="+id);
+    let json = JSON.parse(datos);
+    $("#id_recepcion").val(json.id_recepcion);
+    $("#fecha_txt").val(json.fecha_recepcion);
+    $("#observaciones_txt").val(json.observaciones);
+    $("#estado_lst").val(json.estado);
+    cargarListaClientes(json.id_cliente);
+    let det = ejecutarAjax("controladores/detalle_recepcion.php","leer=1&id_recepcion="+id);
+    if(det !== "0"){
+      detallesRecepcion = JSON.parse(det);
+    }else{
+      detallesRecepcion = [];
+    }
+    renderDetallesRecepcion();
+    // Accesorios: si necesitás editar por-detalle, podés usar setAccesoriosFromString(d.accesorios_entregados) al seleccionar el detalle.
+  },100);
 });
 
 $(document).on("click",".imprimir-recepcion",function(){
-    let id=$(this).closest("tr").find("td:eq(0)").text();
-    imprimirRecepcion(id);
+  let id=$(this).closest("tr").find("td:eq(0)").text();
+  imprimirRecepcion(id);
 });
 
 $(document).on("click",".cerrar-recepcion",function(){
-    let id=$(this).closest("tr").find("td:eq(0)").text();
-    Swal.fire({
-        title:"¿Cerrar recepción?",
-        text:"Esta acción marcará la recepción como cerrada.",
-        icon:"warning",
-        showCancelButton:true,
-        confirmButtonText:"Sí, cerrar",
-        cancelButtonText:"Cancelar",
-        confirmButtonColor:"#dc3545",
-        cancelButtonColor:"#6c757d",
-        reverseButtons:true
-    }).then((result)=>{
-        if(result.isConfirmed){
-            ejecutarAjax("controladores/recepcion.php","cerrar="+id);
-            mensaje_confirmacion("Recepción cerrada");
-            cargarTablaRecepcion();
-        }
-    });
+  let id=$(this).closest("tr").find("td:eq(0)").text();
+  Swal.fire({
+    title:"¿Cerrar recepción?",
+    text:"Esta acción marcará la recepción como cerrada.",
+    icon:"warning",
+    showCancelButton:true,
+    confirmButtonText:"Sí, cerrar",
+    cancelButtonText:"Cancelar",
+    confirmButtonColor:"#dc3545",
+    cancelButtonColor:"#6c757d",
+    reverseButtons:true
+  }).then((result)=>{
+    if(result.isConfirmed){
+      ejecutarAjax("controladores/recepcion.php","cerrar="+id);
+      mensaje_confirmacion("Recepción cerrada");
+      cargarTablaRecepcion();
+    }
+  });
 });

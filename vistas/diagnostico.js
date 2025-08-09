@@ -8,16 +8,80 @@ window.mostrarAgregarDiagnostico=mostrarAgregarDiagnostico;
 function cargarListaRecepciones(selId=""){let d=ejecutarAjax("controladores/recepcion.php","leer=1"),$s=$("#id_recepcion_lst");$s.html('<option value="">-- Seleccione --</option>');if(d!=="0"){JSON.parse(d).forEach(r=>$s.append(`<option value="${r.id_recepcion}">${r.id_recepcion} - ${r.nombre_cliente}</option>`));if(selId)$s.val(selId);}}
 $(document).on("change","#id_recepcion_lst",function(){let id=$(this).val(),$s=$("#id_detalle_lst");$s.html('<option value="">-- Equipo --</option>');if(id){let det=ejecutarAjax("controladores/detalle_recepcion.php","leer=1&id_recepcion="+id);if(det!=="0")JSON.parse(det).forEach(d=>$s.append(`<option value="${d.id_detalle}">${d.nombre_equipo}</option>`));}});
 
-function agregarDetalleDiagnostico(){if($("#componente_txt").val().trim()===''){mensaje_dialogo_info_ERROR("Ingrese componente","ERROR");return;}let det={componente:$("#componente_txt").val().trim(),estado_componente:$("#estado_comp_lst").val(),hallazgo:$("#hallazgo_txt").val().trim(),accion_recomendada:$("#accion_txt").val().trim(),id_repuesto:null,cantidad_repuesto:0,costo_unitario_estimado:0,costo_linea_estimado:0,nota_adicional:null};detallesDiagnostico.push(det);renderDetallesDiagnostico();$("#componente_txt,#hallazgo_txt,#accion_txt").val('');}
-window.agregarDetalleDiagnostico=agregarDetalleDiagnostico;
+function agregarDetalleDiagnostico(){
+  if(!validarDetalleDiagnosticoForm()) return;
+
+  let det = {
+    componente: _trim("#componente_txt"),
+    estado_componente: _trim("#estado_comp_lst"),
+    hallazgo: _trim("#hallazgo_txt"),
+    accion_recomendada: _trim("#accion_txt"),
+    id_repuesto: null,
+    cantidad_repuesto: 0,
+    costo_unitario_estimado: 0,
+    costo_linea_estimado: 0,
+    nota_adicional: null
+  };
+  detallesDiagnostico.push(det);
+  renderDetallesDiagnostico();
+
+  $("#componente_txt,#hallazgo_txt,#accion_txt").val('');
+  $("#estado_comp_lst").val('');
+}
+window.agregarDetalleDiagnostico = agregarDetalleDiagnostico;
+
 
 function renderDetallesDiagnostico(){let tb=$("#detalle_diagnostico_tb");tb.html('');detallesDiagnostico.forEach((d,i)=>tb.append(`<tr><td>${d.componente}</td><td>${d.estado_componente}</td><td>${d.hallazgo}</td><td>${d.accion_recomendada}</td><td><button class="btn btn-danger btn-sm" onclick="eliminarDetalleDiagnostico(${i});return false;"><i class="bi bi-trash"></i></button></td></tr>`));}
 
 function eliminarDetalleDiagnostico(i){detallesDiagnostico.splice(i,1);renderDetallesDiagnostico();}
 window.eliminarDetalleDiagnostico=eliminarDetalleDiagnostico;
 
-function guardarDiagnostico(){if($("#id_recepcion_lst").val()===''){mensaje_dialogo_info_ERROR("Seleccione recepción","ERROR");return;}if(detallesDiagnostico.length===0){mensaje_dialogo_info_ERROR("Debe agregar detalle","ERROR");return;}let datos={id_recepcion:$("#id_recepcion_lst").val(),id_detalle_recepcion:$("#id_detalle_lst").val()||null,estado:$("#estado_lst").val(),descripcion_falla:$("#descripcion_falla_txt").val().trim(),tiempo_estimado_horas:parseFloat($("#tiempo_txt").val()||0),costo_mano_obra_estimado:parseFloat($("#costo_mano_txt").val()||0),costo_repuestos_estimado:parseFloat($("#costo_repuestos_txt").val()||0),aplica_garantia:$("#aplica_garantia_lst").val(),observaciones:$("#observaciones_txt").val().trim(),creado_por:1};datos.costo_total_estimado=datos.costo_mano_obra_estimado+datos.costo_repuestos_estimado;let id=$("#id_diagnostico").val();if(id==="0"){id=ejecutarAjax("controladores/diagnostico.php","guardar="+JSON.stringify(datos));detallesDiagnostico.forEach(d=>{d={...d,id_diagnostico:id};ejecutarAjax("controladores/detalle_diagnostico.php","guardar="+JSON.stringify(d));});}else{datos={...datos,id_diagnostico:id,modificado_por:1};ejecutarAjax("controladores/diagnostico.php","actualizar="+JSON.stringify(datos));ejecutarAjax("controladores/detalle_diagnostico.php","eliminar_por_diagnostico="+id);detallesDiagnostico.forEach(d=>{d={...d,id_diagnostico:id};ejecutarAjax("controladores/detalle_diagnostico.php","guardar="+JSON.stringify(d));});}mensaje_confirmacion("Guardado correctamente");mostrarListarDiagnostico();}
-window.guardarDiagnostico=guardarDiagnostico;
+function guardarDiagnostico(){
+  if(!validarDiagnosticoForm()) return;
+  if(detallesDiagnostico.length === 0){
+    mensaje_dialogo_info_ERROR("Debe agregar al menos un detalle","ATENCIÓN");
+    return;
+  }
+
+  let datos = {
+    id_recepcion: _trim("#id_recepcion_lst"),
+    id_detalle_recepcion: _trim("#id_detalle_lst"),
+    estado: _trim("#estado_lst"),
+    descripcion_falla: _trim("#descripcion_falla_txt"),
+    tiempo_estimado_horas: _num("#tiempo_txt") || 0,
+    costo_mano_obra_estimado: _num("#costo_mano_txt") || 0,
+    costo_repuestos_estimado: _num("#costo_repuestos_txt") || 0,
+    aplica_garantia: _trim("#aplica_garantia_lst"),
+    observaciones: _trim("#observaciones_txt"),
+    creado_por: 1
+  };
+  datos.costo_total_estimado = datos.costo_mano_obra_estimado + datos.costo_repuestos_estimado;
+
+  let id = $("#id_diagnostico").val();
+  if(id === "0"){
+    id = ejecutarAjax("controladores/diagnostico.php","guardar="+JSON.stringify(datos));
+    detallesDiagnostico.forEach(d=>{
+      d = {...d, id_diagnostico:id};
+      ejecutarAjax("controladores/detalle_diagnostico.php","guardar="+JSON.stringify(d));
+    });
+  }else{
+    datos = {...datos, id_diagnostico:id, modificado_por:1};
+    ejecutarAjax("controladores/diagnostico.php","actualizar="+JSON.stringify(datos));
+    ejecutarAjax("controladores/detalle_diagnostico.php","eliminar_por_diagnostico="+id);
+    detallesDiagnostico.forEach(d=>{
+      d = {...d, id_diagnostico:id};
+      ejecutarAjax("controladores/detalle_diagnostico.php","guardar="+JSON.stringify(d));
+    });
+  }
+  mensaje_confirmacion("Guardado correctamente");
+  mostrarListarDiagnostico();
+}
+window.guardarDiagnostico = guardarDiagnostico;
+
+// Helpers
+function _trim(id){ return ($(id).val() || "").toString().trim(); }
+function _num(id){ let v = parseFloat($(id).val()); return isNaN(v) ? null : v; }
+
 
 function imprimirDiagnostico(id){
   const d = ejecutarAjax("controladores/diagnostico.php","leer_id="+id);
@@ -178,3 +242,111 @@ function cargarDiagnostico(id){let d=ejecutarAjax("controladores/diagnostico.php
 $(document).on("click",".editar-diagnostico",function(){cargarDiagnostico($(this).data('id'));});
 $(document).on("click",".eliminar-diagnostico",function(){if(confirm("¿Eliminar?")){ejecutarAjax("controladores/diagnostico.php","eliminar="+$(this).data('id'));cargarTablaDiagnostico();}});
 $(document).on("click",".imprimir-diagnostico",function(){imprimirDiagnostico($(this).data('id'));});
+
+
+
+function _val(id){ return $(id).val(); }
+function _trim(id){ return (_val(id) || "").toString().trim(); }
+function _num(id){ const v = parseFloat(_val(id)); return isNaN(v) ? null : v; }
+function _setInvalid($el, cond){
+  $el.toggleClass("is-invalid", !!cond);
+  return !cond; // true si es válido
+}
+function _clearInvalid(ids){
+  ids.forEach(sel => $(sel).removeClass("is-invalid"));
+}
+
+// Quitar rojo al escribir/cambiar
+$(document).on("input change", `
+  #id_recepcion_lst,#id_detalle_lst,#estado_lst,#descripcion_falla_txt,
+  #tiempo_txt,#costo_mano_txt,#costo_repuestos_txt,#aplica_garantia_lst,
+  #componente_txt,#estado_comp_lst,#hallazgo_txt,#accion_txt
+`, function(){
+  $(this).removeClass("is-invalid");
+});
+
+// === Validación del formulario principal ===
+// Todo obligatorio excepto #observaciones_txt
+function validarDiagnosticoForm(){
+  if(!_trim("#id_recepcion_lst")){
+    mensaje_dialogo_info_ERROR("Seleccione recepción","ATENCIÓN");
+    return false;
+  }
+  if(!_trim("#id_detalle_lst")){
+    mensaje_dialogo_info_ERROR("Seleccione equipo","ATENCIÓN");
+    return false;
+  }
+  if(!_trim("#estado_lst")){
+    mensaje_dialogo_info_ERROR("Seleccione estado","ATENCIÓN");
+    return false;
+  }
+  if(!_trim("#descripcion_falla_txt")){
+    mensaje_dialogo_info_ERROR("Ingrese descripción de la falla","ATENCIÓN");
+    return false;
+  }
+  if(_num("#tiempo_txt") === null || _num("#tiempo_txt") < 0){
+    mensaje_dialogo_info_ERROR("Ingrese un tiempo estimado válido","ATENCIÓN");
+    return false;
+  }
+  if(_num("#costo_mano_txt") === null || _num("#costo_mano_txt") < 0){
+    mensaje_dialogo_info_ERROR("Ingrese un costo de mano de obra válido","ATENCIÓN");
+    return false;
+  }
+  if(_num("#costo_repuestos_txt") === null || _num("#costo_repuestos_txt") < 0){
+    mensaje_dialogo_info_ERROR("Ingrese un costo de repuestos válido","ATENCIÓN");
+    return false;
+  }
+  if(!_trim("#aplica_garantia_lst")){
+    mensaje_dialogo_info_ERROR("Seleccione si aplica garantía","ATENCIÓN");
+    return false;
+  }
+  return true;
+}
+
+
+// === Validación del detalle de componentes ===
+function validarDetalleDiagnosticoForm(){
+  if(!_trim("#componente_txt")){
+    mensaje_dialogo_info_ERROR("Ingrese componente","ATENCIÓN");
+    return false;
+  }
+  if(!_trim("#estado_comp_lst")){
+    mensaje_dialogo_info_ERROR("Seleccione estado del componente","ATENCIÓN");
+    return false;
+  }
+  if(!_trim("#hallazgo_txt")){
+    mensaje_dialogo_info_ERROR("Ingrese hallazgo","ATENCIÓN");
+    return false;
+  }
+  if(!_trim("#accion_txt")){
+    mensaje_dialogo_info_ERROR("Ingrese acción recomendada","ATENCIÓN");
+    return false;
+  }
+  return true;
+}
+
+// Campos numéricos que deben limpiar el "0" inicial al escribir
+const CAMPOS_NUM = '#tiempo_txt,#costo_mano_txt,#costo_repuestos_txt';
+
+// Al enfocar: si está en 0, limpiamos; si tiene otro valor, lo seleccionamos
+$(document).on('focus', CAMPOS_NUM, function () {
+  const v = ($(this).val() || '').trim();
+  if (v === '0' || /^0([.,]0+)?$/.test(v)) {
+    $(this).val('');
+  } else {
+    this.select();
+  }
+});
+
+// Al escribir: solo permitimos dígitos, coma o punto
+$(document).on('input', CAMPOS_NUM, function () {
+  this.value = this.value.replace(/[^0-9.,]/g, '');
+});
+
+// Al salir: si quedó vacío o no numérico, volvemos a 0 (y normalizamos coma→punto)
+$(document).on('blur', CAMPOS_NUM, function () {
+  let v = ($(this).val() || '').trim().replace(',', '.');
+  if (v === '' || isNaN(v)) v = '0';
+  const n = parseFloat(v);
+  $(this).val(Number.isFinite(n) ? n : 0);
+});

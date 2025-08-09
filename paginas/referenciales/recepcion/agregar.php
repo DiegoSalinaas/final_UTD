@@ -56,15 +56,17 @@
                     <label for="falla_txt" class="form-label">Falla Reportada</label>
                     <input type="text" id="falla_txt" class="form-control">
                 </div>
-                <div class="col-md-3">
-                    <label class="form-label">Accesorios Entregados</label>
-                    <div id="accesorios_container">
-                        <div class="input-group mb-2 accesorio-item">
-                            <input type="text" class="form-control accesorios_txt">
-                            <button class="btn btn-outline-primary" type="button" id="add_accesorio_btn"><i class="bi bi-plus"></i></button>
-                        </div>
-                    </div>
-                </div>
+                <div class="col-md-6">
+  <label class="form-label fw-semibold">Accesorios entregados</label>
+  <div class="d-flex gap-2">
+    <input id="accesorio_input" type="text" class="form-control" placeholder="Ej.: Cargador, Cable USB, Funda…">
+    <button id="add_accesorio_btn" type="button" class="btn btn-outline-primary">
+      <i class="bi bi-plus"></i> Agregar
+    </button>
+  </div>
+  <div class="form-text">Escribí un accesorio y presioná Enter o “Agregar”</div>
+  <div id="accesorios_chips" class="mt-2"></div>
+</div>
                 <div class="col-md-3">
                     <label for="diagnostico_txt" class="form-label">Diagnóstico Preliminar</label>
                     <input type="text" id="diagnostico_txt" class="form-control">

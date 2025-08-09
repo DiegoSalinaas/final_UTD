@@ -455,26 +455,7 @@
 </li>
                 </ul>
               </li>
-              <li class="nav-item menu-open">
-                <a href="#" class="nav-link active">
-                  <i class="nav-icon bi bi-bag"></i>
-                  <p>
-                    Auditoria
-                    <i class="nav-arrow bi bi-chevron-right"></i>
-                  </p>
-                </a>
-                <ul class="nav nav-treeview">
-                
-                  
-<li class="nav-item">
-  <a href="#" class="nav-link" onclick="mostrarListarReportes(); return false;">
-    <i class="nav-icon bi bi-file-earmark-text"></i>
-    <p>Reportes</p>
-  </a>
-</li>
-
-                </ul>
-              </li>
+        
               
             </ul>
             <!--end::Sidebar Menu-->
