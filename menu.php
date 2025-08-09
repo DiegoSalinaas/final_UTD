@@ -467,7 +467,7 @@
                 
                   
 <li class="nav-item">
-  <a href="#" class="nav-link" onclick=; return false;">
+  <a href="#" class="nav-link" onclick="mostrarListarReportes(); return false;">
     <i class="nav-icon bi bi-file-earmark-text"></i>
     <p>Reportes</p>
   </a>
@@ -796,6 +796,7 @@
     <script src="vistas/recepcion.js"></script>
     <script src="vistas/nota_credito.js"></script>
     <script src="vistas/diagnostico.js"></script>
+    <script src="vistas/reportes.js"></script>
     <!--end::Script-->
   </body>
   <!--end::Body-->
