@@ -448,11 +448,11 @@
 </li>
 
 <li class="nav-item">
-  <a href="#" class="nav-link" onclick=; return false;">
+  <a href="#" class="nav-link" onclick="mostrarListarDiagnostico(); return false;">
     <i class="nav-icon bi bi-file-earmark-text"></i>
     <p>Diagnostico</p>
   </a>
-</li>    
+</li>
                 </ul>
               </li>
               
@@ -775,6 +775,7 @@
     <script src="vistas/remision.js"></script>
     <script src="vistas/recepcion.js"></script>
     <script src="vistas/nota_credito.js"></script>
+    <script src="vistas/diagnostico.js"></script>
     <!--end::Script-->
   </body>
   <!--end::Body-->
