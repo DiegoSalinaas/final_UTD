@@ -700,6 +700,7 @@ CREATE TABLE `recepcion` (
 CREATE TABLE `recepcion_detalle` (
   `id_detalle` int(11) NOT NULL AUTO_INCREMENT,
   `id_recepcion` int(11) NOT NULL,
+  `nombre_equipo` varchar(100) DEFAULT NULL,
   `marca` varchar(50) DEFAULT NULL,
   `modelo` varchar(50) DEFAULT NULL,
   `numero_serie` varchar(100) DEFAULT NULL,

@@ -36,6 +36,10 @@
             </div>
             <hr class="my-4">
             <div class="row g-3">
+                <div class="col-md-3">
+                    <label for="nombre_equipo_txt" class="form-label">Equipo</label>
+                    <input type="text" id="nombre_equipo_txt" class="form-control">
+                </div>
                 <div class="col-md-2">
                     <label for="marca_txt" class="form-label">Marca</label>
                     <input type="text" id="marca_txt" class="form-control">
@@ -87,6 +91,7 @@
         <table class="table table-bordered text-center align-middle">
             <thead class="table-light">
                 <tr>
+                    <th>Equipo</th>
                     <th>Marca</th>
                     <th>Modelo</th>
                     <th>N° Serie</th>

@@ -59,12 +59,14 @@ $(document).on('change', '#id_cliente_lst', function () {
 
 
 function agregarDetalleRecepcion(){
+    if($("#nombre_equipo_txt").val().trim().length===0){mensaje_dialogo_info_ERROR("Debe ingresar el nombre del equipo","ERROR");return;}
     if($("#marca_txt").val().trim().length===0){mensaje_dialogo_info_ERROR("Debe ingresar la marca","ERROR");return;}
     if($("#modelo_txt").val().trim().length===0){mensaje_dialogo_info_ERROR("Debe ingresar el modelo","ERROR");return;}
     if($("#numero_serie_txt").val().trim().length===0){mensaje_dialogo_info_ERROR("Debe ingresar el número de serie","ERROR");return;}
     if($("#falla_txt").val().trim().length===0){mensaje_dialogo_info_ERROR("Debe ingresar la falla reportada","ERROR");return;}
 
     let detalle = {
+        nombre_equipo: $("#nombre_equipo_txt").val().trim(),
         marca: $("#marca_txt").val().trim(),
         modelo: $("#modelo_txt").val().trim(),
         numero_serie: $("#numero_serie_txt").val().trim(),
@@ -80,6 +82,7 @@ function agregarDetalleRecepcion(){
 window.agregarDetalleRecepcion = agregarDetalleRecepcion;
 
 function limpiarDetalleRecepcionForm(){
+    $("#nombre_equipo_txt").val('');
     $("#marca_txt").val('');
     $("#modelo_txt").val('');
     $("#numero_serie_txt").val('');
@@ -94,6 +97,7 @@ function renderDetallesRecepcion(){
     tbody.html('');
     detallesRecepcion.forEach((d,i)=>{
         tbody.append(`<tr>
+            <td>${d.nombre_equipo}</td>
             <td>${d.marca}</td>
             <td>${d.modelo}</td>
             <td>${d.numero_serie}</td>
@@ -208,6 +212,7 @@ function imprimirRecepcion(id){
 
     let filas = detalles.map((d,i)=>`<tr>
             <td>${i+1}</td>
+            <td>${d.nombre_equipo}</td>
             <td>${d.marca}</td>
             <td>${d.modelo}</td>
             <td>${d.numero_serie}</td>
@@ -249,6 +254,7 @@ function imprimirRecepcion(id){
             <thead>
                 <tr>
                     <th>#</th>
+                    <th>Equipo</th>
                     <th>Marca</th>
                     <th>Modelo</th>
                     <th>N° Serie</th>
