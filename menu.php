@@ -340,13 +340,13 @@
                       <p>Ciudades</p>
                     </a>
                   </li>
-<!--                  <li class="nav-item">
+                  <li class="nav-item">
   <a href="#" class="nav-link" onclick="mostrarListarUsuarioss(); return false;">
     <i class="nav-icon bi bi-people"></i>
-    <p>Usuarios</p>
+    <p>Tecnicos</p>
   </a>
 </li>
-
+<!--
 <li class="nav-item">
   <a href="#" class="nav-link" onclick="mostrarListarEbooks(); return false;">
     <i class="nav-icon bi-book-fill"></i>

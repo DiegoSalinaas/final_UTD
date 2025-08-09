@@ -19,6 +19,9 @@ function mostrarAgregarNotaCredito(){
     cargarListaProductos();
     detallesNota = [];
     renderDetallesNota();
+    let hoy = new Date();
+    let fechaFormateada = hoy.toISOString().split('T')[0]; 
+    $("#fecha_txt").val(fechaFormateada);
 }
 window.mostrarAgregarNotaCredito = mostrarAgregarNotaCredito;
 
@@ -66,6 +69,14 @@ function agregarDetalleNotaCredito(){
     if($("#precio_unitario_txt").val().trim().length === 0){mensaje_dialogo_info_ERROR("Debe ingresar el precio","ERROR");return;}
     if(parseFloat($("#precio_unitario_txt").val()) <= 0){mensaje_dialogo_info_ERROR("El precio debe ser mayor que 0","ERROR");return;}
 
+   
+    const motivoItem = $("#motivo_item_txt").val().trim();
+    if(motivoItem.length === 0){
+        mensaje_dialogo_info_ERROR("Debe ingresar el motivo del ítem","ERROR");
+        $("#motivo_item_txt").focus();
+        return;
+    }
+
     let detalle = {
         id_producto: $("#id_producto_lst").val(),
         producto: $("#id_producto_lst option:selected").text(),
@@ -74,13 +85,14 @@ function agregarDetalleNotaCredito(){
         precio_unitario: $("#precio_unitario_txt").val(),
         subtotal: (parseFloat($("#cantidad_txt").val()) || 0) * (parseFloat($("#precio_unitario_txt").val()) || 0),
         total_linea: (parseFloat($("#cantidad_txt").val()) || 0) * (parseFloat($("#precio_unitario_txt").val()) || 0),
-        motivo: $("#motivo_item_txt").val(),
+        motivo: motivoItem, // 👈 queda guardado
         observacion: $("#observacion_txt").val()
     };
     detallesNota.push(detalle);
     renderDetallesNota();
     limpiarDetalleNotaForm();
 }
+
 window.agregarDetalleNotaCredito = agregarDetalleNotaCredito;
 
 function limpiarDetalleNotaForm(){
@@ -205,6 +217,16 @@ function guardarNotaCredito(){
     if($("#fecha_txt").val().trim().length === 0){mensaje_dialogo_info_ERROR("Debe ingresar la fecha","ERROR");return;}
     if(detallesNota.length === 0){mensaje_dialogo_info_ERROR("Debe agregar al menos un item","ERROR");return;}
 
+  
+    const faltantes = detallesNota
+        .map((d,i)=>({index:i+1, motivo:(d.motivo||"").trim()}))
+        .filter(x=>x.motivo.length === 0);
+
+    if(faltantes.length > 0){
+        mensaje_dialogo_info_ERROR(`Hay ${faltantes.length} ítem(s) sin motivo. Corrija antes de guardar.`, "ATENCIÓN");
+        return;
+    }
+
     let total = detallesNota.reduce((acc,d)=>acc+parseFloat(d.total_linea),0);
 
     let datos = {
@@ -235,6 +257,7 @@ function guardarNotaCredito(){
     mensaje_confirmacion("Guardado correctamente");
     mostrarListarNotaCredito();
 }
+
 window.guardarNotaCredito = guardarNotaCredito;
 
 function cargarTablaNotaCredito(){
@@ -339,4 +362,8 @@ $(document).on("click",".anular-nota",function(){
             cargarTablaNotaCredito();
         }
     });
+});
+$(document).on('blur', '#motivo_item_txt', function(){
+    const vacio = $(this).val().trim().length === 0;
+    $(this).toggleClass('is-invalid', vacio).toggleClass('is-valid', !vacio);
 });

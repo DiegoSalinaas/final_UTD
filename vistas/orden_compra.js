@@ -19,6 +19,9 @@ function mostrarAgregarOrden(){
     cargarListaPresupuestos();
     cargarListaProductos();
     limpiarOrden();
+    let hoy = new Date();
+    let fechaFormateada = hoy.toISOString().split('T')[0]; 
+    $("#fecha_txt").val(fechaFormateada);
 }
 window.mostrarAgregarOrden = mostrarAgregarOrden;
 
