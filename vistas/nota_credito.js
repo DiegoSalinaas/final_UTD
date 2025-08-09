@@ -363,7 +363,3 @@ $(document).on("click",".anular-nota",function(){
         }
     });
 });
-$(document).on('blur', '#motivo_item_txt', function(){
-    const vacio = $(this).val().trim().length === 0;
-    $(this).toggleClass('is-invalid', vacio).toggleClass('is-valid', !vacio);
-});
