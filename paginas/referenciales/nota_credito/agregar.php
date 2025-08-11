@@ -65,7 +65,7 @@
             <label for="precio_unitario_txt" class="form-label">Precio Unitario</label>
             <div class="input-group">
               <span class="input-group-text">Gs.</span>
-              <input type="number" id="precio_unitario_txt" class="form-control text-end" min="0.01" step="0.01" placeholder="0">
+              <input type="text" id="precio_unitario_txt" class="form-control text-end" placeholder="0">
             </div>
           </div>
         </div>
@@ -75,7 +75,7 @@
             <label for="subtotal_txt" class="form-label">Subtotal</label>
             <div class="input-group">
               <span class="input-group-text">Gs.</span>
-              <input type="number" id="subtotal_txt" class="form-control text-end" readonly>
+              <input type="text" id="subtotal_txt" class="form-control text-end" readonly>
             </div>
           </div>
           <div class="col-12 col-md-5">
