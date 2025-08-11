@@ -42,6 +42,13 @@ if (isset($_POST['leer'])) {
     if (!empty($_POST['id_recepcion'])) {
         $sql .= " WHERE id_recepcion = :id_recepcion";
         $params['id_recepcion'] = $_POST['id_recepcion'];
+
+        if (!empty($_POST['sin_diagnostico'])) {
+            $sql .= " AND id_detalle NOT IN (SELECT id_detalle_recepcion FROM diagnostico WHERE id_recepcion = :id_recepcion)";
+        }
+    } elseif (!empty($_POST['sin_diagnostico'])) {
+        // Filtrar sin diagnóstico para todas las recepciones
+        $sql .= " WHERE id_detalle NOT IN (SELECT id_detalle_recepcion FROM diagnostico)";
     }
     $sql .= " ORDER BY id_detalle DESC";
     $query = $cn->prepare($sql);
