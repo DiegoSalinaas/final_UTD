@@ -56,6 +56,22 @@ if (isset($_POST['leer'])) {
     echo $query->rowCount() ? json_encode($query->fetchAll(PDO::FETCH_OBJ)) : '0';
 }
 
+// LISTAR RECEPCIONES PENDIENTES
+if (isset($_POST['leer_pendientes'])) {
+    $db = new DB();
+    $cn = $db->conectar();
+    $sql = "SELECT id_recepcion, nombre_cliente FROM recepcion WHERE estado = 'PENDIENTE'";
+    $params = [];
+    if (!empty($_POST['incluido'])) {
+        $sql .= " OR id_recepcion = :incluido";
+        $params['incluido'] = $_POST['incluido'];
+    }
+    $sql .= " ORDER BY id_recepcion DESC";
+    $query = $cn->prepare($sql);
+    $query->execute($params);
+    echo $query->rowCount() ? json_encode($query->fetchAll(PDO::FETCH_OBJ)) : '0';
+}
+
 // LEER POR ID
 if (isset($_POST['leer_id'])) {
     $db = new DB();
