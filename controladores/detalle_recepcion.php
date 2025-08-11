@@ -44,7 +44,7 @@ if (isset($_POST['leer'])) {
         $params['id_recepcion'] = $_POST['id_recepcion'];
 
         if (!empty($_POST['sin_diagnostico'])) {
-            $sql .= " AND NOT EXISTS (SELECT 1 FROM diagnostico d WHERE d.id_detalle_recepcion = rd.id_detalle AND d.id_recepcion = :id_recepcion)";
+            $sql .= " AND NOT EXISTS (SELECT 1 FROM diagnostico d WHERE d.id_detalle_recepcion = rd.id_detalle AND d.id_recepcion = rd.id_recepcion)";
         }
     } elseif (!empty($_POST['sin_diagnostico'])) {
         // Filtrar sin diagnóstico para todas las recepciones
