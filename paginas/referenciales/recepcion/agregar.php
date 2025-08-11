@@ -22,13 +22,7 @@
                     <label for="direccion_txt" class="form-label">Dirección</label>
                     <input type="text" id="direccion_txt" class="form-control" readonly>
                 </div>
-<!--                <div class="col-md-3">
-                    <label for="estado_lst" class="form-label">Estado</label>
-                    <select id="estado_lst" class="form-select">
-                        <option value="PENDIENTE">Pendiente</option>
-                        <option value="CERRADA">Cerrada</option>
-                    </select>
-                </div>-->
+                <input type="hidden" id="estado_lst" value="PENDIENTE">
                 <div class="col-md-12">
                     <label for="observaciones_txt" class="form-label">Observaciones</label>
                     <input type="text" id="observaciones_txt" class="form-control">
