@@ -89,7 +89,11 @@ function agregarDetalleNotaCredito(){
     if($("#precio_unitario_txt").val().trim().length === 0){mensaje_dialogo_info_ERROR("Debe ingresar el precio","ERROR");return;}
     if(obtenerPrecioUnitario() <= 0){mensaje_dialogo_info_ERROR("El precio debe ser mayor que 0","ERROR");return;}
 
-   
+    if(detallesNota.some(d => d.id_producto === $("#id_producto_lst").val())){
+        mensaje_dialogo_info_ERROR("El producto ya fue agregado","ERROR");
+        return;
+    }
+
     const motivoItem = $("#motivo_item_txt").val().trim();
     if(motivoItem.length === 0){
         mensaje_dialogo_info_ERROR("Debe ingresar el motivo del ítem","ERROR");
