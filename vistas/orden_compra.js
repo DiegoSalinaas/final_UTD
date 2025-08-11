@@ -21,7 +21,8 @@ function setTotalUI(total) {
     '#total_txt', '#total_lbl',
     '#total_orden_txt', '#total_orden_lbl',
     '#total_general', '#total_general_lbl',
-    '#total', '#total_orden'
+    '#total', '#total_orden',
+    '#total_oc_txt'
   ];
   ids.forEach(sel => {
     const $el = $(sel);

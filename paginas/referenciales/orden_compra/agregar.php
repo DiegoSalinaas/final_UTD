@@ -137,38 +137,6 @@
   </div>
 </div>
 
-<!-- Helpers: formato y cálculo rápido -->
-<script>
-  function formatearPY(n) {
-    return new Intl.NumberFormat('es-PY', { minimumFractionDigits: 0 }).format(Math.round(n || 0));
-  }
-
-  // Calcula y muestra el subtotal al tipear
-  $(document).on('input', '#cantidad_txt, #precio_unitario_txt', function () {
-    const cant = parseFloat($('#cantidad_txt').val()) || 0;
-    const precio = parseFloat($('#precio_unitario_txt').val()) || 0;
-    const subtotal = cant * precio;
-    $('#subtotal_txt').val(formatearPY(subtotal));
-  });
-
-  // Función opcional para que puedas actualizar el total mostrado
-  // Llamala después de renderizar las filas en #detalle_oc_tb
-  function actualizarTotalOC() {
-    let total = 0;
-    $('#detalle_oc_tb tr').each(function(){
-      const celda = $(this).find('[data-subtotal], .subtotal-celda').first();
-      let valor = 0;
-      if (celda.length) {
-        // Si guardas el valor "crudo" en data-subtotal, úsalo
-        const ds = celda.attr('data-subtotal');
-        valor = ds ? parseFloat(ds) || 0 : (parseFloat(celda.text().replace(/\./g,'')) || 0);
-      }
-      total += valor;
-    });
-    $('#total_oc_txt').val(formatearPY(total));
-  }
-</script>
-
 <!-- Ajustes finos -->
 <style>
   .card { overflow: hidden; }
