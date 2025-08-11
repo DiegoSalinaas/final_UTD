@@ -32,7 +32,7 @@
     <div class="card-header bg-light rounded-top-4">
       <div class="d-flex align-items-center justify-content-between">
         <span class="fw-semibold"><i class="bi bi-box-seam me-2"></i>Detalle de productos</span>
-        <span class="badge text-bg-primary" id="badge_items" title="Cantidad de ítems">0 ítems</span>
+        <!--<span class="badge text-bg-primary" id="badge_items" title="Cantidad de ítems">0 ítems</span>-->
       </div>
     </div>
 

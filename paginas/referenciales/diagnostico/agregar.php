@@ -81,7 +81,7 @@
     <div class="card-header bg-light rounded-top-4">
       <div class="d-flex align-items-center justify-content-between">
         <span class="fw-semibold"><i class="bi bi-cpu me-2"></i>Detalle de componentes</span>
-        <span class="badge text-bg-primary" id="badge_items_diag" title="Cantidad de ítems">0 ítems</span>
+<!--        <span class="badge text-bg-primary" id="badge_items_diag" title="Cantidad de ítems">0 ítems</span>-->
       </div>
     </div>
 
