@@ -139,11 +139,21 @@ function formatearPY(n) {
   return new Intl.NumberFormat('es-PY', { minimumFractionDigits: 0 }).format(Math.round(n || 0));
 }
 
-$(document).on('input', '#cantidad_txt, #precio_unitario_txt', function () {
+function recalcularSubtotal(){
   const cant = parseFloat($('#cantidad_txt').val()) || 0;
-  const precio = parseFloat($('#precio_unitario_txt').val()) || 0;
+  const precio = quitarDecimalesConvertir($('#precio_unitario_txt').val()) || 0;
   const subtotal = cant * precio;
-  $('#subtotal_txt').val(formatearPY(subtotal));
+  $('#subtotal_txt').val(subtotal ? formatearPY(subtotal) : '');
+}
+
+$(document).on('input', '#cantidad_txt', function(){
+  recalcularSubtotal();
+});
+
+$(document).on('input', '#precio_unitario_txt', function(){
+  const n = quitarDecimalesConvertir($(this).val());
+  $(this).val(n ? formatearPY(n) : '');
+  recalcularSubtotal();
 });
 </script>
 

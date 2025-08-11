@@ -82,7 +82,7 @@ function agregarDetalle(){
         mensaje_dialogo_info_ERROR("Debe ingresar el costo", "ERROR");
         return;
     }
-    if(parseFloat($("#precio_unitario_txt").val()) <= 0){
+    if(quitarDecimalesConvertir($("#precio_unitario_txt").val()) <= 0){
         mensaje_dialogo_info_ERROR("El costo debe ser mayor a cero", "ERROR");
         return;
     }
@@ -93,13 +93,15 @@ function agregarDetalle(){
         return;
     }
 
+    let cantidad = parseFloat($("#cantidad_txt").val()) || 0;
+    let precio = quitarDecimalesConvertir($("#precio_unitario_txt").val());
     let detalle = {
         id_detalle: 0,
         id_producto: idProducto,
         producto: $("#id_producto_lst option:selected").text(),
-        cantidad: $("#cantidad_txt").val(),
-        precio_unitario: $("#precio_unitario_txt").val(),
-        subtotal: (parseFloat($("#cantidad_txt").val()) || 0) * (parseFloat($("#precio_unitario_txt").val()) || 0)
+        cantidad: cantidad,
+        precio_unitario: precio,
+        subtotal: cantidad * precio
     };
 
     detalles.push(detalle);
@@ -115,8 +117,8 @@ function renderDetalles(){
         tbody.append(`<tr>
             <td>${d.producto}</td>
             <td>${d.cantidad}</td>
-            <td>${d.precio_unitario}</td>
-            <td>${d.subtotal}</td>
+            <td>${formatearPY(d.precio_unitario)}</td>
+            <td>${formatearPY(d.subtotal)}</td>
             <td><button class="btn btn-danger btn-sm quitar-detalle" data-idx="${idx}" title="Eliminar">
                 <i class="bi bi-trash"></i>
             </button></td>
@@ -133,8 +135,8 @@ function limpiarDetalleForm(){
 }
 
 function calcularTotal(){
-    let total = detalles.reduce(function(t,d){ return t + parseFloat(d.subtotal); },0);
-    $("#total_txt").val(total.toFixed(2));
+    let total = detalles.reduce(function(t,d){ return t + (parseFloat(d.subtotal) || 0); },0);
+    $("#total_txt").val(formatearPY(total));
 }
 
 function guardarPresupuesto(){
@@ -157,7 +159,7 @@ function guardarPresupuesto(){
     let datos = {
         id_proveedor: $("#id_proveedor_lst").val(),
         fecha: $("#fecha_txt").val(),
-        total_estimado: $("#total_txt").val()
+        total_estimado: quitarDecimalesConvertir($("#total_txt").val())
     };
     if($("#id_presupuesto").val() === "0"){
         let id = ejecutarAjax("controladores/presupuestos_compra.php","guardar="+JSON.stringify(datos));
@@ -244,12 +246,18 @@ $(document).on("click",".editar-presupuesto",function(){
     $("#id_presupuesto").val(json.id_presupuesto);
     $("#id_proveedor_lst").val(json.id_proveedor);
     $("#fecha_txt").val(json.fecha);
-    $("#total_txt").val(json.total_estimado);
+    $("#total_txt").val(formatearPY(json.total_estimado));
 
     // Cargar datos del detalle asociado
     let det = ejecutarAjax("controladores/detalle_presupuesto.php","leer=1&id_presupuesto="+id);
     if(det !== "0"){
-        detalles = JSON.parse(det).map(d => ({...d, id_producto: parseInt(d.id_producto)}));
+        detalles = JSON.parse(det).map(d => ({
+            ...d,
+            id_producto: parseInt(d.id_producto),
+            cantidad: parseFloat(d.cantidad),
+            precio_unitario: parseFloat(d.precio_unitario),
+            subtotal: parseFloat(d.subtotal)
+        }));
         renderDetalles();
     }
 });
