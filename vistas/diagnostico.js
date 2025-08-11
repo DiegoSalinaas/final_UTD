@@ -267,42 +267,65 @@ $(document).on("input change", `
 });
 
 // === Validación del formulario principal ===
-// Todo obligatorio excepto #observaciones_txt
+
 function validarDiagnosticoForm(){
+  // Limpia marcas previas
+  _clearInvalid([
+    "#id_recepcion_lst","#id_detalle_lst","#estado_lst","#descripcion_falla_txt",
+    "#tiempo_txt","#costo_mano_txt","#costo_repuestos_txt","#aplica_garantia_lst"
+  ]);
+
   if(!_trim("#id_recepcion_lst")){
+    $("#id_recepcion_lst").addClass("is-invalid");
     mensaje_dialogo_info_ERROR("Seleccione recepción","ATENCIÓN");
     return false;
   }
   if(!_trim("#id_detalle_lst")){
+    $("#id_detalle_lst").addClass("is-invalid");
     mensaje_dialogo_info_ERROR("Seleccione equipo","ATENCIÓN");
     return false;
   }
   if(!_trim("#estado_lst")){
+    $("#estado_lst").addClass("is-invalid");
     mensaje_dialogo_info_ERROR("Seleccione estado","ATENCIÓN");
     return false;
   }
   if(!_trim("#descripcion_falla_txt")){
+    $("#descripcion_falla_txt").addClass("is-invalid");
     mensaje_dialogo_info_ERROR("Ingrese descripción de la falla","ATENCIÓN");
     return false;
   }
-  if(_num("#tiempo_txt") === null || _num("#tiempo_txt") < 0){
-    mensaje_dialogo_info_ERROR("Ingrese un tiempo estimado válido","ATENCIÓN");
+
+  const t = _num("#tiempo_txt");
+  if(t === null || t <= 0){
+    $("#tiempo_txt").addClass("is-invalid");
+    mensaje_dialogo_info_ERROR("El Tiempo Estimado debe ser mayor a 0","ATENCIÓN");
     return false;
   }
-  if(_num("#costo_mano_txt") === null || _num("#costo_mano_txt") < 0){
-    mensaje_dialogo_info_ERROR("Ingrese un costo de mano de obra válido","ATENCIÓN");
+
+  const m = _num("#costo_mano_txt");
+  if(m === null || m <= 0){
+    $("#costo_mano_txt").addClass("is-invalid");
+    mensaje_dialogo_info_ERROR("El Costo de Mano de Obra debe ser mayor a 0","ATENCIÓN");
     return false;
   }
-  if(_num("#costo_repuestos_txt") === null || _num("#costo_repuestos_txt") < 0){
-    mensaje_dialogo_info_ERROR("Ingrese un costo de repuestos válido","ATENCIÓN");
+
+  const r = _num("#costo_repuestos_txt");
+  if(r === null || r <= 0){
+    $("#costo_repuestos_txt").addClass("is-invalid");
+    mensaje_dialogo_info_ERROR("El Costo de Repuestos debe ser mayor a 0","ATENCIÓN");
     return false;
   }
+
   if(!_trim("#aplica_garantia_lst")){
+    $("#aplica_garantia_lst").addClass("is-invalid");
     mensaje_dialogo_info_ERROR("Seleccione si aplica garantía","ATENCIÓN");
     return false;
   }
+
   return true;
 }
+
 
 
 // === Validación del detalle de componentes ===
@@ -344,10 +367,12 @@ $(document).on('input', CAMPOS_NUM, function () {
   this.value = this.value.replace(/[^0-9.,]/g, '');
 });
 
-// Al salir: si quedó vacío o no numérico, volvemos a 0 (y normalizamos coma→punto)
 $(document).on('blur', CAMPOS_NUM, function () {
   let v = ($(this).val() || '').trim().replace(',', '.');
   if (v === '' || isNaN(v)) v = '0';
   const n = parseFloat(v);
   $(this).val(Number.isFinite(n) ? n : 0);
+  // Marca en rojo si no es > 0
+  $(this).toggleClass('is-invalid', !(n > 0));
 });
+

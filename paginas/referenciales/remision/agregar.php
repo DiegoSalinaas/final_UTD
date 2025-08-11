@@ -3,7 +3,7 @@
   <input type="hidden" id="id_remision" value="0">
   <input type="hidden" id="estado_txt" value="EMITIDO">
 
-  <!-- Card: Cabecera de remisión -->
+  <!-- Card: Cabecera -->
   <div class="card shadow rounded-4 border-0 mb-4">
     <div class="card-header bg-primary text-white rounded-top-4 d-flex align-items-center">
       <h4 class="mb-0"><i class="bi bi-truck me-2"></i> Agregar / Editar Remisión</h4>
@@ -25,18 +25,9 @@
         </div>
       </div>
     </div>
-
-    <div class="card-footer bg-light rounded-bottom-4 d-flex justify-content-end gap-2">
-      <button class="btn btn-success" onclick="guardarRemision(); return false;">
-        <i class="bi bi-save me-1"></i> Guardar
-      </button>
-      <button class="btn btn-outline-danger" onclick="mostrarListarRemision(); return false;">
-        <i class="bi bi-x-circle me-1"></i> Cancelar
-      </button>
-    </div>
   </div>
 
-  <!-- Card: Detalle de productos -->
+  <!-- Card: Detalle -->
   <div class="card shadow rounded-4 border-0">
     <div class="card-header bg-light rounded-top-4">
       <div class="d-flex align-items-center justify-content-between">
@@ -82,7 +73,7 @@
 
       <div class="table-responsive">
         <table class="table table-striped table-hover align-middle text-center mb-0">
-          <thead class="table-primary position-sticky top-0" style="z-index: 1;">
+          <thead class="table-primary position-sticky top-0" style="z-index:1;">
             <tr>
               <th>Producto</th>
               <th class="text-end">Cantidad</th>
@@ -92,7 +83,7 @@
             </tr>
           </thead>
           <tbody id="detalle_remision_tb">
-            <!-- filas dinámicas -->
+            <!-- filas dinámicas: en la celda de subtotal usar class="text-end cell-subtotal" -->
           </tbody>
           <tfoot class="table-light">
             <tr>
@@ -104,10 +95,19 @@
         </table>
       </div>
     </div>
+
+    <!-- BOTONES ABAJO -->
+    <div class="card-footer bg-light rounded-bottom-4 d-flex justify-content-end gap-2">
+      <button class="btn btn-success" onclick="guardarRemision(); return false;">
+        <i class="bi bi-save me-1"></i> Guardar
+      </button>
+      <button class="btn btn-outline-danger" onclick="mostrarListarRemision(); return false;">
+        <i class="bi bi-x-circle me-1"></i> Cancelar
+      </button>
+    </div>
   </div>
 </div>
 
-<!-- Opcional: pequeños toques de estilo -->
 <style>
   .card .form-label { margin-bottom: .35rem; }
   input[type=number]::-webkit-outer-spin-button,
