@@ -59,7 +59,7 @@
 
         <div class="col-md-2">
           <div class="form-floating">
-            <input type="number" step="0.01" id="precio_unitario_txt" class="form-control" inputmode="decimal" placeholder="Precio Unitario">
+            <input type="text" id="precio_unitario_txt" class="form-control" inputmode="decimal" placeholder="Precio Unitario">
             <label for="precio_unitario_txt">Precio Unitario</label>
           </div>
         </div>

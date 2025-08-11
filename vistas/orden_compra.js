@@ -37,7 +37,7 @@ function actualizarSubtotalUI() {
   const cant = getCantidad();
   const precio = getPrecioUnitario();
   const subtotal = cant * precio;
-  $('#subtotal_txt').val(formatearPY(subtotal)); // mostrar con puntos
+  $('#subtotal_txt').val(subtotal ? formatearPY(subtotal) : '');
 }
 
 function calcularTotalOrdenLocal() {
