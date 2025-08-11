@@ -37,20 +37,20 @@ if (isset($_POST['eliminar_por_recepcion'])) {
 
 // LISTAR DETALLES
 if (isset($_POST['leer'])) {
-    $sql = "SELECT id_detalle, id_recepcion, nombre_equipo, marca, modelo, numero_serie, falla_reportada, accesorios_entregados, diagnostico_preliminar, observaciones_detalle FROM recepcion_detalle";
+    $sql = "SELECT id_detalle, id_recepcion, nombre_equipo, marca, modelo, numero_serie, falla_reportada, accesorios_entregados, diagnostico_preliminar, observaciones_detalle FROM recepcion_detalle rd";
     $params = [];
     if (!empty($_POST['id_recepcion'])) {
-        $sql .= " WHERE id_recepcion = :id_recepcion";
+        $sql .= " WHERE rd.id_recepcion = :id_recepcion";
         $params['id_recepcion'] = $_POST['id_recepcion'];
 
         if (!empty($_POST['sin_diagnostico'])) {
-            $sql .= " AND id_detalle NOT IN (SELECT id_detalle_recepcion FROM diagnostico WHERE id_recepcion = :id_recepcion)";
+            $sql .= " AND NOT EXISTS (SELECT 1 FROM diagnostico d WHERE d.id_detalle_recepcion = rd.id_detalle AND d.id_recepcion = :id_recepcion)";
         }
     } elseif (!empty($_POST['sin_diagnostico'])) {
         // Filtrar sin diagnóstico para todas las recepciones
-        $sql .= " WHERE id_detalle NOT IN (SELECT id_detalle_recepcion FROM diagnostico)";
+        $sql .= " WHERE NOT EXISTS (SELECT 1 FROM diagnostico d WHERE d.id_detalle_recepcion = rd.id_detalle)";
     }
-    $sql .= " ORDER BY id_detalle DESC";
+    $sql .= " ORDER BY rd.id_detalle DESC";
     $query = $cn->prepare($sql);
     $query->execute($params);
     echo $query->rowCount() ? json_encode($query->fetchAll(PDO::FETCH_OBJ)) : '0';
