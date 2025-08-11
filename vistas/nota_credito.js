@@ -57,11 +57,29 @@ $(document).on('change','#id_producto_lst',function(){
     $('#descripcion_txt').val(desc);
 });
 
-$(document).on('input','#cantidad_txt, #precio_unitario_txt', function(){
+function obtenerPrecioUnitario(){
+    return quitarDecimalesConvertir(String($('#precio_unitario_txt').val() || '0')) || 0;
+}
+
+function actualizarSubtotalNC(){
     const cant = parseFloat($('#cantidad_txt').val()) || 0;
-    const precio = parseFloat($('#precio_unitario_txt').val()) || 0;
+    const precio = obtenerPrecioUnitario();
     const subtotal = cant * precio;
     $('#subtotal_txt').val(formatearPY(subtotal));
+}
+
+$(document).on('input','#cantidad_txt', actualizarSubtotalNC);
+
+$(document).on('input','#precio_unitario_txt', function(){
+    const raw = String($(this).val());
+    const digits = raw.replace(/\D/g, '');
+    if (digits.length === 0) {
+        $(this).val('');
+    } else {
+        const n = parseInt(digits,10) || 0;
+        $(this).val(formatearPY(n));
+    }
+    actualizarSubtotalNC();
 });
 
 function agregarDetalleNotaCredito(){
@@ -69,7 +87,7 @@ function agregarDetalleNotaCredito(){
     if($("#cantidad_txt").val().trim().length === 0){mensaje_dialogo_info_ERROR("Debe ingresar la cantidad","ERROR");return;}
     if(parseFloat($("#cantidad_txt").val()) <= 0){mensaje_dialogo_info_ERROR("La cantidad debe ser mayor que 0","ERROR");return;}
     if($("#precio_unitario_txt").val().trim().length === 0){mensaje_dialogo_info_ERROR("Debe ingresar el precio","ERROR");return;}
-    if(parseFloat($("#precio_unitario_txt").val()) <= 0){mensaje_dialogo_info_ERROR("El precio debe ser mayor que 0","ERROR");return;}
+    if(obtenerPrecioUnitario() <= 0){mensaje_dialogo_info_ERROR("El precio debe ser mayor que 0","ERROR");return;}
 
    
     const motivoItem = $("#motivo_item_txt").val().trim();
@@ -79,14 +97,17 @@ function agregarDetalleNotaCredito(){
         return;
     }
 
+    const cantidad = parseFloat($("#cantidad_txt").val()) || 0;
+    const precio = obtenerPrecioUnitario();
+    const subtotal = cantidad * precio;
     let detalle = {
         id_producto: $("#id_producto_lst").val(),
         producto: $("#id_producto_lst option:selected").text(),
         descripcion: $("#descripcion_txt").val(),
-        cantidad: $("#cantidad_txt").val(),
-        precio_unitario: $("#precio_unitario_txt").val(),
-        subtotal: (parseFloat($("#cantidad_txt").val()) || 0) * (parseFloat($("#precio_unitario_txt").val()) || 0),
-        total_linea: (parseFloat($("#cantidad_txt").val()) || 0) * (parseFloat($("#precio_unitario_txt").val()) || 0),
+        cantidad: cantidad,
+        precio_unitario: precio,
+        subtotal: subtotal,
+        total_linea: subtotal,
         motivo: motivoItem, // 👈 queda guardado
         observacion: $("#observacion_txt").val()
     };
