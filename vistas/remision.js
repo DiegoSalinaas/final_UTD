@@ -1,11 +1,7 @@
 
-(function(){
- let detallesRemision = [];
+let detallesRemision = [];
 let listaClientes = [];
 let listaProductos = [];
-
-
-})();
 function mostrarListarRemision(){
     let contenido = dameContenido("paginas/referenciales/remision/listar.php");
     $("#contenido-principal").html(contenido);
@@ -51,11 +47,35 @@ function renderListaProductos(arr){
     arr.forEach(p => select.append(`<option value="${p.producto_id}" data-precio="${p.precio}">${p.nombre}</option>`));
 }
 
-$(document).on('input','#cantidad_txt, #precio_unitario_txt', function(){
+function getPrecioUnitario(){
+    return quitarDecimalesConvertir(String($('#precio_unitario_txt').val() || '0')) || 0;
+}
+
+function actualizarSubtotal(){
     const cant = parseFloat($('#cantidad_txt').val()) || 0;
-    const precio = parseFloat($('#precio_unitario_txt').val()) || 0;
+    const precio = getPrecioUnitario();
     const subtotal = cant * precio;
-    $('#subtotal_txt').val(formatearPY(subtotal));
+    $('#subtotal_txt').val(subtotal ? formatearPY(subtotal) : '');
+}
+
+$(document).on('input','#cantidad_txt', actualizarSubtotal);
+
+$(document).on('input','#precio_unitario_txt', function(){
+    const raw = String($(this).val());
+    const digits = raw.replace(/\D/g,'');
+    if(digits.length === 0){
+        $(this).val('');
+    }else{
+        const n = parseInt(digits,10) || 0;
+        $(this).val(formatearPY(n));
+    }
+    actualizarSubtotal();
+});
+
+$(document).on('blur','#precio_unitario_txt', function(){
+    const n = getPrecioUnitario();
+    $(this).val(n ? formatearPY(n) : '');
+    actualizarSubtotal();
 });
 
 function agregarDetalleRemision(){
@@ -63,17 +83,24 @@ function agregarDetalleRemision(){
     if($("#cantidad_txt").val().trim().length === 0){mensaje_dialogo_info_ERROR("Debe ingresar la cantidad","ERROR");return;}
     if(parseFloat($("#cantidad_txt").val()) <= 0){mensaje_dialogo_info_ERROR("La cantidad debe ser mayor que 0","ERROR");return;}
     if($("#precio_unitario_txt").val().trim().length === 0){mensaje_dialogo_info_ERROR("Debe ingresar el precio","ERROR");return;}
-    if(parseFloat($("#precio_unitario_txt").val()) <= 0){mensaje_dialogo_info_ERROR("El precio debe ser mayor que 0","ERROR");return;}
+    if(getPrecioUnitario() <= 0){mensaje_dialogo_info_ERROR("El precio debe ser mayor que 0","ERROR");return;}
+
+    if(detallesRemision.some(d => d.id_producto === $("#id_producto_lst").val())){
+        mensaje_dialogo_info_ERROR("El producto ya fue agregado","ERROR");
+        return;
+    }
+
+    let cantidad = parseFloat($("#cantidad_txt").val()) || 0;
+    let precio = getPrecioUnitario();
 
     let detalle = {
         id_producto: $("#id_producto_lst").val(),
         producto: $("#id_producto_lst option:selected").text(),
-        cantidad: $("#cantidad_txt").val(),
-        precio_unitario: $("#precio_unitario_txt").val(),
-        subtotal: (parseFloat($("#cantidad_txt").val()) || 0) * (parseFloat($("#precio_unitario_txt").val()) || 0)
+        cantidad: cantidad,
+        precio_unitario: precio,
+        subtotal: cantidad * precio
     };
 console.log("✔ Detalles a guardar:", JSON.stringify(detallesRemision, null, 2));
-
 
     detallesRemision.push(detalle);
     renderDetallesRemision();
