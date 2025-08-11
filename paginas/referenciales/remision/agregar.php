@@ -31,11 +31,11 @@
                 </div>
                 <div class="col-md-2">
                     <label for="precio_unitario_txt" class="form-label">Precio Unitario</label>
-                    <input type="number" id="precio_unitario_txt" class="form-control" min="0.01" step="0.01">
+                    <input type="text" id="precio_unitario_txt" class="form-control" inputmode="decimal">
                 </div>
                 <div class="col-md-2">
                     <label for="subtotal_txt" class="form-label">Subtotal</label>
-                    <input type="number" id="subtotal_txt" class="form-control" readonly>
+                    <input type="text" id="subtotal_txt" class="form-control" readonly>
                 </div>
                 <div class="col-md-2 d-grid align-items-end">
                     <button class="btn btn-primary" onclick="agregarDetalleRemision(); return false;">
