@@ -5,7 +5,7 @@ window.mostrarListarDiagnostico=mostrarListarDiagnostico;
 function mostrarAgregarDiagnostico(){let c=dameContenido("paginas/referenciales/diagnostico/agregar.php");$("#contenido-principal").html(c);detallesDiagnostico=[];cargarListaRecepciones();}
 window.mostrarAgregarDiagnostico=mostrarAgregarDiagnostico;
 
-function cargarListaRecepciones(selId=""){let d=ejecutarAjax("controladores/recepcion.php","leer=1"),$s=$("#id_recepcion_lst");$s.html('<option value="">-- Seleccione --</option>');if(d!=="0"){JSON.parse(d).forEach(r=>$s.append(`<option value="${r.id_recepcion}">${r.id_recepcion} - ${r.nombre_cliente}</option>`));if(selId)$s.val(selId);}}
+function cargarListaRecepciones(selId=""){let q="leer_pendientes=1";if(selId)q+="&incluido="+selId;let d=ejecutarAjax("controladores/recepcion.php",q),$s=$("#id_recepcion_lst");$s.html('<option value="">-- Seleccione --</option>');if(d!=="0"){JSON.parse(d).forEach(r=>$s.append(`<option value="${r.id_recepcion}">${r.id_recepcion} - ${r.nombre_cliente}</option>`));if(selId)$s.val(selId);}}
 $(document).on("change","#id_recepcion_lst",function(){let id=$(this).val(),$s=$("#id_detalle_lst");$s.html('<option value="">-- Equipo --</option>');if(id){let det=ejecutarAjax("controladores/detalle_recepcion.php","leer=1&id_recepcion="+id+"&sin_diagnostico=1");if(det!=="0")JSON.parse(det).forEach(d=>$s.append(`<option value="${d.id_detalle}">${d.nombre_equipo}</option>`));}});
 
 function agregarDetalleDiagnostico(){
