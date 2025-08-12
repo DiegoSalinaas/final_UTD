@@ -1,35 +1,79 @@
-<div class="container mt-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-        <h4 class="mb-0">Listado de Notas de Crédito</h4>
-        <button class="btn btn-primary" onclick="mostrarAgregarNotaCredito(); return false;">
-            <i class="bi bi-plus-circle"></i> Agregar
-        </button>
+<div class="container my-4">
+  <!-- Encabezado -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0 text-primary fw-bold d-flex align-items-center">
+      <i class="bi bi-receipt-cutoff me-2"></i> Listado de Notas de Crédito
+    </h3>
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge text-bg-light border shadow-sm">
+        Total: <strong id="nota_credito_count" class="ms-1">0</strong>
+      </span>
+      <button class="btn btn-primary" onclick="mostrarAgregarNotaCredito(); return false;">
+        <i class="bi bi-plus-circle me-1"></i> Agregar
+      </button>
     </div>
-    <div class="card shadow-sm rounded-4">
-        <div class="card-body">
-            <div class="row g-3 align-items-end">
-                <div class="col-md-8">
-                    <label for="b_nota_credito" class="form-label">Buscador</label>
-                    <input type="text" id="b_nota_credito" class="form-control" placeholder="Buscar por cliente o número...">
-                </div>
-                
-            </div>
-            <div class="table-responsive mt-4">
-                <table class="table table-bordered table-hover align-middle text-center">
-                    <thead class="table-light">
-                        <tr>
-                            <th>#</th>
-                            <th>Número</th>
-                            <th>Fecha</th>
-                            <th>Cliente</th>
-                            <th>Total</th>
-                            <th>Estado</th>
-                            <th>Operaciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="nota_credito_datos_tb"></tbody>
-                </table>
-            </div>
+  </div>
+
+  <!-- Card -->
+  <div class="card shadow rounded-4 border-0">
+    <div class="card-body">
+      <!-- Filtros -->
+      <div class="row g-3 align-items-end">
+        <div class="col-md-6">
+          <label for="b_nota_credito" class="form-label fw-semibold">Buscar</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" id="b_nota_credito" class="form-control" placeholder="Cliente, número…">
+            <button class="btn btn-outline-secondary" type="button" id="limpiar_busqueda_btn">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
         </div>
+
+        <div class="col-md-3">
+          <label for="estado_filtro" class="form-label fw-semibold">Estado</label>
+          <select id="estado_filtro" class="form-select">
+            <option value="">Todos</option>
+            <option value="EMITIDO">Emitido</option>
+            <option value="APROBADO">Aprobado</option>
+            <option value="ANULADO">Anulado</option>
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label fw-semibold">Rango de fechas</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
+            <input type="date" id="f_desde" class="form-control" placeholder="Desde">
+            <input type="date" id="f_hasta" class="form-control" placeholder="Hasta">
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla -->
+      <div class="table-responsive mt-4">
+        <table class="table table-striped table-hover align-middle text-center mb-0">
+          <thead class="table-primary position-sticky top-0" style="z-index:1;">
+            <tr>
+              <th style="width: 6%">#</th>
+              <th style="width: 14%">Número</th>
+              <th style="width: 14%">Fecha</th>
+              <th style="width: 30%">Cliente</th>
+              <th class="text-end" style="width: 12%">Total</th>
+              <th style="width: 12%">Estado</th>
+              <th style="width: 12%">Operaciones</th>
+            </tr>
+          </thead>
+          <tbody id="nota_credito_datos_tb">
+            <!-- Contenido dinámico -->
+          </tbody>
+        </table>
+      </div>
     </div>
+  </div>
 </div>
+
+<style>
+  .table thead th { white-space: nowrap; }
+  .text-end { text-align: end !important; }
+</style>

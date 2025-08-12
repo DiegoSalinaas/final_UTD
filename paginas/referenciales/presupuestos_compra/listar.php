@@ -1,57 +1,78 @@
-<div class="container mt-4">
-    <!-- Encabezado -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h3 class="fw-bold text-primary mb-0">
-            <i class="bi bi-file-earmark-text"></i> Presupuestos de Compra
-        </h3>
-        <button class="btn btn-success d-flex align-items-center shadow-sm" onclick="mostrarAgregarPresupuesto(); return false;">
-            <i class="bi bi-plus-circle me-2"></i> Nuevo Presupuesto
-        </button>
+<div class="container my-4">
+  <!-- Encabezado -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="mb-0 text-primary fw-bold d-flex align-items-center">
+      <i class="bi bi-file-earmark-text me-2"></i> Presupuestos de Compra
+    </h3>
+    <div class="d-flex align-items-center gap-2">
+      <span class="badge text-bg-light border shadow-sm">
+        Total: <strong id="presupuesto_count" class="ms-1">0</strong>
+      </span>
+      <button class="btn btn-success d-flex align-items-center shadow-sm" onclick="mostrarAgregarPresupuesto(); return false;">
+        <i class="bi bi-plus-circle me-2"></i> Nuevo Presupuesto
+      </button>
     </div>
+  </div>
 
-    <!-- Card principal -->
-    <div class="card shadow rounded-4 border-0">
-        <div class="card-body">
-            <!-- Buscador -->
-            <div class="row g-3 align-items-end mb-3">
-                <div class="col-md-8">
-                    <label for="b_presupuesto" class="form-label fw-semibold">Buscar presupuesto</label>
-                    <input type="text" id="b_presupuesto" class="form-control form-control-lg" placeholder="Escribe el nombre del proveedor...">
-                </div>
-                <div class="col-md-4 ms-auto">
-                    <label for="estado_filtro" class="form-label fw-semibold">Estado</label>
-                    <select id="estado_filtro" class="form-select form-select-lg">
-                        <option value="">Todos</option>
-                        <option value="PENDIENTE">Pendientes</option>
-                        <option value="APROBADO">Aprobados</option>
-                        <option value="ANULADO">Anulados</option>
-                    </select>
-                </div>
-<!--                <div class="col-md-3">
-                    <button class="btn btn-outline-primary btn-lg w-100 shadow-sm" onclick="buscarPresupuesto(); return false;">
-                        <i class="bi bi-search me-2"></i> Buscar
-                    </button>
-                </div>-->
-            </div>
-
-            <!-- Tabla -->
-            <div class="table-responsive">
-                <table class="table table-striped table-hover align-middle text-center">
-                    <thead class="table-primary text-nowrap">
-                        <tr>
-                            <th>#</th>
-                            <th>Proveedor</th>
-                            <th>Fecha</th>
-                            <th>Total Estimado</th>
-                            <th>Estado</th>
-                            <th>Operaciones</th>
-                        </tr>
-                    </thead>
-                    <tbody id="datos_tb">
-                        <!-- Filas dinámicas -->
-                    </tbody>
-                </table>
-            </div>
+  <!-- Card principal -->
+  <div class="card shadow rounded-4 border-0">
+    <div class="card-body">
+      <!-- Filtros -->
+      <div class="row g-3 align-items-end">
+        <div class="col-md-6">
+          <label for="b_presupuesto" class="form-label fw-semibold">Buscar</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-search"></i></span>
+            <input type="text" id="b_presupuesto" class="form-control" placeholder="Proveedor, número…">
+            <button class="btn btn-outline-secondary" type="button" id="limpiar_busqueda_btn">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
         </div>
+
+        <div class="col-md-3">
+          <label for="estado_filtro" class="form-label fw-semibold">Estado</label>
+          <select id="estado_filtro" class="form-select">
+            <option value="">Todos</option>
+            <option value="PENDIENTE">Pendiente</option>
+            <option value="APROBADO">Aprobado</option>
+            <option value="ANULADO">Anulado</option>
+          </select>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label fw-semibold">Rango de fechas</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
+            <input type="date" id="f_desde" class="form-control" placeholder="Desde">
+            <input type="date" id="f_hasta" class="form-control" placeholder="Hasta">
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla -->
+      <div class="table-responsive mt-4">
+        <table class="table table-striped table-hover align-middle text-center mb-0">
+          <thead class="table-primary position-sticky top-0" style="z-index:1;">
+            <tr>
+              <th style="width: 6%">#</th>
+              <th style="width: 30%">Proveedor</th>
+              <th style="width: 16%">Fecha</th>
+              <th class="text-end" style="width: 16%">Total Estimado</th>
+              <th style="width: 14%">Estado</th>
+              <th style="width: 18%">Operaciones</th>
+            </tr>
+          </thead>
+          <tbody id="datos_tb">
+            <!-- Filas dinámicas -->
+          </tbody>
+        </table>
+      </div>
     </div>
+  </div>
 </div>
+
+<style>
+  .table thead th { white-space: nowrap; }
+  .text-end { text-align: end !important; }
+</style>
