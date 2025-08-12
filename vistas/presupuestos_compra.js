@@ -9,15 +9,31 @@ function toNumberPY(v) {
   if (v == null) return 0;
   v = String(v).trim();
   if (v === "") return 0;
-  const lastC = v.lastIndexOf(",");
-  const lastD = v.lastIndexOf(".");
-  const decIdx = Math.max(lastC, lastD);
-  if (decIdx > -1) {
-    const intPart  = v.slice(0, decIdx).replace(/[.,\s]/g, "");
-    const fracPart = v.slice(decIdx + 1).replace(/[^\d]/g, "");
-    return Number(intPart + "." + fracPart) || 0;
+  v = v.replace(/\s/g, "");
+
+  const hasComma = v.includes(",");
+  const hasDot = v.includes(".");
+
+  if (hasComma && hasDot) {
+    // Si hay ambos símbolos, el último encontrado es el separador decimal
+    if (v.lastIndexOf(",") > v.lastIndexOf(".")) {
+      v = v.replace(/\./g, "").replace(",", ".");
+    } else {
+      v = v.replace(/,/g, "");
+    }
+  } else if (hasComma) {
+    // Solo comas -> decimal, puntos como miles
+    v = v.replace(/\./g, "").replace(",", ".");
+  } else if (hasDot) {
+    const parts = v.split(".");
+    if (parts.length > 2 || (parts.length === 2 && parts[1].length === 3)) {
+      // Múltiples puntos o 3 dígitos al final -> todos son miles
+      v = v.replace(/\./g, "");
+    }
+    // Si no, se asume punto decimal y se deja tal cual
   }
-  return Number(v.replace(/[.,\s]/g, "")) || 0;
+
+  return Number(v) || 0;
 }
 
 function fmt0(n) {
