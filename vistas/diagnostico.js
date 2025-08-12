@@ -61,27 +61,35 @@ function guardarDiagnostico(){
     costo_mano_obra_estimado: _num("#costo_mano_txt") || 0,
     costo_repuestos_estimado: _num("#costo_repuestos_txt") || 0,
     aplica_garantia: _trim("#aplica_garantia_lst"),
-    observaciones: _trim("#observaciones_txt"),
-    creado_por: 1
+    observaciones: _trim("#observaciones_txt")
   };
   datos.costo_total_estimado = datos.costo_mano_obra_estimado + datos.costo_repuestos_estimado;
 
   let id = $("#id_diagnostico").val();
   if(id === "0"){
+    datos.creado_por = 1;
     id = ejecutarAjax("controladores/diagnostico.php","guardar="+JSON.stringify(datos));
-    detallesDiagnostico.forEach(d=>{
-      d = {...d, id_diagnostico:id};
-      ejecutarAjax("controladores/detalle_diagnostico.php","guardar="+JSON.stringify(d));
-    });
   }else{
     datos = {...datos, id_diagnostico:id, modificado_por:1};
     ejecutarAjax("controladores/diagnostico.php","actualizar="+JSON.stringify(datos));
     ejecutarAjax("controladores/detalle_diagnostico.php","eliminar_por_diagnostico="+id);
-    detallesDiagnostico.forEach(d=>{
-      d = {...d, id_diagnostico:id};
-      ejecutarAjax("controladores/detalle_diagnostico.php","guardar="+JSON.stringify(d));
-    });
   }
+
+  detallesDiagnostico.forEach(d=>{
+    const det = {
+      id_diagnostico: id,
+      componente: d.componente,
+      estado_componente: d.estado_componente,
+      hallazgo: d.hallazgo,
+      accion_recomendada: d.accion_recomendada,
+      id_repuesto: d.id_repuesto,
+      cantidad_repuesto: d.cantidad_repuesto,
+      costo_unitario_estimado: d.costo_unitario_estimado,
+      costo_linea_estimado: d.costo_linea_estimado,
+      nota_adicional: d.nota_adicional
+    };
+    ejecutarAjax("controladores/detalle_diagnostico.php","guardar="+JSON.stringify(det));
+  });
   mensaje_confirmacion("Guardado correctamente");
   mostrarListarDiagnostico();
 }
