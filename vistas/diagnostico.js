@@ -248,13 +248,18 @@ window.imprimirDiagnostico = imprimirDiagnostico;
 function cargarTablaDiagnostico(filtro=""){let q=filtro?"leer_descripcion="+filtro:"leer=1",datos=ejecutarAjax("controladores/diagnostico.php",q);if(datos==="0"){$("#diagnostico_datos_tb").html("NO HAY REGISTROS");}else{let js=JSON.parse(datos);$("#diagnostico_datos_tb").html('');js.forEach(it=>{$("#diagnostico_datos_tb").append(`<tr><td>${it.id_diagnostico}</td><td>${it.id_recepcion} - ${it.nombre_cliente}</td><td>${it.fecha_inicio}</td><td>${badgeEstado(it.estado)}</td><td><button class="btn btn-secondary btn-sm imprimir-diagnostico" data-id="${it.id_diagnostico}"><i class="bi bi-printer"></i></button> <button class="btn btn-warning btn-sm editar-diagnostico" data-id="${it.id_diagnostico}"><i class="bi bi-pencil-square"></i></button> <button class="btn btn-danger btn-sm eliminar-diagnostico" data-id="${it.id_diagnostico}"><i class="bi bi-trash"></i></button></td></tr>`);});}}
 
 function cargarDiagnostico(id){
+  // Cargar la vista de edición antes de establecer los datos para evitar
+  // que se reinicie el arreglo de detalles al incluir nuevamente el script
+  mostrarAgregarDiagnostico(false);
+
   let d=ejecutarAjax("controladores/diagnostico.php","leer_id="+id);
   if(d!=='0'){
     let j=JSON.parse(d);
-    detallesDiagnostico=[];
+
+    // Obtener los detalles del diagnóstico ya guardados
     let det=ejecutarAjax("controladores/detalle_diagnostico.php","leer=1&id_diagnostico="+id);
-    if(det!=='0')detallesDiagnostico=JSON.parse(det);
-    mostrarAgregarDiagnostico(false);
+    detallesDiagnostico = det!=="0" ? JSON.parse(det) : [];
+
     $("#id_diagnostico").val(j.id_diagnostico);
     $("#estado_lst").val(j.estado);
     $("#descripcion_falla_txt").val(j.descripcion_falla);
@@ -263,13 +268,15 @@ function cargarDiagnostico(id){
     $("#costo_mano_txt").val(j.costo_mano_obra_estimado);
     $("#costo_repuestos_txt").val(j.costo_repuestos_estimado);
     $("#aplica_garantia_lst").val(j.aplica_garantia);
+
     cargarListaRecepciones(j.id_recepcion);
     let detRec=ejecutarAjax("controladores/detalle_recepcion.php","leer=1&id_recepcion="+j.id_recepcion);
-    if(detRec!=='0'){
+    if(detRec!=="0"){
       let arr=JSON.parse(detRec),$s=$("#id_detalle_lst");
       arr.forEach(e=>$s.append(`<option value="${e.id_detalle}">${e.nombre_equipo}</option>`));
       $s.val(j.id_detalle_recepcion);
     }
+
     renderDetallesDiagnostico();
   }
 }
