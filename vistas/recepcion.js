@@ -2,6 +2,20 @@
 let detallesRecepcion = [];
 let listaClientes = [];
 
+function renderAccionesRecepcion(estado){
+  const est = (estado || '').toUpperCase();
+  const diag = est === 'DIAGNOSTICADO';
+  const cerr = est === 'CERRADA';
+  const editStyle = (diag || cerr) ? ' style="opacity:.5;"' : '';
+  const cierre = cerr
+    ? '<button class="btn btn-danger btn-sm eliminar-recepcion" title="Eliminar"><i class="bi bi-trash"></i></button>'
+    : `<button class="btn btn-danger btn-sm cerrar-recepcion" title="Cerrar"${diag ? ' style="opacity:.5;"' : ''}><i class="bi bi-x-circle"></i></button>`;
+  return `
+            <button class="btn btn-info btn-sm imprimir-recepcion" title="Imprimir"><i class="bi bi-printer"></i></button>
+            <button class="btn btn-warning btn-sm editar-recepcion" title="Editar"${editStyle}><i class="bi bi-pencil-square"></i></button>
+            ${cierre}`;
+}
+
 // ========================= Navegación =========================
 function mostrarListarRecepcion(){
   let contenido = dameContenido("paginas/referenciales/recepcion/listar.php");
@@ -214,7 +228,7 @@ function cargarTablaRecepcion(){
     let json = JSON.parse(datos);
     $("#recepcion_datos_tb").html('');
     json.map(function(it){
-     
+      const acciones = renderAccionesRecepcion(it.estado);
       $("#recepcion_datos_tb").append(`
         <tr>
           <td>${it.id_recepcion}</td>
@@ -223,12 +237,7 @@ function cargarTablaRecepcion(){
           <td>${it.telefono}</td>
           <td>${it.direccion}</td>
           <td>${badgeEstado(it.estado)}</td>
-        <td>
-            <button class="btn btn-info btn-sm imprimir-recepcion" title="Imprimir"><i class="bi bi-printer"></i></button>
-            <button class="btn btn-warning btn-sm editar-recepcion" title="Editar"><i class="bi bi-pencil-square"></i></button>
-            <button class="btn btn-danger btn-sm cerrar-recepcion" title="Cerrar"><i class="bi bi-x-circle"></i></button>
-          </td>
-
+          <td>${acciones}</td>
         </tr>`);
     });
   }
@@ -243,7 +252,7 @@ function buscarRecepcion(){
     let json = JSON.parse(datos);
     $("#recepcion_datos_tb").html('');
     json.map(function(it){
-      
+      const acciones = renderAccionesRecepcion(it.estado);
       $("#recepcion_datos_tb").append(`
         <tr>
           <td>${it.id_recepcion}</td>
@@ -384,6 +393,15 @@ window.imprimirRecepcion = imprimirRecepcion;
 
 // ========================= Acciones tabla =========================
 $(document).on("click",".editar-recepcion",function(){
+  const estado = $(this).closest("tr").find("td:eq(5)").text().trim().toUpperCase();
+  if(estado === "DIAGNOSTICADO"){
+    Swal.fire("Atención","El campo está siendo utilizado y no se puede editar ni cerrar.","info");
+    return;
+  }
+  if(estado === "CERRADA"){
+    Swal.fire("Atención","La recepción está cerrada y no se puede editar.","info");
+    return;
+  }
   let id=$(this).closest("tr").find("td:eq(0)").text();
   mostrarAgregarRecepcion();
   setTimeout(function(){
@@ -411,10 +429,40 @@ $(document).on("click",".imprimir-recepcion",function(){
 });
 
 $(document).on("click",".cerrar-recepcion",function(){
+  const estado = $(this).closest("tr").find("td:eq(5)").text().trim().toUpperCase();
+  if(estado === "DIAGNOSTICADO"){
+    Swal.fire("Atención","El campo está siendo utilizado y no se puede editar ni cerrar.","info");
+    return;
+  }
+  if(estado === "CERRADA"){
+    Swal.fire("Atención","La recepción ya está cerrada.","info");
+    return;
+  }
   let id=$(this).closest("tr").find("td:eq(0)").text();
   Swal.fire({
     title:"¿Cerrar recepción?",
     text:"Esta acción marcará la recepción como cerrada.",
+    icon:"warning",
+    showCancelButton:true,
+    confirmButtonText:"Sí, cerrar",
+    cancelButtonText:"Cancelar",
+    confirmButtonColor:"#dc3545",
+    cancelButtonColor:"#6c757d",
+    reverseButtons:true
+  }).then((result)=>{
+    if(result.isConfirmed){
+      ejecutarAjax("controladores/recepcion.php","cerrar="+id);
+      mensaje_confirmacion("Recepción cerrada");
+      cargarTablaRecepcion();
+    }
+  });
+});
+
+$(document).on("click",".eliminar-recepcion",function(){
+  let id=$(this).closest("tr").find("td:eq(0)").text();
+  Swal.fire({
+    title:"¿Eliminar recepción?",
+    text:"Esta acción eliminará el registro.",
     icon:"warning",
     showCancelButton:true,
     confirmButtonText:"Sí, eliminar",
@@ -424,8 +472,8 @@ $(document).on("click",".cerrar-recepcion",function(){
     reverseButtons:true
   }).then((result)=>{
     if(result.isConfirmed){
-      ejecutarAjax("controladores/recepcion.php","cerrar="+id);
-      mensaje_confirmacion("Recepción cerrada");
+      ejecutarAjax("controladores/recepcion.php","eliminar="+id);
+      mensaje_confirmacion("Registro eliminado");
       cargarTablaRecepcion();
     }
   });
