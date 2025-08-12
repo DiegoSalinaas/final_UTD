@@ -3,6 +3,7 @@ let detallesRecepcion = [];
 let listaClientes = [];
 
 function renderAccionesRecepcion(estado){
+
   const est = (estado || '').toUpperCase();
   const diag = est === 'DIAGNOSTICADO';
   const cerr = est === 'CERRADA';
@@ -14,6 +15,7 @@ function renderAccionesRecepcion(estado){
             <button class="btn btn-info btn-sm imprimir-recepcion" title="Imprimir"><i class="bi bi-printer"></i></button>
             <button class="btn btn-warning btn-sm editar-recepcion" title="Editar"${editStyle}><i class="bi bi-pencil-square"></i></button>
             ${cierre}`;
+
 }
 
 // ========================= Navegación =========================
@@ -398,10 +400,12 @@ $(document).on("click",".editar-recepcion",function(){
     Swal.fire("Atención","El campo está siendo utilizado y no se puede editar ni cerrar.","info");
     return;
   }
+
   if(estado === "CERRADA"){
     Swal.fire("Atención","La recepción está cerrada y no se puede editar.","info");
     return;
   }
+
   let id=$(this).closest("tr").find("td:eq(0)").text();
   mostrarAgregarRecepcion();
   setTimeout(function(){
@@ -434,10 +438,12 @@ $(document).on("click",".cerrar-recepcion",function(){
     Swal.fire("Atención","El campo está siendo utilizado y no se puede editar ni cerrar.","info");
     return;
   }
+
   if(estado === "CERRADA"){
     Swal.fire("Atención","La recepción ya está cerrada.","info");
     return;
   }
+
   let id=$(this).closest("tr").find("td:eq(0)").text();
   Swal.fire({
     title:"¿Cerrar recepción?",
