@@ -19,28 +19,26 @@ if (isset($_POST['actualizar'])) {
     $datos = json_decode($_POST['actualizar'], true);
     $db = new DB();
     $cn = $db->conectar();
-    $check = $cn->prepare("SELECT estado FROM recepcion WHERE id_recepcion = :id");
-    $check->execute(['id' => $datos['id_recepcion']]);
-    $estado = $check->fetchColumn();
-    if ($estado !== 'DIAGNOSTICADO') {
-        $query = $cn->prepare(
-            "UPDATE recepcion SET fecha_recepcion = :fecha_recepcion, id_cliente = :id_cliente, nombre_cliente = :nombre_cliente, telefono = :telefono, direccion = :direccion, estado = :estado, observaciones = :observaciones WHERE id_recepcion = :id_recepcion"
-        );
-        $query->execute($datos);
-    }
+     $query = $cn->prepare(
+        "UPDATE recepcion SET fecha_recepcion = :fecha_recepcion, id_cliente = :id_cliente, nombre_cliente = :nombre_cliente, telefono = :telefono, direccion = :direccion, estado = :estado, observaciones = :observaciones WHERE id_recepcion = :id_recepcion"
+    );
+    $query->execute($datos);
+}
+
+// CERRAR RECEPCION
+if (isset($_POST['cerrar'])) {
+    $db = new DB();
+    $cn = $db->conectar();
+    $query = $cn->prepare("UPDATE recepcion SET estado = 'CERRADA' WHERE id_recepcion = :id");
+    $query->execute(['id' => $_POST['cerrar']]);
 }
 
 // ELIMINAR RECEPCION
 if (isset($_POST['eliminar'])) {
     $db = new DB();
     $cn = $db->conectar();
-    $check = $cn->prepare("SELECT estado FROM recepcion WHERE id_recepcion = :id");
-    $check->execute(['id' => $_POST['eliminar']]);
-    $estado = $check->fetchColumn();
-    if ($estado !== 'DIAGNOSTICADO') {
-        $query = $cn->prepare("DELETE FROM recepcion WHERE id_recepcion = :id");
-        $query->execute(['id' => $_POST['eliminar']]);
-    }
+    $query = $cn->prepare("DELETE FROM recepcion WHERE id_recepcion = :id");
+    $query->execute(['id' => $_POST['eliminar']]);
 }
 
 // LISTAR RECEPCIONES
