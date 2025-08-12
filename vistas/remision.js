@@ -219,6 +219,7 @@ function buscarRemision(){
         let json = JSON.parse(datos);
         $("#remision_datos_tb").html("");
         json.map(function(it){
+            const disabled = it.estado === 'ANULADO' ? 'disabled' : '';
             $("#remision_datos_tb").append(`
                 <tr>
                     <td>${it.id_remision}</td>
@@ -228,8 +229,8 @@ function buscarRemision(){
                     <td>${badgeEstado(it.estado)}</td>
                     <td>
                         <button class="btn btn-info btn-sm imprimir-remision" title="Imprimir"><i class="bi bi-printer"></i></button>
-                        <button class="btn btn-warning btn-sm editar-remision" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                        <button class="btn btn-danger btn-sm anular-remision" title="Anular"><i class="bi bi-x-circle"></i></button>
+                        <button class="btn btn-warning btn-sm editar-remision" ${disabled} title="Editar"><i class="bi bi-pencil-square"></i></button>
+                        <button class="btn btn-danger btn-sm anular-remision" ${disabled} title="Anular"><i class="bi bi-x-circle"></i></button>
                     </td>
                 </tr>`);
         });
@@ -369,6 +370,7 @@ window.imprimirRemision = imprimirRemision;
 
 
 $(document).on("click",".editar-remision",function(){
+    if($(this).prop('disabled')) return;
     let id=$(this).closest("tr").find("td:eq(0)").text();
     mostrarAgregarRemision();
     setTimeout(function(){
@@ -391,6 +393,7 @@ $(document).on("click",".editar-remision",function(){
 });
 
 $(document).on("click",".anular-remision",function(){
+    if($(this).prop('disabled')) return;
     let id=$(this).closest("tr").find("td:eq(0)").text();
     Swal.fire({
         title:"¿Anular remisión?",
