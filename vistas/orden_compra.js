@@ -482,13 +482,7 @@ function limpiarOrden(){
 // Listado / Búsqueda
 // -----------------------------
 function cargarTablaOrden(){
-  console.log("Entró en cargarTablaOrden()");
-  let datos = ejecutarAjax("controladores/orden_compra.php","leer=1");
-  if(datos !== "0"){
-    renderTablaOrden(JSON.parse(datos));
-  }else{
-    $("#orden_datos_tb").html("");
-  }
+  buscarOrden();
 }
 
 function renderTablaOrden(arr){
@@ -570,16 +564,34 @@ $(document).on('click','.imprimir-orden',function(){
 });
 
 function buscarOrden(){
-  let datos = ejecutarAjax("controladores/orden_compra.php","leer_descripcion="+$("#b_orden").val());
+  let b = $("#b_orden").val();
+  let estado = $("#estado_filtro").val();
+  let desde = $("#f_desde").val();
+  let hasta = $("#f_hasta").val();
+
+  let datos = ejecutarAjax(
+    "controladores/orden_compra.php",
+    "leer_descripcion="+encodeURIComponent(b)+"&estado="+estado+"&desde="+desde+"&hasta="+hasta
+  );
   if(datos !== "0"){
     renderTablaOrden(JSON.parse(datos));
   }else{
-    $("#orden_datos_tb").html("");
+    $("#orden_datos_tb").html("NO HAY REGISTROS");
   }
 }
 window.buscarOrden = buscarOrden;
 
 $(document).on('keyup','#b_orden',function(){
+  buscarOrden();
+});
+$(document).on('change','#estado_filtro, #f_desde, #f_hasta',function(){
+  buscarOrden();
+});
+$(document).on('click','#limpiar_busqueda_btn',function(){
+  $("#b_orden").val('');
+  $("#estado_filtro").val('');
+  $("#f_desde").val('');
+  $("#f_hasta").val('');
   buscarOrden();
 });
 
