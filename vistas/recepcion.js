@@ -2,6 +2,15 @@
 let detallesRecepcion = [];
 let listaClientes = [];
 
+function renderAccionesRecepcion(estado){
+  const diag = (estado || '').toUpperCase() === 'DIAGNOSTICADO';
+  const style = diag ? ' style="opacity:.5;"' : '';
+  return `
+            <button class="btn btn-info btn-sm imprimir-recepcion" title="Imprimir"><i class="bi bi-printer"></i></button>
+            <button class="btn btn-warning btn-sm editar-recepcion" title="Editar"${style}><i class="bi bi-pencil-square"></i></button>
+            <button class="btn btn-danger btn-sm cerrar-recepcion" title="Cerrar"${style}><i class="bi bi-x-circle"></i></button>`;
+}
+
 // ========================= Navegación =========================
 function mostrarListarRecepcion(){
   let contenido = dameContenido("paginas/referenciales/recepcion/listar.php");
@@ -214,7 +223,7 @@ function cargarTablaRecepcion(){
     let json = JSON.parse(datos);
     $("#recepcion_datos_tb").html('');
     json.map(function(it){
-     
+      const acciones = renderAccionesRecepcion(it.estado);
       $("#recepcion_datos_tb").append(`
         <tr>
           <td>${it.id_recepcion}</td>
@@ -223,12 +232,7 @@ function cargarTablaRecepcion(){
           <td>${it.telefono}</td>
           <td>${it.direccion}</td>
           <td>${badgeEstado(it.estado)}</td>
-        <td>
-            <button class="btn btn-info btn-sm imprimir-recepcion" title="Imprimir"><i class="bi bi-printer"></i></button>
-            <button class="btn btn-warning btn-sm editar-recepcion" title="Editar"><i class="bi bi-pencil-square"></i></button>
-            <button class="btn btn-danger btn-sm cerrar-recepcion" title="Cerrar"><i class="bi bi-x-circle"></i></button>
-          </td>
-
+          <td>${acciones}</td>
         </tr>`);
     });
   }
@@ -243,7 +247,7 @@ function buscarRecepcion(){
     let json = JSON.parse(datos);
     $("#recepcion_datos_tb").html('');
     json.map(function(it){
-      
+      const acciones = renderAccionesRecepcion(it.estado);
       $("#recepcion_datos_tb").append(`
         <tr>
           <td>${it.id_recepcion}</td>
@@ -384,6 +388,11 @@ window.imprimirRecepcion = imprimirRecepcion;
 
 // ========================= Acciones tabla =========================
 $(document).on("click",".editar-recepcion",function(){
+  const estado = $(this).closest("tr").find("td:eq(5)").text().trim().toUpperCase();
+  if(estado === "DIAGNOSTICADO"){
+    Swal.fire("Atención","El campo está siendo utilizado y no se puede editar ni cerrar.","info");
+    return;
+  }
   let id=$(this).closest("tr").find("td:eq(0)").text();
   mostrarAgregarRecepcion();
   setTimeout(function(){
@@ -411,6 +420,11 @@ $(document).on("click",".imprimir-recepcion",function(){
 });
 
 $(document).on("click",".cerrar-recepcion",function(){
+  const estado = $(this).closest("tr").find("td:eq(5)").text().trim().toUpperCase();
+  if(estado === "DIAGNOSTICADO"){
+    Swal.fire("Atención","El campo está siendo utilizado y no se puede editar ni cerrar.","info");
+    return;
+  }
   let id=$(this).closest("tr").find("td:eq(0)").text();
   Swal.fire({
     title:"¿Cerrar recepción?",
