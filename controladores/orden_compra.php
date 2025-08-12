@@ -56,10 +56,10 @@ if (isset($_POST['leer'])) {
      FROM orden_compra o
      LEFT JOIN proveedor pr ON o.id_proveedor = pr.id_proveedor
      LEFT JOIN detalle_orden_compra d ON o.id_orden = d.id_orden
-     GROUP BY o.id_orden, o.fecha_emision, o.id_presupuesto, 
+     GROUP BY o.id_orden, o.fecha_emision, o.id_presupuesto,
               o.id_proveedor, pr.razon_social, o.estado
      ORDER BY o.id_orden DESC"
-);
+    );
 
     $query->execute();
     if ($query->rowCount()) {
@@ -79,10 +79,10 @@ if (isset($_POST['leer_id'])) {
      LEFT JOIN proveedor pr ON o.id_proveedor = pr.id_proveedor
      LEFT JOIN detalle_orden_compra d ON o.id_orden = d.id_orden
      WHERE o.id_orden = :id
-     GROUP BY o.id_orden, o.fecha_emision, o.id_presupuesto, 
+     GROUP BY o.id_orden, o.fecha_emision, o.id_presupuesto,
               o.id_proveedor, pr.razon_social, o.estado
      ORDER BY o.id_orden DESC"
-);
+    );
 
     $query->execute(['id' => $_POST['leer_id']]);
     if ($query->rowCount()) {
@@ -92,27 +92,54 @@ if (isset($_POST['leer_id'])) {
     }
 }
 
-// LEER POR DESCRIPCION
+// LEER POR DESCRIPCION CON FILTROS
 if (isset($_POST['leer_descripcion'])) {
     $f = '%' . $_POST['leer_descripcion'] . '%';
+    $estado = $_POST['estado'] ?? '';
+    $desde  = $_POST['desde'] ?? '';
+    $hasta  = $_POST['hasta'] ?? '';
+
     $db = new DB();
-    $query = $db->conectar()->prepare(
-    "SELECT o.id_orden, o.fecha_emision, o.id_presupuesto, o.id_proveedor,
+    $cn = $db->conectar();
+
+    $sql = "SELECT o.id_orden, o.fecha_emision, o.id_presupuesto, o.id_proveedor,
             pr.razon_social AS proveedor, o.estado, IFNULL(SUM(d.subtotal),0) AS total
      FROM orden_compra o
      LEFT JOIN proveedor pr ON o.id_proveedor = pr.id_proveedor
      LEFT JOIN detalle_orden_compra d ON o.id_orden = d.id_orden
-     WHERE pr.razon_social LIKE :filtro
-     GROUP BY o.id_orden, o.fecha_emision, o.id_presupuesto, 
-              o.id_proveedor, pr.razon_social, o.estado
-     ORDER BY o.id_orden DESC"
-    );
+     WHERE pr.razon_social LIKE :filtro";
 
-    $query->execute(['filtro' => $f]);
+    if ($estado !== '') {
+        $sql .= " AND o.estado = :estado";
+    }
+    if ($desde !== '' && $hasta !== '') {
+        $sql .= " AND o.fecha_emision BETWEEN :desde AND :hasta";
+    } else {
+        if ($desde !== '') {
+            $sql .= " AND o.fecha_emision >= :desde";
+        }
+        if ($hasta !== '') {
+            $sql .= " AND o.fecha_emision <= :hasta";
+        }
+    }
+
+    $sql .= " GROUP BY o.id_orden, o.fecha_emision, o.id_presupuesto,
+              o.id_proveedor, pr.razon_social, o.estado
+     ORDER BY o.id_orden DESC";
+
+    $query = $cn->prepare($sql);
+    $params = ['filtro' => $f];
+    if ($estado !== '') { $params['estado'] = $estado; }
+    if ($desde  !== '') { $params['desde']  = $desde; }
+    if ($hasta  !== '') { $params['hasta']  = $hasta; }
+
+    $query->execute($params);
     if ($query->rowCount()) {
         echo json_encode($query->fetchAll(PDO::FETCH_OBJ));
     } else {
         echo '0';
     }
 }
+
 ?>
+
