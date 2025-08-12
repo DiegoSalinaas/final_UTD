@@ -83,24 +83,47 @@ if (isset($_POST['leer_id'])) {
     }
 }
 
-// LEER POR CLIENTE
+// LEER CON FILTROS
 if (isset($_POST['leer_descripcion'])) {
     $f = '%' . $_POST['leer_descripcion'] . '%';
+    $estado = $_POST['estado'] ?? '';
+    $desde  = $_POST['desde'] ?? '';
+    $hasta  = $_POST['hasta'] ?? '';
+
     $db = new DB();
     $cn = $db->conectar();
-    $query = $cn->prepare(
-        "SELECT r.id_remision, r.fecha_remision, r.id_cliente, c.nombre_apellido AS cliente, r.observacion, r.estado, IFNULL(SUM(d.subtotal),0) AS total
-         FROM remision r
-         LEFT JOIN clientes c ON r.id_cliente = c.id_cliente
-         LEFT JOIN detalle_remision d ON r.id_remision = d.id_remision
-         WHERE c.nombre_apellido LIKE :filtro
-         GROUP BY r.id_remision, r.fecha_remision, r.id_cliente, c.nombre_apellido, r.observacion, r.estado
-         ORDER BY r.id_remision DESC"
-    );
-    $query->execute(['filtro' => $f]);
-    if ($query->rowCount()) {
-      
 
+    $sql = "SELECT r.id_remision, r.fecha_remision, r.id_cliente, c.nombre_apellido AS cliente, r.observacion, r.estado, IFNULL(SUM(d.subtotal),0) AS total
+            FROM remision r
+            LEFT JOIN clientes c ON r.id_cliente = c.id_cliente
+            LEFT JOIN detalle_remision d ON r.id_remision = d.id_remision
+            WHERE CONCAT(r.id_remision, c.nombre_apellido) LIKE :filtro";
+
+    if ($estado !== '') {
+        $sql .= " AND r.estado = :estado";
+    }
+    if ($desde !== '' && $hasta !== '') {
+        $sql .= " AND r.fecha_remision BETWEEN :desde AND :hasta";
+    } else {
+        if ($desde !== '') {
+            $sql .= " AND r.fecha_remision >= :desde";
+        }
+        if ($hasta !== '') {
+            $sql .= " AND r.fecha_remision <= :hasta";
+        }
+    }
+
+    $sql .= " GROUP BY r.id_remision, r.fecha_remision, r.id_cliente, c.nombre_apellido, r.observacion, r.estado
+              ORDER BY r.id_remision DESC";
+
+    $query = $cn->prepare($sql);
+    $params = ['filtro' => $f];
+    if ($estado !== '') { $params['estado'] = $estado; }
+    if ($desde  !== '') { $params['desde']  = $desde; }
+    if ($hasta  !== '') { $params['hasta']  = $hasta; }
+
+    $query->execute($params);
+    if ($query->rowCount()) {
         echo json_encode($query->fetchAll(PDO::FETCH_OBJ));
     } else {
         echo '0';
