@@ -7,7 +7,7 @@ let listaProductos = [];
 function mostrarListarRemision(){
     let contenido = dameContenido("paginas/referenciales/remision/listar.php");
     $("#contenido-principal").html(contenido);
-    cargarTablaRemision();
+    buscarRemision();
 }
 window.mostrarListarRemision = mostrarListarRemision;
 
@@ -199,35 +199,22 @@ function guardarRemision() {
 window.guardarRemision = guardarRemision;
 
 function cargarTablaRemision(){
-    let datos = ejecutarAjax("controladores/remision.php","leer=1");
-    if(datos === "0"){
-        $("#remision_datos_tb").html("NO HAY REGISTROS");
-    }else{
-        let json = JSON.parse(datos);
-        $("#remision_datos_tb").html("");
-        json.map(function(it){
-            $("#remision_datos_tb").append(`
-                <tr>
-                    <td>${it.id_remision}</td>
-                    <td>${it.fecha_remision}</td>
-                    <td>${it.cliente}</td>
-                    <td>${formatearPY(it.total)}</td>
-                    <td>${badgeEstado(it.estado)}</td>
-                    <td>
-                        <button class="btn btn-info btn-sm imprimir-remision" title="Imprimir"><i class="bi bi-printer"></i></button>
-                        <button class="btn btn-warning btn-sm editar-remision" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                        <button class="btn btn-danger btn-sm anular-remision" title="Anular"><i class="bi bi-x-circle"></i></button>
-                    </td>
-                </tr>`);
-        });
-    }
+    buscarRemision();
 }
 
 function buscarRemision(){
     let b = $("#b_remision").val();
-    let datos = ejecutarAjax("controladores/remision.php","leer_descripcion="+b);
+    let estado = $("#estado_filtro").val();
+    let desde = $("#f_desde").val();
+    let hasta = $("#f_hasta").val();
+
+    let datos = ejecutarAjax(
+        "controladores/remision.php",
+        "leer_descripcion="+encodeURIComponent(b)+"&estado="+estado+"&desde="+desde+"&hasta="+hasta
+    );
     if(datos === "0"){
         $("#remision_datos_tb").html("NO HAY REGISTROS");
+        $("#remision_count").text(0);
     }else{
         let json = JSON.parse(datos);
         $("#remision_datos_tb").html("");
@@ -246,9 +233,26 @@ function buscarRemision(){
                     </td>
                 </tr>`);
         });
+        $("#remision_count").text(json.length);
     }
 }
 window.buscarRemision = buscarRemision;
+
+$(document).on("keyup", "#b_remision", function(){
+    buscarRemision();
+});
+
+$(document).on("change", "#estado_filtro, #f_desde, #f_hasta", function(){
+    buscarRemision();
+});
+
+$(document).on("click", "#limpiar_busqueda_btn", function(){
+    $("#b_remision").val('');
+    $("#estado_filtro").val('');
+    $("#f_desde").val('');
+    $("#f_hasta").val('');
+    buscarRemision();
+});
 
 function imprimirRemision(id){
   const datos = ejecutarAjax("controladores/remision.php","leer_id="+id);
