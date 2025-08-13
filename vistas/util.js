@@ -800,16 +800,3 @@ function cargarDataTable(componente, lista) {
     }
 }
 
-// Restaurar texto completo en los combos al enfocar
-$(document).on('focus', 'select', function(){
-  $(this).find('option[data-full]').each(function(){
-    $(this).text($(this).data('full'));
-  });
-});
-
-// Al seleccionar, mostrar solo el nombre
-$(document).on('change', 'select', function(){
-  const $opt = $(this).find('option:selected');
-  const nombre = $opt.data('nombre');
-  if(nombre){ $opt.text(nombre); }
-});

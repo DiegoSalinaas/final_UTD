@@ -85,10 +85,9 @@ function renderListaProveedores(arr){
   arr.forEach(function(p){
     const nombre = p.razon_social;
     const ruc = p.ruc;
-    const full = `${nombre} | ruc: ${ruc}`;
     select.append(`
-      <option value="${p.id_proveedor}" data-ruc="${ruc}" data-nombre="${nombre}" data-full="${full}">
-        ${full}
+      <option value="${p.id_proveedor}" data-ruc="${ruc}" data-nombre="${nombre}">
+        ${nombre}
       </option>
     `);
   });
