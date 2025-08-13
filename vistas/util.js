@@ -134,23 +134,21 @@ function formatearPY(numero) {
 
 // Devuelve un badge coloreado según el estado proporcionado
 function badgeEstado(estado) {
-    const est = (estado || '').toString().toUpperCase();
-    let clase = 'secondary';
+  const est = (estado ?? '')
+    .toString().trim()
+    .normalize('NFD').replace(/\p{Diacritic}/gu, '')
+    .toUpperCase();
 
-    if (est.includes('ANUL') || est.includes('INAC') || est.includes('RECH')) {
-        clase = 'danger';
-    } else if (est.includes('PEND') || est.includes('PRES')) {
-        clase = 'warning text-dark';
-    } else if (est.includes('DIAG')) {
-        clase = 'info';
-    } else if (est.includes('EMIT') || est.includes('CERR')) {
-        clase = 'primary';
-    } else if (est.includes('ACTI') || est.includes('APROB') || est.includes('CONFIR') || est.includes('ENTREG')) {
-        clase = 'success';
-    }
+  let cls = 'text-bg-secondary'; // fallback (gris)
+  if (est === 'PENDIENTE')                 cls = 'text-bg-warning text-dark';
+  else if (est === 'DIAGNOSTICADO' || est === 'DIAGNOSTICADA') cls = 'text-bg-info';
+  else if (est === 'CERRADA' || est === 'CERRADO' || est === 'EMITIDO' || est === 'EMITIDA') cls = 'text-bg-primary';
+  else if (est === 'APROBADO' || est === 'APROBADA' || est === 'APROBADO' || est === 'APROBADA') cls = 'text-bg-success';
+  else if (est === 'ANULADO' || est === 'ANULADA' || est === 'INACTIVO') cls = 'text-bg-danger';
 
-    return `<span class="badge bg-${clase}">${estado || ''}</span>`;
+  return `<span class="badge ${cls}">${estado}</span>`;
 }
+
 
 
 

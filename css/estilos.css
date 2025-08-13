@@ -116,3 +116,11 @@ body {
   background-color: #084298;
 }
 
+.badge.bg-success, .badge.text-bg-success { background-color:#198754 !important; color:#fff !important; background-image:none !important; }
+.badge.bg-warning, .badge.text-bg-warning { background-color:#ffc107 !important; color:#212529 !important; background-image:none !important; }
+.badge.bg-info,    .badge.text-bg-info    { background-color:#0dcaf0 !important; color:#000 !important; background-image:none !important; }
+.badge.bg-secondary, .badge.text-bg-secondary { background-color:#6c757d !important; color:#fff !important; background-image:none !important; }
+
+/* Ya funcionan, pero por si tu CSS global les mete gradiente: */
+.badge.bg-primary, .badge.text-bg-primary,
+.badge.bg-danger,  .badge.text-bg-danger  { background-image:none !important; }
