@@ -491,18 +491,19 @@ function buscarPresupuesto(){
   }
 }
 
-/* =========================
-   Impresión (igual que antes)
-   ========================= */
 function imprimirPresupuesto(id){
-  let presupuestoData = ejecutarAjax("controladores/presupuestos_compra.php","leer_id="+id);
-  if(presupuestoData === "0"){ alert("No se encontró el presupuesto"); return; }
+  let presupuestoData = ejecutarAjax("controladores/presupuestos_compra.php", "leer_id=" + id);
+  if (presupuestoData === "0") {
+    alert("No se encontró el presupuesto");
+    return;
+  }
+
   let presupuesto = JSON.parse(presupuestoData);
 
-  let detalleData = ejecutarAjax("controladores/detalle_presupuesto.php","leer=1&id_presupuesto="+id);
+  let detalleData = ejecutarAjax("controladores/detalle_presupuesto.php", "leer=1&id_presupuesto=" + id);
   let filas = "";
-  if(detalleData !== "0"){ 
-    JSON.parse(detalleData).forEach(function(d, i){
+  if (detalleData !== "0") {
+    JSON.parse(detalleData).forEach(function(d, i) {
       filas += `
         <tr>
           <td>${i + 1}</td>
@@ -514,8 +515,8 @@ function imprimirPresupuesto(id){
     });
   }
 
-  const estadoBadge = (String(presupuesto.estado||"").toUpperCase()==="APROBADO") ? "bg-success" :
-                      (String(presupuesto.estado||"").toUpperCase()==="ANULADO") ? "bg-danger" : "bg-warning text-dark";
+  const estadoBadge = (String(presupuesto.estado || "").toUpperCase() === "APROBADO") ? "bg-success" :
+                      (String(presupuesto.estado || "").toUpperCase() === "ANULADO") ? "bg-danger" : "bg-warning text-dark";
 
   const v = window.open('', '', 'width=1024,height=720');
   v.document.write(`
@@ -532,7 +533,7 @@ function imprimirPresupuesto(id){
       .doc-info { flex:1; padding-left:20px; display:flex; flex-direction:column; justify-content:flex-end; }
       .doc-title { margin:0; font-weight:800; letter-spacing:.3px; font-size:26px; }
       .meta { font-size:14px; color:#555; margin-top:6px; }
-      .kpi-grid { display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; margin-bottom:20px; }
+      .kpi-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; margin-bottom:20px; }
       .kpi { border:1px solid #e9ecef; border-radius:12px; padding:14px; background:#f8f9fa; }
       .kpi .lbl { font-size:12px; color:#6c757d; margin-bottom:4px; text-transform:uppercase; letter-spacing:.3px; }
       .kpi .val { font-size:15px; font-weight:600; }
@@ -555,7 +556,6 @@ function imprimirPresupuesto(id){
           Proveedor: <strong>${presupuesto.proveedor || presupuesto.id_proveedor}</strong>
           &nbsp;·&nbsp; Estado: <span class="badge ${estadoBadge}">${presupuesto.estado || "PENDIENTE"}</span>
           &nbsp;·&nbsp; Fecha: <strong>${formatearFechaDMA(presupuesto.fecha)}</strong>
-          &nbsp;·&nbsp; Validez: <strong>${presupuesto.validez} días</strong>
         </div>
       </div>
     </div>
@@ -568,6 +568,10 @@ function imprimirPresupuesto(id){
       <div class="kpi">
         <div class="lbl">Moneda</div>
         <div class="val">PYG</div>
+      </div>
+      <div class="kpi">
+        <div class="lbl">Validez</div>
+        <div class="val">${presupuesto.validez} días</div>
       </div>
     </div>
 
@@ -603,9 +607,7 @@ function imprimirPresupuesto(id){
 }
 window.imprimirPresupuesto = imprimirPresupuesto;
 
-/* =========================
-   Reset
-   ========================= */
+
 function limpiarPresupuesto(){
   $("#id_presupuesto").val("0");
   $("#id_detalle").val("0");
