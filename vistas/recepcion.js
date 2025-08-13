@@ -45,7 +45,8 @@ function renderListaClientes(arr, selectedId = "") {
     const id  = c.id_cliente ?? c.cod_cliente ?? c.id;
     const nom = c.nombre_apellido ?? c.nombre_cliente ?? c.nombre;
     const ruc = c.ruc ?? c.ruc_cliente ?? '';
-    $sel.append(`<option value="${id}">${nom} | ruc: ${ruc}</option>`);
+    const full = `${nom} | ruc: ${ruc}`;
+    $sel.append(`<option value="${id}" data-ruc="${ruc}" data-nombre="${nom}" data-full="${full}">${full}</option>`);
   });
   if (selectedId) $sel.val(selectedId).trigger('change'); // prellena al editar
 }
