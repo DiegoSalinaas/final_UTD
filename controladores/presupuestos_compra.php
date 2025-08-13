@@ -85,16 +85,31 @@ if (isset($_POST['leer_id'])) {
 if (isset($_POST['leer_descripcion'])) {
     $f = '%' . $_POST['leer_descripcion'] . '%';
     $estado = $_POST['estado'] ?? '';
+    $f_desde = $_POST['f_desde'] ?? '';
+    $f_hasta = $_POST['f_hasta'] ?? '';
     $db = new DB();
     $sql = "SELECT p.id_presupuesto, p.fecha, p.id_proveedor, pr.razon_social AS proveedor, p.total_estimado, p.validez, p.estado FROM presupuestos_compra p LEFT JOIN proveedor pr ON p.id_proveedor = pr.id_proveedor WHERE CONCAT(p.id_presupuesto, pr.razon_social) LIKE :filtro";
     if ($estado !== '') {
         $sql .= " AND p.estado = :estado";
+    }
+    if ($f_desde !== '' && $f_hasta !== '') {
+        $sql .= " AND p.fecha BETWEEN :desde AND :hasta";
+    } elseif ($f_desde !== '') {
+        $sql .= " AND p.fecha >= :desde";
+    } elseif ($f_hasta !== '') {
+        $sql .= " AND p.fecha <= :hasta";
     }
     $sql .= " ORDER BY p.id_presupuesto DESC";
     $query = $db->conectar()->prepare($sql);
     $params = ['filtro' => $f];
     if ($estado !== '') {
         $params['estado'] = $estado;
+    }
+    if ($f_desde !== '') {
+        $params['desde'] = $f_desde;
+    }
+    if ($f_hasta !== '') {
+        $params['hasta'] = $f_hasta;
     }
     $query->execute($params);
     if ($query->rowCount()) {
