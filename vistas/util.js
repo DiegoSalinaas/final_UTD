@@ -136,18 +136,20 @@ function formatearPY(numero) {
 function badgeEstado(estado) {
     const est = (estado || '').toString().toUpperCase();
     let clase = 'secondary';
-    if (est === 'ACTIVO' || est === 'APROBADO') {
-        clase = 'success';
-    } else if (est === 'PENDIENTE') {
-        clase = 'warning text-dark';
-    } else if (est === 'DIAGNOSTICADO') {
-        clase = 'info';
-    } else if (est === 'CERRADA') {
-        clase = 'primary';
-    } else if (est === 'INACTIVO' || est === 'ANULADO') {
+
+    if (est.includes('ANUL') || est.includes('INAC') || est.includes('RECH')) {
         clase = 'danger';
+    } else if (est.includes('PEND') || est.includes('PRES')) {
+        clase = 'warning text-dark';
+    } else if (est.includes('DIAG')) {
+        clase = 'info';
+    } else if (est.includes('EMIT') || est.includes('CERR')) {
+        clase = 'primary';
+    } else if (est.includes('ACTI') || est.includes('APROB') || est.includes('CONFIR') || est.includes('ENTREG')) {
+        clase = 'success';
     }
-    return `<span class="badge bg-${clase}">${estado}</span>`;
+
+    return `<span class="badge bg-${clase}">${estado || ''}</span>`;
 }
 
 
