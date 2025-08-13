@@ -3,12 +3,12 @@ let detallesRecepcion = [];
 let listaClientes = [];
 
 function renderAccionesRecepcion(estado){
-  const diag = (estado || '').toUpperCase() === 'DIAGNOSTICADO';
-  const style = diag ? ' style="opacity:.5;"' : '';
+  const bloqueado = ['DIAGNOSTICADO','CERRADA'].includes((estado || '').toUpperCase());
+  const attr = bloqueado ? ' style="opacity:.5;pointer-events:none;"' : '';
   return `
             <button class="btn btn-info btn-sm imprimir-recepcion" title="Imprimir"><i class="bi bi-printer"></i></button>
-            <button class="btn btn-warning btn-sm editar-recepcion" title="Editar"${style}><i class="bi bi-pencil-square"></i></button>
-            <button class="btn btn-danger btn-sm cerrar-recepcion" title="Cerrar"${style}><i class="bi bi-x-circle"></i></button>`;
+            <button class="btn btn-warning btn-sm editar-recepcion" title="Editar"${attr}><i class="bi bi-pencil-square"></i></button>
+            <button class="btn btn-danger btn-sm cerrar-recepcion" title="Cerrar"${attr}><i class="bi bi-x-circle"></i></button>`;
 }
 
 // ========================= Navegación =========================
@@ -386,8 +386,11 @@ window.imprimirRecepcion = imprimirRecepcion;
 // ========================= Acciones tabla =========================
 $(document).on("click",".editar-recepcion",function(){
   const estado = $(this).closest("tr").find("td:eq(5)").text().trim().toUpperCase();
-  if(estado === "DIAGNOSTICADO"){
-    Swal.fire("Atención","El campo está siendo utilizado y no se puede editar ni cerrar.","info");
+  if(estado === "DIAGNOSTICADO" || estado === "CERRADA"){
+    const msg = estado === "CERRADA"
+      ? "La recepción ya está cerrada y no se puede editar ni cerrar."
+      : "El campo está siendo utilizado y no se puede editar ni cerrar.";
+    Swal.fire("Atención",msg,"info");
     return;
   }
   let id=$(this).closest("tr").find("td:eq(0)").text();
@@ -418,8 +421,11 @@ $(document).on("click",".imprimir-recepcion",function(){
 
 $(document).on("click",".cerrar-recepcion",function(){
   const estado = $(this).closest("tr").find("td:eq(5)").text().trim().toUpperCase();
-  if(estado === "DIAGNOSTICADO"){
-    Swal.fire("Atención","El campo está siendo utilizado y no se puede editar ni cerrar.","info");
+  if(estado === "DIAGNOSTICADO" || estado === "CERRADA"){
+    const msg = estado === "CERRADA"
+      ? "La recepción ya está cerrada y no se puede editar ni cerrar."
+      : "El campo está siendo utilizado y no se puede editar ni cerrar.";
+    Swal.fire("Atención",msg,"info");
     return;
   }
   let id=$(this).closest("tr").find("td:eq(0)").text();
