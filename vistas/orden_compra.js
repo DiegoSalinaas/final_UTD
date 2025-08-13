@@ -582,6 +582,14 @@ function cargarTablaOrden(){
 function renderTablaOrden(arr){
   let tbody = $("#orden_datos_tb");
   tbody.html("");
+
+  // Asegurarse de que 'arr' sea iterable. Si el backend devuelve un
+  // objeto o un valor no esperado, convertirlo a un arreglo vacío para
+  // evitar errores de ejecución al usar `forEach`.
+  if (!Array.isArray(arr)) {
+    arr = [];
+  }
+
   arr.forEach(function(o){
     const disabled = o.estado === 'ANULADO' ? 'disabled' : '';
     tbody.append(`<tr>
