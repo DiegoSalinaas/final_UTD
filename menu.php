@@ -326,6 +326,12 @@
     <p>Clientes</p>
   </a>
 </li>
+  <li class="nav-item">
+    <a href="#" class="nav-link" onclick="mostrarListarConductor(); return false;">
+      <i class="nav-icon bi bi-person-vcard"></i>
+      <p>Conductores</p>
+    </a>
+  </li>
                   <li class="nav-item">
                       <a href="#" class="nav-link" 
                          onclick="mostrarListarDepartamento(); return false;">
@@ -772,6 +778,7 @@
     <script src="vistas/resenas.js"></script>
     <script src="vistas/proveedor.js"></script>
     <script src="vistas/cliente.js"></script>
+    <script src="vistas/conductor.js"></script>
     <script src="vistas/productos.js"></script>
     <script src="vistas/remision.js"></script>
     <script src="vistas/recepcion.js"></script>

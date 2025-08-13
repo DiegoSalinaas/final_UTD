@@ -222,6 +222,19 @@ CREATE TABLE `cliente` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `conductor`
+--
+CREATE TABLE `conductor` (
+  `id_conductor` int(11) NOT NULL,
+  `nombre` varchar(100) NOT NULL,
+  `cedula` varchar(20) NOT NULL,
+  `telefono` varchar(20) NOT NULL,
+  `licencia_conduccion` varchar(50) NOT NULL,
+  `estado` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `productos`
@@ -453,6 +466,12 @@ ALTER TABLE `cliente`
   ADD PRIMARY KEY (`id_cliente`);
 
 --
+-- Indices de la tabla `conductor`
+--
+ALTER TABLE `conductor`
+  ADD PRIMARY KEY (`id_conductor`);
+
+--
 -- Indices de la tabla `resenas`
 --
 ALTER TABLE `resenas`
@@ -536,6 +555,10 @@ ALTER TABLE `proveedor`
 --
 ALTER TABLE `cliente`
   MODIFY `id_cliente` int(11) NOT NULL AUTO_INCREMENT;
+
+-- AUTO_INCREMENT de la tabla `conductor`
+ALTER TABLE `conductor`
+  MODIFY `id_conductor` int(11) NOT NULL AUTO_INCREMENT;
 
 -- AUTO_INCREMENT de la tabla `presupuestos_compra`
 ALTER TABLE `presupuestos_compra`
