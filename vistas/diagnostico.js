@@ -3,6 +3,7 @@ function mostrarListarDiagnostico(){
   let c=dameContenido("paginas/referenciales/diagnostico/listar.php");
   $("#contenido-principal").html(c);
   cargarTablaDiagnostico();
+  cargarPendientesDiagnostico();
 }
 window.mostrarListarDiagnostico=mostrarListarDiagnostico;
 
@@ -13,6 +14,12 @@ function mostrarAgregarDiagnostico(reset=true){
   cargarListaRecepciones();
 }
 window.mostrarAgregarDiagnostico=mostrarAgregarDiagnostico;
+
+function cargarPendientesDiagnostico(){
+  let d=ejecutarAjax("controladores/recepcion.php","leer_pendientes=1");
+  let n=d==="0"?0:JSON.parse(d).length;
+  $("#recepcion_pendiente_count").text(n);
+}
 
 function cargarListaRecepciones(selId=""){let q="leer_pendientes=1";if(selId)q+="&incluido="+selId;let d=ejecutarAjax("controladores/recepcion.php",q),$s=$("#id_recepcion_lst");$s.html('<option value="">-- Seleccione --</option>');if(d!=="0"){JSON.parse(d).forEach(r=>$s.append(`<option value="${r.id_recepcion}">${r.id_recepcion} - ${r.nombre_cliente}</option>`));if(selId)$s.val(selId);}}
 $(document).on("change","#id_recepcion_lst",function(){let id=$(this).val(),$s=$("#id_detalle_lst");$s.html('<option value="">-- Equipo --</option>');if(id){let det=ejecutarAjax("controladores/detalle_recepcion.php","leer=1&id_recepcion="+id+"&sin_diagnostico=1");if(det!=="0")JSON.parse(det).forEach(d=>$s.append(`<option value="${d.id_detalle}">${d.nombre_equipo}</option>`));}});
@@ -355,7 +362,7 @@ window.imprimirDiagnostico = imprimirDiagnostico;
 
 
 
-function cargarTablaDiagnostico(filtro=""){let q=filtro?"leer_descripcion="+filtro:"leer=1",datos=ejecutarAjax("controladores/diagnostico.php",q);if(datos==="0"){$("#diagnostico_datos_tb").html("NO HAY REGISTROS");}else{let js=JSON.parse(datos);$("#diagnostico_datos_tb").html('');js.forEach(it=>{$("#diagnostico_datos_tb").append(`<tr><td>${it.id_diagnostico}</td><td>${it.id_recepcion} - ${it.nombre_cliente}</td><td>${it.fecha_inicio}</td><td>${badgeEstado(it.estado)}</td><td><button class="btn btn-secondary btn-sm imprimir-diagnostico" data-id="${it.id_diagnostico}"><i class="bi bi-printer"></i></button> <button class="btn btn-warning btn-sm editar-diagnostico" data-id="${it.id_diagnostico}"><i class="bi bi-pencil-square"></i></button> <button class="btn btn-danger btn-sm eliminar-diagnostico" data-id="${it.id_diagnostico}"><i class="bi bi-trash"></i></button></td></tr>`);});}}
+function cargarTablaDiagnostico(filtro=""){let q=filtro?"leer_descripcion="+filtro:"leer=1",datos=ejecutarAjax("controladores/diagnostico.php",q);if(datos==="0"){$("#diagnostico_datos_tb").html("NO HAY REGISTROS");$("#diagnostico_count").text(0);}else{let js=JSON.parse(datos);$("#diagnostico_datos_tb").html('');js.forEach(it=>{$("#diagnostico_datos_tb").append(`<tr><td>${it.id_diagnostico}</td><td>${it.id_recepcion} - ${it.nombre_cliente}</td><td>${it.fecha_inicio}</td><td>${badgeEstado(it.estado)}</td><td><button class="btn btn-secondary btn-sm imprimir-diagnostico" data-id="${it.id_diagnostico}"><i class="bi bi-printer"></i></button> <button class="btn btn-warning btn-sm editar-diagnostico" data-id="${it.id_diagnostico}"><i class="bi bi-pencil-square"></i></button> <button class="btn btn-danger btn-sm eliminar-diagnostico" data-id="${it.id_diagnostico}"><i class="bi bi-trash"></i></button></td></tr>`);});$("#diagnostico_count").text(js.length);}}
 
 function cargarDiagnostico(id){
   // Cargar la vista de edición antes de establecer los datos para evitar
@@ -391,7 +398,7 @@ function cargarDiagnostico(id){
   }
 }
 $(document).on("click",".editar-diagnostico",function(){cargarDiagnostico($(this).data('id'));});
-$(document).on("click",".eliminar-diagnostico",function(){if(confirm("¿Eliminar?")){ejecutarAjax("controladores/diagnostico.php","eliminar="+$(this).data('id'));cargarTablaDiagnostico();}});
+$(document).on("click",".eliminar-diagnostico",function(){if(confirm("¿Eliminar?")){ejecutarAjax("controladores/diagnostico.php","eliminar="+$(this).data('id'));cargarTablaDiagnostico();cargarPendientesDiagnostico();}});
 $(document).on("click",".imprimir-diagnostico",function(){imprimirDiagnostico($(this).data('id'));});
 $(document).on("keyup","#b_diagnostico",function(){cargarTablaDiagnostico($(this).val());});
 
