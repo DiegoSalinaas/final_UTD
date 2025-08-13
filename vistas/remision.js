@@ -1,9 +1,9 @@
 
-(function(){
 let detallesRemision = [];
 let listaClientes = [];
 let listaProductos = [];
-})();
+let listaConductores = [];
+let listaPuntos = [];
 function mostrarListarRemision(){
     let contenido = dameContenido("paginas/referenciales/remision/listar.php");
     $("#contenido-principal").html(contenido);
@@ -16,6 +16,8 @@ function mostrarAgregarRemision(){
     $("#contenido-principal").html(contenido);
     cargarListaClientes();
     cargarListaProductos();
+    cargarListaConductores();
+    cargarListaPuntos();
     detallesRemision = [];
     renderDetallesRemision();
 }
@@ -46,63 +48,60 @@ function cargarListaProductos(){
 function renderListaProductos(arr){
     let select = $("#id_producto_lst");
     select.html('<option value="">-- Seleccione un producto --</option>');
-    arr.forEach(p => select.append(`<option value="${p.producto_id}" data-precio="${p.precio}">${p.nombre}</option>`));
+    arr.forEach(p => select.append(`<option value="${p.producto_id}">${p.nombre}</option>`));
 }
 
-function getPrecioUnitario(){
-    return quitarDecimalesConvertir(String($('#precio_unitario_txt').val() || '0')) || 0;
-}
-
-function actualizarSubtotal(){
-    const cant = parseFloat($('#cantidad_txt').val()) || 0;
-    const precio = getPrecioUnitario();
-    const subtotal = cant * precio;
-    $('#subtotal_txt').val(subtotal ? formatearPY(subtotal) : '');
-}
-
-$(document).on('input','#cantidad_txt', actualizarSubtotal);
-
-$(document).on('input','#precio_unitario_txt', function(){
-    const raw = String($(this).val());
-    const digits = raw.replace(/\D/g,'');
-    if(digits.length === 0){
-        $(this).val('');
-    }else{
-        const n = parseInt(digits,10) || 0;
-        $(this).val(formatearPY(n));
+function cargarListaConductores(){
+    let datos = ejecutarAjax("controladores/conductor.php","leer=1");
+    if(datos !== "0"){
+        listaConductores = JSON.parse(datos);
+        renderListaConductores(listaConductores);
     }
-    actualizarSubtotal();
-});
+}
 
-$(document).on('blur','#precio_unitario_txt', function(){
-    const n = getPrecioUnitario();
-    $(this).val(n ? formatearPY(n) : '');
-    actualizarSubtotal();
-});
+function renderListaConductores(arr){
+    let select = $("#id_conductor_lst");
+    select.html('<option value="">-- Seleccione un conductor --</option>');
+    arr.forEach(c => select.append(`<option value="${c.id_conductor}">${c.nombre}</option>`));
+}
+
+function cargarListaPuntos(){
+    let datos = ejecutarAjax("controladores/puntos.php","leer=1");
+    if(datos !== "0"){
+        listaPuntos = JSON.parse(datos);
+        renderListaPuntos(listaPuntos);
+    }
+}
+
+function renderListaPuntos(arr){
+    let selectSalida = $("#punto_salida_lst");
+    let selectLlegada = $("#punto_llegada_lst");
+    selectSalida.html('<option value="">-- Seleccione punto --</option>');
+    selectLlegada.html('<option value="">-- Seleccione punto --</option>');
+    arr.forEach(p => {
+        selectSalida.append(`<option value="${p.id_punto}">${p.nombre}</option>`);
+        selectLlegada.append(`<option value="${p.id_punto}">${p.nombre}</option>`);
+    });
+}
+
+// Precios y subtotales eliminados
 
 function agregarDetalleRemision(){
     if($("#id_producto_lst").val() === ""){mensaje_dialogo_info_ERROR("Debe seleccionar un producto","ERROR");return;}
     if($("#cantidad_txt").val().trim().length === 0){mensaje_dialogo_info_ERROR("Debe ingresar la cantidad","ERROR");return;}
     if(parseFloat($("#cantidad_txt").val()) <= 0){mensaje_dialogo_info_ERROR("La cantidad debe ser mayor que 0","ERROR");return;}
-    if($("#precio_unitario_txt").val().trim().length === 0){mensaje_dialogo_info_ERROR("Debe ingresar el precio","ERROR");return;}
-    if(getPrecioUnitario() <= 0){mensaje_dialogo_info_ERROR("El precio debe ser mayor que 0","ERROR");return;}
 
     if(detallesRemision.some(d => d.id_producto === $("#id_producto_lst").val())){
         mensaje_dialogo_info_ERROR("El producto ya fue agregado","ERROR");
         return;
     }
-
     let cantidad = parseFloat($("#cantidad_txt").val()) || 0;
-    let precio = getPrecioUnitario();
 
     let detalle = {
         id_producto: $("#id_producto_lst").val(),
         producto: $("#id_producto_lst option:selected").text(),
-        cantidad: cantidad,
-        precio_unitario: precio,
-        subtotal: cantidad * precio
+        cantidad: cantidad
     };
-console.log("✔ Detalles a guardar:", JSON.stringify(detallesRemision, null, 2));
 
     detallesRemision.push(detalle);
     renderDetallesRemision();
@@ -113,25 +112,18 @@ window.agregarDetalleRemision = agregarDetalleRemision;
 function limpiarDetalleRemisionForm(){
     $("#id_producto_lst").val("");
     $("#cantidad_txt").val("");
-    $("#precio_unitario_txt").val("");
-    $("#subtotal_txt").val("");
 }
 
 function renderDetallesRemision(){
     let tbody = $("#detalle_remision_tb");
     tbody.html("");
-    let total = 0;
     detallesRemision.forEach((d,i) => {
-        total += parseFloat(d.subtotal);
         tbody.append(`<tr>
             <td>${d.producto}</td>
             <td>${d.cantidad}</td>
-            <td>${formatearPY(d.precio_unitario)}</td>
-            <td>${formatearPY(d.subtotal)}</td>
             <td><button class="btn btn-danger btn-sm" onclick="eliminarDetalleRemision(${i}); return false;"><i class="bi bi-trash"></i></button></td>
         </tr>`);
     });
-    $("#total_general_txt").text(formatearPY(total));
 }
 
 function eliminarDetalleRemision(index){
@@ -148,8 +140,33 @@ function guardarRemision() {
         return;
     }
 
+    if ($("#id_conductor_lst").val() === "") {
+        mensaje_dialogo_info_ERROR("Debe seleccionar un conductor", "ERROR");
+        return;
+    }
+
+    if ($("#movil_txt").val().trim().length === 0) {
+        mensaje_dialogo_info_ERROR("Debe ingresar el móvil", "ERROR");
+        return;
+    }
+
     if ($("#fecha_txt").val().trim().length === 0) {
         mensaje_dialogo_info_ERROR("Debe ingresar la fecha", "ERROR");
+        return;
+    }
+
+    if ($("#punto_salida_lst").val() === "" || $("#punto_llegada_lst").val() === "") {
+        mensaje_dialogo_info_ERROR("Debe seleccionar los puntos de salida y llegada", "ERROR");
+        return;
+    }
+
+    if ($("#punto_salida_lst").val() === $("#punto_llegada_lst").val()) {
+        mensaje_dialogo_info_ERROR("Punto de salida y llegada no pueden ser iguales", "ERROR");
+        return;
+    }
+
+    if ($("#tipo_transporte_lst").val() === "") {
+        mensaje_dialogo_info_ERROR("Debe seleccionar el tipo de transporte", "ERROR");
         return;
     }
 
@@ -162,7 +179,13 @@ function guardarRemision() {
         id_cliente: $("#id_cliente_lst").val(),
         fecha_remision: $("#fecha_txt").val(),
         observacion: $("#observacion_txt").val(),
-        estado: $("#estado_txt").val()
+        estado: $("#estado_txt").val(),
+        id_conductor: $("#id_conductor_lst").val(),
+        movil: $("#movil_txt").val(),
+        id_punto_salida: $("#punto_salida_lst").val(),
+        id_punto_llegada: $("#punto_llegada_lst").val(),
+        tipo_transporte: $("#tipo_transporte_lst").val(),
+        factura_relacionada: $("#factura_relacionada_txt").val()
     };
 
     
@@ -225,7 +248,6 @@ function buscarRemision(){
                     <td>${it.id_remision}</td>
                     <td>${it.fecha_remision}</td>
                     <td>${it.cliente}</td>
-                    <td>${formatearPY(it.total)}</td>
                     <td>${badgeEstado(it.estado)}</td>
                     <td>
                         <button class="btn btn-info btn-sm imprimir-remision" title="Imprimir"><i class="bi bi-printer"></i></button>
@@ -269,11 +291,9 @@ function imprimirRemision(id){
         <td>${i+1}</td>
         <td>${d.producto || d.id_producto || ""}</td>
         <td>${d.cantidad}</td>
-        <td>${formatearPY(d.precio_unitario)}</td>
-        <td>${formatearPY(d.subtotal)}</td>
       </tr>
     `).join("")
-    : `<tr><td colspan="5">Sin ítems</td></tr>`;
+    : `<tr><td colspan="3">Sin ítems</td></tr>`;
 
   const estadoTxt = rem.estado || "EMITIDA";
   const estUC = String(estadoTxt).toUpperCase();
@@ -295,19 +315,14 @@ function imprimirRemision(id){
       .doc-logo { flex:0 0 auto; }
       .doc-logo img { height:110px; }
       .doc-info { flex:1; padding-left:20px; display:flex; flex-direction:column; justify-content:flex-end; }
-      .doc-title { margin:0; font-weight:800; letter-spacing:.3px; font-size:26px; }
-      .meta { font-size:14px; color:#555; margin-top:6px; }
-      .kpi-grid { display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; margin-bottom:20px; }
-      .kpi { border:1px solid #e9ecef; border-radius:12px; padding:14px; background:#f8f9fa; }
-      .kpi .lbl { font-size:12px; color:#6c757d; margin-bottom:4px; text-transform:uppercase; letter-spacing:.3px; }
-      .kpi .val { font-size:15px; font-weight:600; }
-      table { width:100%; border-collapse:collapse; }
+        .doc-title { margin:0; font-weight:800; letter-spacing:.3px; font-size:26px; }
+        .meta { font-size:14px; color:#555; margin-top:6px; }
+        table { width:100%; border-collapse:collapse; }
       thead th { background:#e9f2ff; border-bottom:1px solid #cfe2ff !important; font-weight:700; }
       th, td { border:1px solid #e9ecef; padding:8px; font-size:12.5px; vertical-align:top; text-align:center; }
-      .total { margin-top:20px; font-size:16px; font-weight:700; text-align:right; }
-      .footer { margin-top:20px; font-size:11px; color:#6c757d; text-align:right; }
-      @media print { .no-print { display:none !important; } }
-    </style>
+        .footer { margin-top:20px; font-size:11px; color:#6c757d; text-align:right; }
+        @media print { .no-print { display:none !important; } }
+      </style>
   </head>
   <body>
     <div class="doc-header">
@@ -318,21 +333,16 @@ function imprimirRemision(id){
         <h2 class="doc-title">Remisión #${rem.id_remision}</h2>
         <div class="meta">
           Cliente: <strong>${rem.cliente || rem.id_cliente || ""}</strong>
+          &nbsp;·&nbsp; Conductor: <strong>${rem.conductor || ""}</strong>
+          &nbsp;·&nbsp; Móvil: <strong>${rem.movil || ""}</strong>
+          &nbsp;·&nbsp; Salida: <strong>${rem.punto_salida || ""}</strong>
+          &nbsp;·&nbsp; Llegada: <strong>${rem.punto_llegada || ""}</strong>
+          &nbsp;·&nbsp; Tipo: <strong>${rem.tipo_transporte || ""}</strong>
+          &nbsp;·&nbsp; Factura: <strong>${rem.factura_relacionada || ""}</strong>
           &nbsp;·&nbsp; Estado: <span class="badge ${estadoBadge}">${estadoTxt}</span>
           &nbsp;·&nbsp; Fecha: <strong>${formatearFechaDMA(rem.fecha_remision)}</strong>
           ${rem.observacion ? `&nbsp;·&nbsp; Obs.: <strong>${rem.observacion}</strong>` : ""}
         </div>
-      </div>
-    </div>
-
-    <div class="kpi-grid">
-      <div class="kpi">
-        <div class="lbl">Total</div>
-        <div class="val">${formatearPY(rem.total || 0)}</div>
-      </div>
-      <div class="kpi">
-        <div class="lbl">Moneda</div>
-        <div class="val">PYG</div>
       </div>
     </div>
 
@@ -342,18 +352,12 @@ function imprimirRemision(id){
           <th>#</th>
           <th>Producto</th>
           <th>Cantidad</th>
-          <th>Precio Unitario</th>
-          <th>Subtotal</th>
         </tr>
       </thead>
       <tbody>
         ${filas}
       </tbody>
     </table>
-
-    <div class="total">
-      Total General: ${formatearPY(rem.total || 0)}
-    </div>
 
     <div class="footer">
       Documento generado automáticamente.
@@ -378,13 +382,19 @@ $(document).on("click",".editar-remision",function(){
         let json=JSON.parse(datos);
         $("#id_remision").val(json.id_remision);
         $("#id_cliente_lst").val(json.id_cliente);
+        $("#id_conductor_lst").val(json.id_conductor);
+        $("#movil_txt").val(json.movil);
+        $("#punto_salida_lst").val(json.id_punto_salida);
+        $("#punto_llegada_lst").val(json.id_punto_llegada);
+        $("#tipo_transporte_lst").val(json.tipo_transporte);
+        $("#factura_relacionada_txt").val(json.factura_relacionada);
         $("#fecha_txt").val(json.fecha_remision);
         $("#observacion_txt").val(json.observacion);
         $("#estado_txt").val(json.estado);
         
         let det=ejecutarAjax("controladores/detalle_remision.php","leer=1&id_remision="+id);
         if(det !== "0"){
-            detallesRemision=JSON.parse(det).map(d=>({id_producto:d.id_producto,producto:d.producto,cantidad:d.cantidad,precio_unitario:d.precio_unitario,subtotal:d.subtotal}));
+            detallesRemision=JSON.parse(det).map(d=>({id_producto:d.id_producto,producto:d.producto,cantidad:d.cantidad}));
         }else{
             detallesRemision=[];
         }

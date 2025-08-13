@@ -11,15 +11,46 @@
 
     <div class="card-body">
       <div class="row g-3">
-        <div class="col-md-6">
+        <div class="col-md-4">
           <label for="id_cliente_lst" class="form-label fw-semibold">Cliente</label>
           <select id="id_cliente_lst" class="form-select" aria-label="Cliente"></select>
         </div>
+        <div class="col-md-4">
+          <label for="id_conductor_lst" class="form-label fw-semibold">Conductor</label>
+          <select id="id_conductor_lst" class="form-select" aria-label="Conductor"></select>
+        </div>
+        <div class="col-md-4">
+          <label for="movil_txt" class="form-label fw-semibold">Móvil</label>
+          <input type="text" id="movil_txt" class="form-control" placeholder="Móvil">
+        </div>
+
         <div class="col-md-3">
           <label for="fecha_txt" class="form-label fw-semibold">Fecha</label>
           <input type="date" id="fecha_txt" class="form-control" value="<?php echo date('Y-m-d'); ?>">
         </div>
         <div class="col-md-3">
+          <label for="punto_salida_lst" class="form-label fw-semibold">Punto de salida</label>
+          <select id="punto_salida_lst" class="form-select" aria-label="Punto de salida"></select>
+        </div>
+        <div class="col-md-3">
+          <label for="punto_llegada_lst" class="form-label fw-semibold">Punto de llegada</label>
+          <select id="punto_llegada_lst" class="form-select" aria-label="Punto de llegada"></select>
+        </div>
+        <div class="col-md-3">
+          <label for="tipo_transporte_lst" class="form-label fw-semibold">Tipo de transporte</label>
+          <select id="tipo_transporte_lst" class="form-select">
+            <option value="">-- Seleccione --</option>
+            <option value="TERRESTRE">Terrestre</option>
+            <option value="AEREO">Aéreo</option>
+            <option value="FLUVIAL">Fluvial</option>
+          </select>
+        </div>
+
+        <div class="col-md-4">
+          <label for="factura_relacionada_txt" class="form-label fw-semibold">Factura relacionada</label>
+          <input type="text" id="factura_relacionada_txt" class="form-control" placeholder="Nro. factura">
+        </div>
+        <div class="col-md-8">
           <label for="observacion_txt" class="form-label fw-semibold">Observación</label>
           <input type="text" id="observacion_txt" class="form-control" placeholder="Opcional">
         </div>
@@ -48,22 +79,6 @@
           <input type="number" id="cantidad_txt" class="form-control" min="1" placeholder="0">
         </div>
 
-        <div class="col-md-2">
-          <label for="precio_unitario_txt" class="form-label fw-semibold">Precio Unitario</label>
-          <div class="input-group">
-            <span class="input-group-text">Gs.</span>
-            <input type="text" id="precio_unitario_txt" class="form-control" inputmode="numeric" placeholder="0">
-          </div>
-        </div>
-
-        <div class="col-md-2">
-          <label for="subtotal_txt" class="form-label fw-semibold">Subtotal</label>
-          <div class="input-group">
-            <span class="input-group-text">Gs.</span>
-            <input type="text" id="subtotal_txt" class="form-control" readonly>
-          </div>
-        </div>
-
         <div class="col-md-1 d-grid">
           <button class="btn btn-primary" onclick="agregarDetalleRemision(); return false;">
             <i class="bi bi-plus-lg"></i>
@@ -77,21 +92,12 @@
             <tr>
               <th>Producto</th>
               <th class="text-end">Cantidad</th>
-              <th class="text-end">Precio Unitario</th>
-              <th class="text-end">Subtotal</th>
               <th>Acción</th>
             </tr>
           </thead>
           <tbody id="detalle_remision_tb">
-            <!-- filas dinámicas: en la celda de subtotal usar class="text-end cell-subtotal" -->
+            <!-- filas dinámicas -->
           </tbody>
-          <tfoot class="table-light">
-            <tr>
-              <th colspan="3" class="text-end fw-bold">Total</th>
-              <th id="total_general_txt" class="text-end fs-5">0</th>
-              <th></th>
-            </tr>
-          </tfoot>
         </table>
       </div>
     </div>

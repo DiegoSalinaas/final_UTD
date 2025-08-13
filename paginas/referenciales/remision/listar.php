@@ -56,12 +56,11 @@
         <table class="table table-striped table-hover align-middle text-center mb-0">
           <thead class="table-primary position-sticky top-0" style="z-index:1;">
             <tr>
-              <th style="width: 8%">#</th>
-              <th style="width: 16%">Fecha</th>
-              <th style="width: 36%">Cliente</th>
-              <th class="text-end" style="width: 14%">Total</th>
-              <th style="width: 12%">Estado</th>
-              <th style="width: 14%">Operaciones</th>
+              <th style="width: 10%">#</th>
+              <th style="width: 20%">Fecha</th>
+              <th style="width: 40%">Cliente</th>
+              <th style="width: 15%">Estado</th>
+              <th style="width: 15%">Operaciones</th>
             </tr>
           </thead>
           <tbody id="remision_datos_tb">
