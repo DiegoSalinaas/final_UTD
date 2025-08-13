@@ -3,7 +3,7 @@
   <input type="hidden" id="id_orden" value="0">
   <input type="hidden" id="id_proveedor">
 
-  <!-- Encabezado -->
+  <!-- Encabezado de página -->
   <div class="d-flex align-items-center justify-content-between mb-3">
     <h3 class="mb-0 text-success fw-bold d-flex align-items-center">
       <i class="bi bi-clipboard-plus me-2"></i> Agregar / Editar Orden de Compra
@@ -13,9 +13,8 @@
     </span>
   </div>
 
-  <!-- Card Único: Datos + Detalle + Total + Acciones -->
-  <div class="card shadow rounded-4 border-0">
-    <!-- Sección: Datos de la orden -->
+  <!-- Card 1: Datos de la orden (CABECERA) -->
+  <div class="card shadow rounded-4 border-0 mb-4">
     <div class="card-header bg-light rounded-top-4">
       <h6 class="mb-0 text-secondary d-flex align-items-center">
         <i class="bi bi-info-circle me-2"></i>Datos de la orden
@@ -52,15 +51,18 @@
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- Sección: Agregar producto -->
-    <div class="px-4">
-      <hr class="my-0">
-    </div>
-    <div class="card-body p-4 pb-3">
-      <h6 class="mb-3 text-secondary d-flex align-items-center">
-        <i class="bi bi-box-seam me-2"></i>Agregar producto a la orden
+  <!-- Card 2: Detalle (DETALLE + TOTAL + ACCIONES) -->
+  <div class="card shadow rounded-4 border-0">
+    <div class="card-header bg-light rounded-top-4">
+      <h6 class="mb-0 text-secondary d-flex align-items-center">
+        <i class="bi bi-list-ul me-2"></i>Detalle de productos
       </h6>
+    </div>
+
+    <!-- Fila de carga -->
+    <div class="card-body p-4 pb-3">
       <div class="row g-4 align-items-end">
         <!-- Producto -->
         <div class="col-md-6">
@@ -77,7 +79,7 @@
           <input type="number" id="cantidad_txt" class="form-control text-end" min="0" inputmode="numeric" placeholder="0">
         </div>
 
-        <!-- Precio Unitario (con Gs.) -->
+        <!-- Precio Unitario (Gs.) -->
         <div class="col-md-2">
           <label for="precio_unitario_txt" class="form-label fw-semibold">Precio Unitario</label>
           <div class="input-group">
@@ -86,7 +88,7 @@
           </div>
         </div>
 
-        <!-- Subtotal (readonly con Gs.) -->
+        <!-- Subtotal (readonly Gs.) -->
         <div class="col-md-2">
           <label for="subtotal_txt" class="form-label fw-semibold">Subtotal</label>
           <div class="input-group">
@@ -96,7 +98,7 @@
         </div>
 
         <!-- Botón agregar -->
-        <div class="col-12 col-md-3 col-lg-2 d-grid">
+        <div class="col-12 col-md-3 col-lg-2 d-grid mt-2">
           <button class="btn btn-outline-primary" onclick="agregarProductoExtra(); return false;">
             <i class="bi bi-plus-lg me-1"></i> Agregar
           </button>
@@ -104,7 +106,7 @@
       </div>
     </div>
 
-    <!-- Sección: Tabla detalle -->
+    <!-- Tabla -->
     <div class="card-body pt-0 px-4">
       <div class="table-responsive">
         <table class="table table-striped table-hover align-middle text-center mb-0">
@@ -128,7 +130,7 @@
     <div class="card-footer bg-white rounded-bottom-4">
       <div class="row g-3 align-items-center">
         <div class="col-md-6">
-          <div class="small text-muted">
+          <div class="text-start small text-muted">
             <i class="bi bi-info-circle me-1"></i>La suma del total se actualiza automáticamente según el detalle.
           </div>
         </div>
@@ -152,13 +154,13 @@
   </div>
 </div>
 
-<!-- Ajustes finos -->
+<!-- Ajustes finos (mismos del primer diseño) -->
 <style>
   .card { overflow: hidden; }
   .form-label { margin-bottom: .35rem; }
   .table thead th { white-space: nowrap; }
+  .text-end { text-align: end !important; }
   input[type=number]::-webkit-outer-spin-button,
   input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
   input[type=number] { -moz-appearance: textfield; }
-  .text-end { text-align: end !important; }
 </style>
