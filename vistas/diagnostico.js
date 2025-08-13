@@ -100,12 +100,12 @@ function _trim(id){ return ($(id).val() || "").toString().trim(); }
 function _num(id){ let v = parseFloat($(id).val()); return isNaN(v) ? null : v; }
 
 
-function imprimirDiagnostico(id){
+function imprimirDiagnostico(id, auto = true, copias = 1){
   const d = ejecutarAjax("controladores/diagnostico.php","leer_id="+id);
   if(d==="0"){ alert("No se encontró el diagnóstico"); return; }
   const diag = JSON.parse(d);
 
-  // Obtener nombre del equipo
+  // Equipo desde la recepción (mejor nombre legible)
   let nombreEquipo = "";
   try{
     const detRec = ejecutarAjax("controladores/detalle_recepcion.php","leer=1&id_recepcion="+diag.id_recepcion);
@@ -114,141 +114,243 @@ function imprimirDiagnostico(id){
       const match = arr.find(x => String(x.id_detalle) === String(diag.id_detalle_recepcion));
       nombreEquipo = match ? (match.nombre_equipo || match.modelo || "") : "";
     }
-  }catch(e){/* ignore */}
+  }catch(e){}
 
-  // Detalle de componentes
-  let filas = "";
+  // Componentes del diagnóstico
   const det = ejecutarAjax("controladores/detalle_diagnostico.php","leer=1&id_diagnostico="+id);
-  if(det !== "0"){
-    JSON.parse(det).forEach(e=>{
-      const ok = (String(e.estado_componente||"").toUpperCase()==="OK") ? "✔" : "";
-      filas += `
-        <tr>
-          <td>${e.componente||""}</td>
-          <td><span class="badge rounded-pill ${String(e.estado_componente||"").toUpperCase()==="OK" ? "bg-success" : "bg-secondary"}">${e.estado_componente||""}</span></td>
-          <td>${ok}</td>
-          <td class="text-start">${e.hallazgo||""}</td>
-          <td class="text-start">${e.accion_recomendada||""}</td>
-        </tr>`;
-    });
-  }
+  const componentes = det !== "0" ? JSON.parse(det) : [];
+  const filas = componentes.length ? componentes.map(e=>{
+    const est = String(e.estado_componente||"").toUpperCase();
+    const ok  = est === "OK" ? "✔" : "";
+    const pill = est === "OK" ? "bg-success" :
+                 est === "MALO" ? "bg-danger" :
+                 "bg-secondary";
+    return `
+      <tr>
+        <td class="text-start">${e.componente||""}</td>
+        <td class="text-center"><span class="badge rounded-pill ${pill}">${e.estado_componente||""}</span></td>
+        <td class="text-center">${ok}</td>
+        <td class="text-start">${(e.hallazgo||"").toString()}</td>
+        <td class="text-start">${(e.accion_recomendada||"").toString()}</td>
+      </tr>`;
+  }).join("") : `<tr><td colspan="5" class="text-start">Sin componentes</td></tr>`;
 
+  // Helpers
+  const fmtPY = (n)=> (typeof formatearPY==="function" ? formatearPY(n||0) : new Intl.NumberFormat("es-PY",{maximumFractionDigits:0}).format(Math.round(n||0)));
+  const fDMA  = (f)=> (typeof formatearFechaDMA==="function" ? formatearFechaDMA(f) : (f||""));
+
+  // Estados
+  const estadoTxt = diag.estado || "EN PROCESO";
+  const estUC = estadoTxt.toUpperCase();
+  const estadoBadge =
+    estUC.includes("FINALIZ") ? "bg-primary" :
+    estUC.includes("ANUL")    ? "bg-danger"  :
+    "bg-warning text-dark";
+
+  // KPIs
   const tiempoEst = diag.tiempo_estimado_horas || 0;
-  const manoObra  = (typeof formatearPY==="function") ? formatearPY(diag.costo_mano_obra_estimado||0) : (diag.costo_mano_obra_estimado||0);
-  const repuestos = (typeof formatearPY==="function") ? formatearPY(diag.costo_repuestos_estimado||0) : (diag.costo_repuestos_estimado||0);
+  const manoObra  = fmtPY(diag.costo_mano_obra_estimado||0);
+  const repuestos = fmtPY(diag.costo_repuestos_estimado||0);
   const garantiaSi = (String(diag.aplica_garantia||"").toUpperCase()==="SI" || diag.aplica_garantia===1);
   const garantiaTxt = garantiaSi ? "Sí" : "No";
   const garantiaBadge = garantiaSi ? "bg-success" : "bg-danger";
-  const estadoBadge = (String(diag.estado||"").toUpperCase()==="FINALIZADO") ? "bg-primary" : "bg-warning text-dark";
+
+  // Empresa (ajustar)
+  const EMPRESA = {
+    nombre: "HARD INFORMATICA S.A.",
+    ruc: "84945944-4",
+    dir: "Av. Siempre Viva 123 - Asunción",
+    tel: "(021) 376-548",
+    email: "servicio@hardinformatica.com"
+  };
+
+  // Copias
+  const etiquetas = ["ORIGINAL", "DUPLICADO", "TRIPLICADO", "COPIA 4"];
+  const bloques = [];
+  for (let i = 0; i < Math.max(1, copias); i++) {
+    const etiqueta = etiquetas[i] || `COPIA ${i+1}`;
+    bloques.push(`
+      <section class="doc">
+        ${estUC.includes("ANUL") ? `<div class="watermark">ANULADO</div>` : ""}
+
+        <header class="doc-header">
+          <div class="doc-logo"><img src="images/logo.png" alt="Logo" onerror="this.style.display='none'"></div>
+          <div class="doc-empresa">
+            <h1>${EMPRESA.nombre}</h1>
+            <div class="emp-meta">
+              RUC: ${EMPRESA.ruc} &nbsp;•&nbsp; ${EMPRESA.dir}<br>
+              Tel.: ${EMPRESA.tel} &nbsp;•&nbsp; ${EMPRESA.email}
+            </div>
+          </div>
+          <div class="doc-right">
+            <div class="doc-tipo">DIAGNÓSTICO</div>
+            <div class="doc-num">#${diag.id_diagnostico}</div>
+            <span class="badge ${estadoBadge}">${estadoTxt}</span>
+            <div class="doc-fecha">${fDMA(diag.fecha_inicio)}</div>
+            <span class="copia">${etiqueta}</span>
+          </div>
+        </header>
+
+        <div class="doc-info">
+          <div class="pair"><span class="lbl">Recepción:</span> <span class="val">${diag.id_recepcion || ""}</span></div>
+          <div class="pair"><span class="lbl">Equipo:</span>    <span class="val">${nombreEquipo || ""}</span></div>
+          ${diag.tecnico ? `<div class="pair"><span class="lbl">Técnico:</span> <span class="val">${diag.tecnico}</span></div>` : ""}
+          <div class="pair"><span class="lbl">Garantía:</span>  <span class="val"><span class="badge ${garantiaBadge}">${garantiaTxt}</span></span></div>
+        </div>
+
+        <div class="kpi-grid">
+          <div class="kpi"><div class="lbl">Tiempo Est. (h)</div><div class="val">${tiempoEst}</div></div>
+          <div class="kpi"><div class="lbl">Mano de Obra</div><div class="val">${manoObra}</div></div>
+          <div class="kpi"><div class="lbl">Repuestos</div><div class="val">${repuestos}</div></div>
+          ${diag.fecha_fin ? `<div class="kpi"><div class="lbl">Fecha Fin</div><div class="val">${fDMA(diag.fecha_fin)}</div></div>` : ""}
+        </div>
+
+        ${diag.descripcion_falla ? `
+        <div class="section">
+          <div class="section-title">Descripción de Falla</div>
+          <div class="note-box">${String(diag.descripcion_falla).replaceAll("\\n","<br>")}</div>
+        </div>` : ""}
+
+        ${diag.observaciones ? `
+        <div class="section">
+          <div class="section-title">Observaciones</div>
+          <div class="note-box">${String(diag.observaciones).replaceAll("\\n","<br>")}</div>
+        </div>` : ""}
+
+        <div class="section">
+          <div class="section-title">Componentes</div>
+          <table class="tabla">
+            <thead>
+              <tr>
+                <th class="text-start" style="width:24%">Componente</th>
+                <th class="text-center" style="width:12%">Estado</th>
+                <th class="text-center" style="width:6%">OK</th>
+                <th class="text-start" style="width:29%">Hallazgo</th>
+                <th class="text-start" style="width:29%">Acción Recomendada</th>
+              </tr>
+            </thead>
+            <tbody>${filas}</tbody>
+          </table>
+        </div>
+
+        <div class="firmas">
+          <div class="fbox"><div class="linea"></div><div class="ftxt">Técnico</div></div>
+          <div class="fbox"><div class="linea"></div><div class="ftxt">Cliente</div></div>
+          <div class="fbox"><div class="linea"></div><div class="ftxt">Autorizado por</div></div>
+        </div>
+
+        <footer class="doc-footer">Documento generado automáticamente — ${new Date().toLocaleString()}</footer>
+      </section>
+    `);
+  }
 
   const v = window.open('', '', 'width=1024,height=720');
   v.document.write(`
-    <html>
-    <head>
-      <title>Diagnóstico #${diag.id_diagnostico}</title>
-      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-      <style>
-        @page { size: A4; margin: 16mm; }
-        body { color:#111; font-family: "Segoe UI", Arial, sans-serif; }
-        .doc-header { display:flex; align-items:center; border-bottom:2px solid #0d6efd; padding-bottom:10px; margin-bottom:18px; }
-        .doc-logo { flex:0 0 auto; }
-        .doc-logo img { height:110px; }
-        .doc-info { flex:1; padding-left:15px; }
-        .doc-title { margin:0; font-weight:800; letter-spacing:.3px; }
-        .meta { font-size:12px; color:#555; margin-top:4px; }
-        .kpi-grid { display:grid; grid-template-columns: repeat(4, 1fr); gap:12px; }
-        .kpi { border:1px solid #e9ecef; border-radius:12px; padding:14px; background:#f8f9fa; }
-        .kpi .lbl { font-size:12px; color:#6c757d; margin-bottom:4px; text-transform:uppercase; letter-spacing:.3px; }
-        .kpi .val { font-size:15px; font-weight:600; }
-        .section { margin-top:18px; }
-        .section .section-title { font-size:13px; font-weight:700; color:#0d6efd; text-transform:uppercase; letter-spacing:.4px; margin-bottom:8px; }
-        .note-box { border:1px dashed #cfe2ff; background:#f8fbff; border-radius:10px; padding:12px; min-height:60px; }
-        table { width:100%; border-collapse:collapse; }
-        thead th { background:#e9f2ff; border-bottom:1px solid #cfe2ff !important; font-weight:700; }
-        th, td { border:1px solid #e9ecef; padding:8px; font-size:12.5px; vertical-align:top; }
-        .text-start { text-align:left; }
-        .footer { margin-top:20px; font-size:11px; color:#6c757d; text-align:right; }
-        @media print { .no-print { display:none !important; } }
-      </style>
-    </head>
-    <body>
-      <div class="doc-header">
-        <div class="doc-logo">
-          <img src="images/logo.png" alt="Logo">
-        </div>
-        <div class="doc-info">
-          <h2 class="doc-title">Diagnóstico #${diag.id_diagnostico}</h2>
-          <div class="meta">
-            Recepción: <strong>${diag.id_recepcion || ""}</strong>
-            &nbsp;·&nbsp; Estado: <span class="badge ${estadoBadge}">${diag.estado || ""}</span>
-            &nbsp;·&nbsp; Fecha inicio: <strong>${diag.fecha_inicio || ""}</strong>
-          </div>
-        </div>
-      </div>
+  <html>
+  <head>
+    <title>Diagnóstico #${diag.id_diagnostico}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      @page { size: A4; margin: 14mm; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      body { color:#111; font-family: "Segoe UI", Arial, sans-serif; }
+      .doc { position: relative; page-break-after: always; }
+      .doc:last-of-type { page-break-after: auto; }
 
-      <div class="kpi-grid">
-        <div class="kpi">
-          <div class="lbl">Equipo</div>
-          <div class="val">${nombreEquipo || ""}</div>
-        </div>
-        <div class="kpi">
-          <div class="lbl">Tiempo Est. (h)</div>
-          <div class="val">${tiempoEst}</div>
-        </div>
-        <div class="kpi">
-          <div class="lbl">Costo Mano Obra</div>
-          <div class="val">${manoObra}</div>
-        </div>
-        <div class="kpi">
-          <div class="lbl">Costo Repuestos</div>
-          <div class="val">${repuestos}</div>
-        </div>
-        <div class="kpi">
-          <div class="lbl">Garantía</div>
-          <div class="val"><span class="badge ${garantiaBadge}">${garantiaTxt}</span></div>
-        </div>
-      </div>
+      /* Header alineado (logo | empresa | doc) */
+      .doc-header{
+        display:grid;
+        grid-template-columns: auto 1fr auto;
+        align-items:center;
+        gap:16px;
+        border-bottom:2px solid #0d6efd;
+        padding-bottom:10px;
+        margin-bottom:14px;
+      }
+      .doc-logo img{ height:70px; display:block; }
+      .doc-empresa{ display:flex; flex-direction:column; justify-content:center; }
+      .doc-empresa h1{ font-size:20px; font-weight:800; margin:0 0 4px 0; letter-spacing:.2px; text-align:center; }
+      .emp-meta{ font-size:12px; color:#555; line-height:1.35; text-align:center; }
 
-      <div class="section">
-        <div class="section-title">Descripción de Falla</div>
-        <div class="note-box">${(diag.descripcion_falla || "").replaceAll("\\n","<br>")}</div>
-      </div>
+      .doc-right{ text-align:right; display:flex; flex-direction:column; gap:6px; align-items:flex-end; }
+      .doc-right .doc-tipo{ font-size:14px; font-weight:700; color:#0d6efd; letter-spacing:1.2px; }
+      .doc-right .doc-num{ font-size:18px; font-weight:800; }
+      .doc-right .doc-fecha{ font-size:12px; color:#555; }
+      .doc-right .badge{ font-size:12px; }
+      .doc-right .copia{
+        background:#f1f3f5; border:1px solid #dee2e6; padding:2px 8px; border-radius:12px; font-size:11px;
+      }
 
-      <div class="section">
-        <div class="section-title">Observaciones</div>
-        <div class="note-box">${(diag.observaciones || "").replaceAll("\\n","<br>")}</div>
-      </div>
+      /* Info en pares */
+      .doc-info{
+        display:grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap:6px 12px;
+        margin-bottom:10px;
+        font-size:13px;
+        align-items:center;
+      }
+      .doc-info .pair{ display:flex; align-items:center; gap:6px; white-space:nowrap; }
+      .doc-info .lbl{ color:#6c757d; min-width:90px; font-weight:600; }
+      .doc-info .val{ font-weight:600; }
 
-      <div class="section">
-        <div class="section-title">Componentes</div>
-        <table class="table table-bordered">
-          <thead>
-            <tr>
-              <th style="width:22%">Componente</th>
-              <th style="width:12%">Estado</th>
-              <th style="width:6%">OK</th>
-              <th style="width:30%">Hallazgo</th>
-              <th style="width:30%">Acción Recomendada</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${filas || `<tr><td colspan="5" class="text-start">Sin componentes</td></tr>`}
-          </tbody>
-        </table>
-      </div>
+      /* KPIs compactos */
+      .kpi-grid{ display:grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap:10px 12px; margin-bottom:8px; }
+      .kpi{ border:1px solid #e9ecef; border-radius:12px; padding:10px 12px; background:#f8f9fa; }
+      .kpi .lbl{ font-size:11px; color:#6c757d; margin-bottom:2px; text-transform:uppercase; letter-spacing:.3px; }
+      .kpi .val{ font-size:14px; font-weight:700; }
 
-      <div class="footer">
-        Documento generado automáticamente.
-      </div>
+      /* Secciones de texto */
+      .section{ margin-top:12px; }
+      .section .section-title{ font-size:13px; font-weight:700; color:#0d6efd; text-transform:uppercase; letter-spacing:.4px; margin-bottom:6px; }
+      .note-box{ border:1px dashed #cfe2ff; background:#f8fbff; border-radius:10px; padding:10px; min-height:52px; font-size:12.5px; }
 
-      <script>window.print();</script>
-    </body>
-    </html>
-  `);
+      /* Tabla de componentes */
+      table.tabla{ width:100%; border-collapse:collapse; margin-top:8px; }
+      .tabla thead th{
+        background:#e9f2ff;
+        border:1px solid #cfe2ff !important;
+        font-weight:700;
+        padding:6px 8px;
+        text-align:center;
+      }
+      .tabla td{
+        border:1px solid #e9ecef;
+        padding:7px 8px;
+        font-size:12.5px;
+        vertical-align:top;
+      }
+      .text-center{text-align:center;} .text-start{text-align:left;} .text-end{text-align:right;}
+      thead{ display: table-header-group; }
+      tfoot{ display: table-footer-group; }
+
+      /* Firmas y footer */
+      .firmas{ display:grid; grid-template-columns: repeat(3, 1fr); gap:22px; margin-top:16px; }
+      .firmas .linea{ border-bottom:1px solid #000; height:28px; }
+      .firmas .ftxt{ text-align:center; font-size:12px; color:#444; margin-top:6px; }
+
+      .doc-footer{ margin-top:8px; font-size:11px; color:#6c757d; text-align:right; }
+
+      /* Watermark ANULADO */
+      .watermark{
+        position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+        font-size:100px; opacity:0.07; transform: rotate(-22deg); font-weight:900; color:#dc3545;
+        pointer-events:none; user-select:none;
+      }
+
+      @media print { .no-print{ display:none !important; } }
+    </style>
+  </head>
+  <body>
+    ${bloques.join("")}
+    <script>${auto ? "window.print();" : ""}</script>
+  </body>
+  </html>`);
   v.document.close();
   v.focus();
 }
 window.imprimirDiagnostico = imprimirDiagnostico;
+
 
 
 
