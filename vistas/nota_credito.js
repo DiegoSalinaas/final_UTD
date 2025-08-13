@@ -333,12 +333,20 @@ if(motivoGeneral.length === 0){
 window.guardarNotaCredito = guardarNotaCredito;
 
 function cargarTablaNotaCredito(){
-    let datos = ejecutarAjax("controladores/nota_credito.php","leer=1");
+    const buscar = $("#b_nota_credito").val();
+    const estado = $("#estado_filtro").val();
+    const fDesde = $("#f_desde").val();
+    const fHasta = $("#f_hasta").val();
+
+    let datos = ejecutarAjax("controladores/nota_credito.php", `leer=1&buscar=${encodeURIComponent(buscar)}&estado=${estado}&f_desde=${fDesde}&f_hasta=${fHasta}`);
+
     if(datos === "0"){
         $("#nota_credito_datos_tb").html("NO HAY REGISTROS");
+        $("#nota_credito_count").text("0");
     }else{
         let json = JSON.parse(datos);
         $("#nota_credito_datos_tb").html("");
+        $("#nota_credito_count").text(json.length);
         json.map(function(it){
             $("#nota_credito_datos_tb").append(`
                 <tr>
@@ -359,33 +367,18 @@ function cargarTablaNotaCredito(){
 }
 window.cargarTablaNotaCredito = cargarTablaNotaCredito;
 
-function buscarNotaCredito(){
-    let b = $("#b_nota_credito").val();
-    let datos = ejecutarAjax("controladores/nota_credito.php","leer_descripcion="+b);
-    if(datos === "0"){
-        $("#nota_credito_datos_tb").html("NO HAY REGISTROS");
-    }else{
-        let json = JSON.parse(datos);
-        $("#nota_credito_datos_tb").html("");
-        json.map(function(it){
-            $("#nota_credito_datos_tb").append(`
-                <tr>
-                    <td>${it.id_nota_credito}</td>
-                    <td>${it.numero_nota}</td>
-                    <td>${it.fecha_emision}</td>
-                    <td>${it.cliente}</td>
-                    <td>${formatearPY(it.total)}</td>
-                    <td>${badgeEstado(it.estado)}</td>
-                    <td>
-                        <button class="btn btn-info btn-sm imprimir-nota" title="Imprimir"><i class="bi bi-printer"></i></button>
-                        <button class="btn btn-warning btn-sm editar-nota" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                        <button class="btn btn-danger btn-sm anular-nota" title="Anular"><i class="bi bi-x-circle"></i></button>
-                    </td>
-                </tr>`);
-        });
-    }
-}
-window.buscarNotaCredito = buscarNotaCredito;
+// Filtros
+$(document).on('input', '#b_nota_credito', cargarTablaNotaCredito);
+$(document).on('change', '#estado_filtro', cargarTablaNotaCredito);
+$(document).on('change', '#f_desde, #f_hasta', cargarTablaNotaCredito);
+
+$(document).on('click', '#limpiar_busqueda_btn', function(){
+    $('#b_nota_credito').val('');
+    $('#estado_filtro').val('');
+    $('#f_desde').val('');
+    $('#f_hasta').val('');
+    cargarTablaNotaCredito();
+});
 
 $(document).on("click",".imprimir-nota",function(){
     let id=$(this).closest("tr").find("td:eq(0)").text();

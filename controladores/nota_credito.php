@@ -39,12 +39,43 @@ if (isset($_POST['anular'])) {
     $query->execute(['id' => $_POST['anular']]);
 }
 
-// LEER TODAS
+// LEER TODAS CON FILTROS OPCIONALES
 if (isset($_POST['leer'])) {
     $db = new DB();
     $cn = $db->conectar();
-    $query = $cn->prepare("SELECT n.id_nota_credito, n.fecha_emision, n.numero_nota, n.id_cliente, c.nombre_apellido AS cliente, n.motivo_general, n.estado, IFNULL(SUM(d.total_linea),0) AS total FROM nota_credito n LEFT JOIN clientes c ON n.id_cliente = c.id_cliente LEFT JOIN detalle_nota_credito d ON n.id_nota_credito = d.id_nota_credito GROUP BY n.id_nota_credito, n.fecha_emision, n.numero_nota, n.id_cliente, c.nombre_apellido, n.motivo_general, n.estado ORDER BY n.id_nota_credito DESC");
-    $query->execute();
+
+    $sql = "SELECT n.id_nota_credito, n.fecha_emision, n.numero_nota, n.id_cliente, c.nombre_apellido AS cliente, n.motivo_general, n.estado, IFNULL(SUM(d.total_linea),0) AS total FROM nota_credito n LEFT JOIN clientes c ON n.id_cliente = c.id_cliente LEFT JOIN detalle_nota_credito d ON n.id_nota_credito = d.id_nota_credito";
+    $where = [];
+    $params = [];
+
+    if (!empty($_POST['buscar'])) {
+        $where[] = "(c.nombre_apellido LIKE :buscar OR n.numero_nota LIKE :buscar)";
+        $params['buscar'] = '%' . $_POST['buscar'] . '%';
+    }
+
+    if (!empty($_POST['estado'])) {
+        $where[] = "n.estado = :estado";
+        $params['estado'] = $_POST['estado'];
+    }
+
+    if (!empty($_POST['f_desde'])) {
+        $where[] = "n.fecha_emision >= :f_desde";
+        $params['f_desde'] = $_POST['f_desde'];
+    }
+
+    if (!empty($_POST['f_hasta'])) {
+        $where[] = "n.fecha_emision <= :f_hasta";
+        $params['f_hasta'] = $_POST['f_hasta'];
+    }
+
+    if ($where) {
+        $sql .= ' WHERE ' . implode(' AND ', $where);
+    }
+
+    $sql .= " GROUP BY n.id_nota_credito, n.fecha_emision, n.numero_nota, n.id_cliente, c.nombre_apellido, n.motivo_general, n.estado ORDER BY n.id_nota_credito DESC";
+
+    $query = $cn->prepare($sql);
+    $query->execute($params);
     echo $query->rowCount() ? json_encode($query->fetchAll(PDO::FETCH_OBJ)) : '0';
 }
 
