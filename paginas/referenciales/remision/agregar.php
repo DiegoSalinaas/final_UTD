@@ -13,7 +13,13 @@
       <div class="row g-3">
         <div class="col-md-4">
           <label for="id_cliente_lst" class="form-label fw-semibold">Cliente</label>
-          <select id="id_cliente_lst" class="form-select" aria-label="Cliente"></select>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-person-badge"></i></span>
+            <select id="id_cliente_lst" class="form-select" aria-label="Cliente"></select>
+            <button id="nuevo_cliente_btn" class="btn btn-outline-primary" type="button" title="Agregar cliente">
+              <i class="bi bi-plus-lg"></i>
+            </button>
+          </div>
         </div>
         <div class="col-md-4">
           <label for="id_conductor_lst" class="form-label fw-semibold">Conductor</label>
@@ -110,6 +116,19 @@
       <button class="btn btn-outline-danger" onclick="mostrarListarRemision(); return false;">
         <i class="bi bi-x-circle me-1"></i> Cancelar
       </button>
+    </div>
+</div>
+</div>
+
+<!-- Modal: Agregar Cliente -->
+<div class="modal fade" id="modal_nuevo_cliente" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Agregar Cliente</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body p-0"></div>
     </div>
   </div>
 </div>
