@@ -289,7 +289,8 @@ function imprimirRecepcion(id, auto = true, copias = 1){
       estUC === "ANULADO"       ? "bg-danger" :
       estUC === "DIAGNOSTICADO" ? "bg-info text-dark" :
       estUC === "PENDIENTE"     ? "bg-warning text-dark" :
-      estUC === "ACTIVO"        ? "bg-primary" :
+      estUC === "CERRADA"       ? "bg-primary" :
+      estUC === "ACTIVO"        ? "bg-success" :
                                   "bg-secondary";
 
   // Datos de empresa (ajusta a tu realidad)

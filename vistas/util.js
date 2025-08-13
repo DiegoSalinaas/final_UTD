@@ -142,6 +142,8 @@ function badgeEstado(estado) {
         clase = 'warning text-dark';
     } else if (est === 'DIAGNOSTICADO') {
         clase = 'info';
+    } else if (est === 'CERRADA') {
+        clase = 'primary';
     } else if (est === 'INACTIVO' || est === 'ANULADO') {
         clase = 'danger';
     }
