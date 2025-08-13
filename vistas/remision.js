@@ -275,6 +275,7 @@ function initFiltrosRemision(){
   $est.html(`
     <option value="">-- Todos --</option>
     <option value="EMITIDO">EMITIDO</option>
+    <option value="APROBADO">APROBADO</option>
     <option value="ANULADO">ANULADO</option>
   `);
 }
@@ -292,16 +293,23 @@ function cargarTablaRemision(){
 }
 
 function buscarRemision(){
-  const b     = encodeURIComponent($("#b_remision").val() || "");
-  const estado= encodeURIComponent($("#estado_filtro").val() || "");
-  const desde = encodeURIComponent($("#f_desde").val() || "");
-  const hasta = encodeURIComponent($("#f_hasta").val() || "");
+  const b      = $("#b_remision").val() || "";
+  const estado = $("#estado_filtro").val() || "";
+  const desde  = $("#f_desde").val() || "";
+  const hasta  = $("#f_hasta").val() || "";
+
+  const params = {
+    leer_descripcion: b.trim(),
+    estado: estado,
+    desde: desde,
+    hasta: hasta
+  };
 
   let resp = ejecutarAjax(
     "controladores/remision.php",
-    "leer_descripcion="+b+"&estado="+estado+"&desde="+desde+"&hasta="+hasta
+    params
   );
-
+  
   if(resp === "0" || !resp){
     $("#remision_datos_tb").html("NO HAY REGISTROS");
     $("#remision_count").text(0);
