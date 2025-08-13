@@ -346,6 +346,13 @@
                       <p>Ciudades</p>
                     </a>
                   </li>
+                  <li class="nav-item">
+                    <a href="#" class="nav-link"
+                         onclick="mostrarListarPuntos(); return false;">
+                      <i class="nav-icon bi bi-geo-fill"></i>
+                      <p>Puntos</p>
+                    </a>
+                  </li>
    <!--               <li class="nav-item">
   <a href="#" class="nav-link" onclick="mostrarListarUsuarioss(); return false;">
     <i class="nav-icon bi bi-people"></i>
@@ -769,6 +776,7 @@
     <script src="vistas/util.js"></script>
     <script src="vistas/departamento.js"></script>
     <script src="vistas/ciudad.js"></script>
+      <script src="vistas/puntos.js"></script>
     <script src="vistas/usuarioss.js"></script>
     <script src="vistas/ebooks.js"></script>
     <script src="vistas/compras.js"></script>

@@ -798,3 +798,34 @@ CREATE TABLE `diagnostico_detalle` (
   KEY `idx_det_diag` (`id_diagnostico`),
   CONSTRAINT `fk_det_diag` FOREIGN KEY (`id_diagnostico`) REFERENCES `diagnostico` (`id_diagnostico`) ON UPDATE CASCADE ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+--
+-- Estructura de tabla para la tabla `puntos`
+--
+CREATE TABLE `puntos` (
+  `id_punto` int(11) NOT NULL,
+  `nombre` varchar(150) NOT NULL,
+  `direccion` varchar(200) NOT NULL,
+  `id_ciudad` int(11) NOT NULL,
+  `estado` varchar(20) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Indices de la tabla `puntos`
+--
+ALTER TABLE `puntos`
+  ADD PRIMARY KEY (`id_punto`),
+  ADD KEY `id_ciudad` (`id_ciudad`);
+
+--
+-- AUTO_INCREMENT de la tabla `puntos`
+--
+ALTER TABLE `puntos`
+  MODIFY `id_punto` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- Filtros para la tabla `puntos`
+--
+ALTER TABLE `puntos`
+  ADD CONSTRAINT `puntos_ibfk_1` FOREIGN KEY (`id_ciudad`) REFERENCES `ciudad` (`id_ciudad`);
