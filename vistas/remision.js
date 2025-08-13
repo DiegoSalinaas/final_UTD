@@ -144,10 +144,12 @@ function renderListaPuntos(arr){
   const $llegada = $("#punto_llegada_lst");
   $salida.html('<option value="">-- Seleccione punto --</option>');
   $llegada.html('<option value="">-- Seleccione punto --</option>');
-  arr.forEach(p => {
-    $salida.append(`<option value="${p.id_punto}">${p.nombre}</option>`);
-    $llegada.append(`<option value="${p.id_punto}">${p.nombre}</option>`);
-  });
+  arr
+    .filter(p => p.estado === "ACTIVO")
+    .forEach(p => {
+      $salida.append(`<option value="${p.id_punto}">${p.nombre}</option>`);
+      $llegada.append(`<option value="${p.id_punto}">${p.nombre}</option>`);
+    });
 }
 
 /* =========================
