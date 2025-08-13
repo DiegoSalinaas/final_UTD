@@ -144,7 +144,7 @@ function badgeEstado(estado) {
   else if (est === 'DIAGNOSTICADO' || est === 'DIAGNOSTICADA') cls = 'text-bg-info';
   else if (est === 'CERRADA' || est === 'CERRADO' || est === 'EMITIDO' || est === 'EMITIDA') cls = 'text-bg-primary';
   else if (est === 'APROBADO' || est === 'APROBADA' || est === 'APROBADO' || est === 'APROBADA') cls = 'text-bg-success';
-  else if (est === 'ANULADO' || est === 'ANULADA' || est === 'INACTIVO') cls = 'text-bg-danger';
+  else if (est === 'ANULADO' || est === 'ANULADA' || est === 'INACTIVO' || est === 'RECHAZADO' || est === 'RECHAZADA') cls = 'text-bg-danger';
 
   return `<span class="badge ${cls}">${estado}</span>`;
 }

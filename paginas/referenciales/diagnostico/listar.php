@@ -38,8 +38,8 @@
           <select id="estado_filtro" class="form-select">
             <option value="">Todos</option>
             <option value="PENDIENTE">Pendiente</option>
-            <option value="REALIZADO">Realizado</option>
-            <option value="ANULADO">Anulado</option>
+            <option value="APROBADO">Aprobado</option>
+            <option value="RECHAZADO">Rechazado</option>
           </select>
         </div>
 

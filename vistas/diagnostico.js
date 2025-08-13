@@ -362,7 +362,16 @@ window.imprimirDiagnostico = imprimirDiagnostico;
 
 
 
-function cargarTablaDiagnostico(filtro=""){let q=filtro?"leer_descripcion="+filtro:"leer=1",datos=ejecutarAjax("controladores/diagnostico.php",q);if(datos==="0"){$("#diagnostico_datos_tb").html("NO HAY REGISTROS");$("#diagnostico_count").text(0);}else{let js=JSON.parse(datos);$("#diagnostico_datos_tb").html('');js.forEach(it=>{$("#diagnostico_datos_tb").append(`<tr><td>${it.id_diagnostico}</td><td>${it.id_recepcion} - ${it.nombre_cliente}</td><td>${it.fecha_inicio}</td><td>${badgeEstado(it.estado)}</td><td><button class="btn btn-secondary btn-sm imprimir-diagnostico" data-id="${it.id_diagnostico}"><i class="bi bi-printer"></i></button> <button class="btn btn-warning btn-sm editar-diagnostico" data-id="${it.id_diagnostico}"><i class="bi bi-pencil-square"></i></button> <button class="btn btn-danger btn-sm eliminar-diagnostico" data-id="${it.id_diagnostico}"><i class="bi bi-trash"></i></button></td></tr>`);});$("#diagnostico_count").text(js.length);}}
+function cargarTablaDiagnostico(){
+  const filtros={
+    leer:1,
+    buscar:$("#b_diagnostico").val(),
+    estado:$("#estado_filtro").val(),
+    desde:$("#f_desde").val(),
+    hasta:$("#f_hasta").val()
+  };
+  let datos=ejecutarAjax("controladores/diagnostico.php",filtros),$tb=$("#diagnostico_datos_tb");
+  if(datos==="0"){$tb.html("NO HAY REGISTROS");$("#diagnostico_count").text(0);}else{let js=JSON.parse(datos);$tb.html('');js.forEach(it=>$tb.append(`<tr><td>${it.id_diagnostico}</td><td>${it.id_recepcion} - ${it.nombre_cliente}</td><td>${it.fecha_inicio}</td><td>${badgeEstado(it.estado)}</td><td><button class="btn btn-secondary btn-sm imprimir-diagnostico" data-id="${it.id_diagnostico}"><i class="bi bi-printer"></i></button> <button class="btn btn-warning btn-sm editar-diagnostico" data-id="${it.id_diagnostico}"><i class="bi bi-pencil-square"></i></button> <button class="btn btn-danger btn-sm eliminar-diagnostico" data-id="${it.id_diagnostico}"><i class="bi bi-trash"></i></button></td></tr>`));$("#diagnostico_count").text(js.length);}}
 
 function cargarDiagnostico(id){
   // Cargar la vista de edición antes de establecer los datos para evitar
@@ -400,7 +409,15 @@ function cargarDiagnostico(id){
 $(document).on("click",".editar-diagnostico",function(){cargarDiagnostico($(this).data('id'));});
 $(document).on("click",".eliminar-diagnostico",function(){if(confirm("¿Eliminar?")){ejecutarAjax("controladores/diagnostico.php","eliminar="+$(this).data('id'));cargarTablaDiagnostico();cargarPendientesDiagnostico();}});
 $(document).on("click",".imprimir-diagnostico",function(){imprimirDiagnostico($(this).data('id'));});
-$(document).on("keyup","#b_diagnostico",function(){cargarTablaDiagnostico($(this).val());});
+$(document).on('input','#b_diagnostico',cargarTablaDiagnostico);
+$(document).on('change','#estado_filtro, #f_desde, #f_hasta',cargarTablaDiagnostico);
+$(document).on('click','#limpiar_busqueda_btn',function(){
+  $('#b_diagnostico').val('');
+  $('#estado_filtro').val('');
+  $('#f_desde').val('');
+  $('#f_hasta').val('');
+  cargarTablaDiagnostico();
+});
 
 
 
