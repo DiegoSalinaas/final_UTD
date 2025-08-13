@@ -60,6 +60,14 @@ if (isset($_POST['leer'])) {
     echo $query->rowCount() ? json_encode($query->fetchAll(PDO::FETCH_OBJ)) : '0';
 }
 
+if (isset($_POST['leerActivo'])) {
+    $query = $db->prepare(
+        "SELECT id_conductor, nombre, cedula, telefono, licencia_conduccion, estado FROM conductor WHERE estado = 'ACTIVO' ORDER BY id_conductor DESC"
+    );
+    $query->execute();
+    echo $query->rowCount() ? json_encode($query->fetchAll(PDO::FETCH_OBJ)) : '0';
+}
+
 if (isset($_POST['leer_descripcion'])) {
     $filtro = '%' . $_POST['leer_descripcion'] . '%';
     $query = $db->prepare(
