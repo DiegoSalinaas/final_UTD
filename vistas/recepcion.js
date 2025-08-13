@@ -261,7 +261,7 @@ $(document).on('click', '#limpiar_busqueda_btn', function(){
 });
 
 // ========================= Impresión =========================
-function imprimirRecepcion(id){
+function imprimirRecepcion(id, auto = true, copias = 1){
   const datos = ejecutarAjax("controladores/recepcion.php","leer_id="+id);
   if(datos === "0"){ alert("Recepción no encontrada"); return; }
   const rec = JSON.parse(datos);
@@ -269,30 +269,99 @@ function imprimirRecepcion(id){
   const detData = ejecutarAjax("controladores/detalle_recepcion.php","leer=1&id_recepcion="+id);
   const detalles = detData === "0" ? [] : JSON.parse(detData);
 
-  let filas = detalles.length
-    ? detalles.map((d,i)=>`
-        <tr>
-          <td>${i+1}</td>
-          <td>${d.nombre_equipo || ""}</td>
-          <td>${d.marca || ""}</td>
-          <td>${d.modelo || ""}</td>
-          <td>${d.numero_serie || ""}</td>
-          <td class="text-start">${(d.falla_reportada || "").toString()}</td>
-          <td class="text-start">${(d.accesorios_entregados || "").toString()}</td>
-          <td class="text-start">${(d.diagnostico_preliminar || "").toString()}</td>
-          <td class="text-start">${(d.observaciones_detalle || "").toString()}</td>
-        </tr>
-      `).join("")
-    : `<tr><td colspan="9">Sin equipos</td></tr>`;
+  const filas = detalles.length ? detalles.map((d,i)=>`
+    <tr>
+      <td class="text-center">${i+1}</td>
+      <td class="text-start">${d.nombre_equipo || ""}</td>
+      <td class="text-start">${d.marca || ""}</td>
+      <td class="text-start">${d.modelo || ""}</td>
+      <td class="text-start">${d.numero_serie || ""}</td>
+      <td class="text-start">${(d.falla_reportada || "").toString()}</td>
+      <td class="text-start">${(d.accesorios_entregados || "").toString()}</td>
+      <td class="text-start">${(d.diagnostico_preliminar || "").toString()}</td>
+      <td class="text-start">${(d.observaciones_detalle || "").toString()}</td>
+    </tr>
+  `).join("") : `<tr><td colspan="9" class="text-center">Sin equipos</td></tr>`;
 
   const estadoTxt = rec.estado || "ACTIVO";
-  const estadoUC  = String(estadoTxt).toUpperCase();
+  const estUC = String(estadoTxt).toUpperCase();
   const estadoBadge =
-      estadoUC === "ACTIVO"        ? "bg-primary" :
-      estadoUC === "ANULADO"       ? "bg-danger"  :
-      estadoUC === "PENDIENTE"     ? "bg-warning text-dark" :
-      estadoUC === "DIAGNOSTICADO" ? "bg-info text-dark" :
-                                     "bg-secondary";
+      estUC === "ANULADO"       ? "bg-danger" :
+      estUC === "DIAGNOSTICADO" ? "bg-info text-dark" :
+      estUC === "PENDIENTE"     ? "bg-warning text-dark" :
+      estUC === "ACTIVO"        ? "bg-primary" :
+                                  "bg-secondary";
+
+  // Datos de empresa (ajusta a tu realidad)
+  const EMPRESA = {
+    nombre: "HARD INFORMATICA S.A.",
+    ruc: "84945944-4",
+    dir: "Av. Siempre Viva 123 - Asunción",
+    tel: "(021) 376-548",
+    email: "ventas@hardinformatica.com"
+  };
+
+  const etiquetas = ["ORIGINAL", "DUPLICADO", "TRIPLICADO", "COPIA 4"];
+  const bloques = [];
+  for (let i = 0; i < Math.max(1, copias); i++) {
+    const etiqueta = etiquetas[i] || `COPIA ${i+1}`;
+    bloques.push(`
+      <section class="doc">
+        ${estUC === "ANULADO" ? `<div class="watermark">ANULADO</div>` : ""}
+
+        <header class="doc-header">
+          <div class="doc-logo"><img src="images/logo.png" alt="Logo" onerror="this.style.display='none'"></div>
+          <div class="doc-empresa">
+            <h1>${EMPRESA.nombre}</h1>
+            <div class="emp-meta">
+              RUC: ${EMPRESA.ruc} &nbsp;•&nbsp; ${EMPRESA.dir}<br>
+              Tel.: ${EMPRESA.tel} &nbsp;•&nbsp; ${EMPRESA.email}
+            </div>
+          </div>
+          <div class="doc-right">
+            <div class="doc-tipo">RECEPCIÓN</div>
+            <div class="doc-num">#${rec.id_recepcion}</div>
+            <span class="badge ${estadoBadge}">${estadoTxt}</span>
+            <div class="doc-fecha">${formatearFechaDMA(rec.fecha_recepcion)}</div>
+            <span class="copia">${etiqueta}</span>
+          </div>
+        </header>
+
+        <div class="doc-info">
+          <div class="pair"><span class="lbl">Cliente:</span> <span class="val">${rec.nombre_cliente || ""}</span></div>
+          <div class="pair"><span class="lbl">Tel.:</span>    <span class="val">${rec.telefono || ""}</span></div>
+          <div class="pair"><span class="lbl">Dirección:</span> <span class="val">${rec.direccion || "—"}</span></div>
+          <div class="pair"><span class="lbl">Equipos:</span> <span class="val">${detalles.length}</span></div>
+          ${rec.observaciones ? `<div class="observ"><span class="lbl">Obs.:</span> <span class="val">${rec.observaciones}</span></div>` : ""}
+        </div>
+
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th class="text-center" style="width:50px">#</th>
+              <th class="text-start">Equipo</th>
+              <th class="text-start" style="width:120px">Marca</th>
+              <th class="text-start" style="width:140px">Modelo</th>
+              <th class="text-start" style="width:140px">N° Serie</th>
+              <th class="text-start">Falla Reportada</th>
+              <th class="text-start">Accesorios</th>
+              <th class="text-start">Diagnóstico</th>
+              <th class="text-start">Observaciones</th>
+            </tr>
+          </thead>
+          <tbody>${filas}</tbody>
+        </table>
+
+        <div class="firmas">
+          <div class="fbox"><div class="linea"></div><div class="ftxt">Recibido por</div></div>
+          <div class="fbox"><div class="linea"></div><div class="ftxt">Cliente</div></div>
+          <div class="fbox"><div class="linea"></div><div class="ftxt">Técnico</div></div>
+        </div>
+
+        <footer class="doc-footer">Documento generado automáticamente — ${new Date().toLocaleString()}</footer>
+      </section>
+    `);
+  }
 
   const v = window.open('', '', 'width=1024,height=720');
   v.document.write(`
@@ -301,84 +370,92 @@ function imprimirRecepcion(id){
     <title>Recepción #${rec.id_recepcion}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-      @page { size: A4; margin: 16mm; }
+      @page { size: A4; margin: 14mm; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       body { color:#111; font-family: "Segoe UI", Arial, sans-serif; }
-      .doc-header { display:flex; align-items:center; border-bottom:2px solid #0d6efd; padding-bottom:10px; margin-bottom:18px; }
-      .doc-logo { flex:0 0 auto; }
-      .doc-logo img { height:110px; }
-      .doc-info { flex:1; padding-left:20px; display:flex; flex-direction:column; justify-content:flex-end; }
-      .doc-title { margin:0; font-weight:800; letter-spacing:.3px; font-size:26px; }
-      .meta { font-size:14px; color:#555; margin-top:6px; }
-      .kpi-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; margin-bottom:20px; }
-      .kpi { border:1px solid #e9ecef; border-radius:12px; padding:14px; background:#f8f9fa; }
-      .kpi .lbl { font-size:12px; color:#6c757d; margin-bottom:4px; text-transform:uppercase; letter-spacing:.3px; }
-      .kpi .val { font-size:15px; font-weight:600; }
-      table { width:100%; border-collapse:collapse; }
-      thead th { background:#e9f2ff; border-bottom:1px solid #cfe2ff !important; font-weight:700; }
-      th, td { border:1px solid #e9ecef; padding:8px; font-size:12.5px; vertical-align:top; text-align:center; }
-      .text-start { text-align:left; }
-      .footer { margin-top:20px; font-size:11px; color:#6c757d; text-align:right; }
-      @media print { .no-print { display:none !important; } }
+      .doc { position: relative; page-break-after: always; }
+      .doc:last-of-type { page-break-after: auto; }
+
+      /* Header alineado (logo | empresa | doc) */
+      .doc-header{
+        display:grid;
+        grid-template-columns: auto 1fr auto;
+        align-items:center;
+        gap:16px;
+        border-bottom:2px solid #0d6efd;
+        padding-bottom:10px;
+        margin-bottom:14px;
+      }
+      .doc-logo img{ height:70px; display:block; }
+      .doc-empresa{ display:flex; flex-direction:column; justify-content:center; }
+      .doc-empresa h1{ font-size:20px; font-weight:800; margin:0 0 4px 0; letter-spacing:.2px; text-align:center; }
+      .emp-meta{ font-size:12px; color:#555; line-height:1.35; text-align:center; }
+
+      .doc-right{ text-align:right; display:flex; flex-direction:column; gap:6px; align-items:flex-end; }
+      .doc-right .doc-tipo{ font-size:14px; font-weight:700; color:#0d6efd; letter-spacing:1.2px; }
+      .doc-right .doc-num{ font-size:18px; font-weight:800; }
+      .doc-right .doc-fecha{ font-size:12px; color:#555; }
+      .doc-right .badge{ font-size:12px; }
+      .doc-right .copia{
+        background:#f1f3f5; border:1px solid #dee2e6; padding:2px 8px; border-radius:12px; font-size:11px;
+      }
+
+      /* Info en pares */
+      .doc-info{
+        display:grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap:6px 12px;
+        margin-bottom:10px;
+        font-size:13px;
+        align-items:center;
+      }
+      .doc-info .pair{ display:flex; align-items:center; gap:6px; white-space:nowrap; }
+      .doc-info .lbl{ color:#6c757d; min-width:90px; font-weight:600; }
+      .doc-info .val{ font-weight:600; }
+      .doc-info .observ{ grid-column: 1 / -1; }
+
+      /* Tabla */
+      table.tabla{ width:100%; border-collapse:collapse; margin-top:10px; }
+      .tabla thead th{
+        background:#e9f2ff;
+        border:1px solid #cfe2ff !important;
+        font-weight:700;
+        padding:6px 8px;
+      }
+      .tabla td{
+        border:1px solid #e9ecef;
+        padding:7px 8px;
+        font-size:12.5px;
+        vertical-align:top;
+      }
+      .text-center{text-align:center;} .text-start{text-align:left;} .text-end{text-align:right;}
+
+      /* Repetir encabezado/pie en cada página impresa */
+      thead{ display: table-header-group; }
+      tfoot{ display: table-footer-group; }
+
+      /* Firmas y footer */
+      .firmas{ display:grid; grid-template-columns: repeat(3, 1fr); gap:22px; margin-top:18px; }
+      .firmas .linea{ border-bottom:1px solid #000; height:28px; }
+      .firmas .ftxt{ text-align:center; font-size:12px; color:#444; margin-top:6px; }
+
+      .doc-footer{ margin-top:10px; font-size:11px; color:#6c757d; text-align:right; }
+
+      /* Watermark ANULADO */
+      .watermark{
+        position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+        font-size:100px; opacity:0.07; transform: rotate(-22deg); font-weight:900; color:#dc3545;
+        pointer-events:none; user-select:none;
+      }
+
+      @media print { .no-print{ display:none !important; } }
     </style>
   </head>
   <body>
-    <div class="doc-header">
-      <div class="doc-logo">
-        <img src="images/logo.png" alt="Logo">
-      </div>
-      <div class="doc-info">
-        <h2 class="doc-title">Recepción #${rec.id_recepcion}</h2>
-        <div class="meta">
-          Cliente: <strong>${rec.nombre_cliente || ""}</strong>
-          &nbsp;·&nbsp; Tel.: <strong>${rec.telefono || ""}</strong>
-          &nbsp;·&nbsp; Estado: <span class="badge ${estadoBadge}">${estadoTxt}</span>
-          &nbsp;·&nbsp; Fecha: <strong>${formatearFechaDMA(rec.fecha_recepcion)}</strong>
-        </div>
-      </div>
-    </div>
-
-    <div class="kpi-grid">
-      <div class="kpi">
-        <div class="lbl">Dirección</div>
-        <div class="val">${rec.direccion || "—"}</div>
-      </div>
-      <div class="kpi">
-        <div class="lbl">Observaciones</div>
-        <div class="val">${rec.observaciones || "—"}</div>
-      </div>
-      <div class="kpi">
-        <div class="lbl">Total de equipos</div>
-        <div class="val">${detalles.length}</div>
-      </div>
-    </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Equipo</th>
-          <th>Marca</th>
-          <th>Modelo</th>
-          <th>N° Serie</th>
-          <th>Falla Reportada</th>
-          <th>Accesorios</th>
-          <th>Diagnóstico</th>
-          <th>Observaciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${filas}
-      </tbody>
-    </table>
-
-    <div class="footer">
-      Documento generado automáticamente.
-    </div>
-
-    <script>window.print();</script>
+    ${bloques.join("")}
+    <script>${auto ? "window.print();" : ""}</script>
   </body>
-  </html>
-  `);
+  </html>`);
   v.document.close();
   v.focus();
 }
