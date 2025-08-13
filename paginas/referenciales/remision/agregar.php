@@ -54,7 +54,7 @@
 
         <div class="col-md-4">
           <label for="factura_relacionada_txt" class="form-label fw-semibold">Factura relacionada</label>
-          <input type="text" id="factura_relacionada_txt" class="form-control" placeholder="Nro. factura">
+          <input type="text" id="factura_relacionada_txt" class="form-control" placeholder="Nro. factura" required pattern="\d+" inputmode="numeric">
         </div>
         <div class="col-md-8">
           <label for="observacion_txt" class="form-label fw-semibold">Observación</label>
