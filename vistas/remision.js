@@ -275,7 +275,6 @@ function initFiltrosRemision(){
   $est.html(`
     <option value="">-- Todos --</option>
     <option value="EMITIDO">EMITIDO</option>
-    <option value="APROBADO">APROBADO</option>
     <option value="ANULADO">ANULADO</option>
   `);
 }

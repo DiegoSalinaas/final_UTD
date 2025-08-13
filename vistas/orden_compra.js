@@ -449,7 +449,7 @@ function imprimirOrden(id, auto = true, copias = 2) {
 
         <div class="firmas">
           <div class="fbox"><div class="linea"></div><div class="ftxt">Solicitado por</div></div>
-          <div class="fbox"><div class="linea"></div><div class="ftxt">Aprobado por</div></div>
+
           <div class="fbox"><div class="linea"></div><div class="ftxt">Proveedor</div></div>
         </div>
 

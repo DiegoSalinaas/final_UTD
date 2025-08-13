@@ -1,121 +1,145 @@
-<div class="container mt-4">
+<div class="container my-4">
+  <!-- Hidden -->
   <input type="hidden" id="id_nota_credito" value="0">
   <input type="hidden" id="estado_txt" value="ACTIVO">
 
-  <div class="card shadow rounded-4 border-0">
-    <div class="card-header bg-primary text-white rounded-top-4 d-flex justify-content-between align-items-center">
-      <h4 class="mb-0"><i class="bi bi-receipt me-2"></i> Agregar / Editar Nota de Crédito</h4>
-    </div>
+  <!-- Encabezado de página -->
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h3 class="mb-0 text-success fw-bold d-flex align-items-center">
+      <i class="bi bi-receipt me-2"></i> Agregar / Editar Nota de Crédito
+    </h3>
+    <span class="badge text-bg-light border shadow-sm">
+      Estado: <strong class="ms-1">Borrador</strong>
+    </span>
+  </div>
 
-    <div class="card-body">
-      <!-- Bloque 1: Datos del cliente -->
-      <div class="mb-2 border-bottom pb-2">
-        <h6 class="text-secondary fw-bold mb-3"><i class="bi bi-person-lines-fill me-2"></i>Datos del cliente</h6>
-        <div class="row g-3">
+  <!-- Card 1: CABECERA (Datos cliente + Datos nota) -->
+  <div class="card shadow rounded-4 border-0 mb-4">
+    <div class="card-header bg-light rounded-top-4">
+      <h6 class="mb-0 text-secondary d-flex align-items-center">
+        <i class="bi bi-info-circle me-2"></i>Datos de la nota
+      </h6>
+    </div>
+    <div class="card-body p-4">
+      <!-- Bloque: Datos del cliente -->
+      <div class="mb-3">
+        <h6 class="text-secondary fw-bold mb-3 d-flex align-items-center">
+          <i class="bi bi-person-lines-fill me-2"></i>Datos del cliente
+        </h6>
+        <div class="row g-4">
           <div class="col-12 col-md-5">
-            <label for="id_cliente_lst" class="form-label">Cliente</label>
-            <select id="id_cliente_lst" class="form-select"></select>
+            <label for="id_cliente_lst" class="form-label fw-semibold">Cliente</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-people"></i></span>
+              <select id="id_cliente_lst" class="form-select"></select>
+            </div>
           </div>
           <div class="col-6 col-md-3">
-            <label for="ruc_cliente_txt" class="form-label">RUC</label>
-            <input type="text" id="ruc_cliente_txt" class="form-control" readonly>
+            <label for="ruc_cliente_txt" class="form-label fw-semibold">RUC</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-file-earmark-text"></i></span>
+              <input type="text" id="ruc_cliente_txt" class="form-control bg-light" readonly>
+            </div>
           </div>
           <div class="col-6 col-md-2">
-            <label for="fecha_txt" class="form-label">Fecha</label>
-            <input type="date" id="fecha_txt" class="form-control" value="<?php echo date('Y-m-d'); ?>">
+            <label for="fecha_txt" class="form-label fw-semibold">Fecha</label>
+            <div class="input-group">
+              <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
+              <input type="date" id="fecha_txt" class="form-control">
+            </div>
           </div>
           <div class="col-12 col-md-2">
-            <label for="total_general_txt" class="form-label">Total</label>
+            <label for="total_general_txt" class="form-label fw-semibold">Total</label>
             <div class="input-group">
               <span class="input-group-text">Gs.</span>
-              <input type="text" id="total_general_txt" class="form-control text-end" readonly value="0">
+              <input type="text" id="total_general_txt" class="form-control bg-light text-end fw-bold" value="0" readonly>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Bloque 2: Datos de la nota -->
-      <div class="mb-2 border-bottom pb-2">
-        <h6 class="text-secondary fw-bold mb-3"><i class="bi bi-info-circle me-2"></i>Datos de la nota</h6>
-        <div class="row g-3">
+      <!-- Bloque: Datos de la nota -->
+      <div>
+        <h6 class="text-secondary fw-bold mb-3 d-flex align-items-center">
+          <i class="bi bi-card-text me-2"></i>Datos de la nota
+        </h6>
+        <div class="row g-4">
           <div class="col-12">
-            <label for="motivo_general_txt" class="form-label">Motivo General</label>
+            <label for="motivo_general_txt" class="form-label fw-semibold">Motivo General</label>
             <input type="text" id="motivo_general_txt" class="form-control" placeholder="Ej.: Devolución parcial por producto defectuoso">
           </div>
         </div>
       </div>
-
-      <!-- Bloque 3: Agregar ítem -->
-      <div>
-        <h6 class="text-secondary fw-bold mb-3"><i class="bi bi-plus-square me-2"></i>Agregar ítem</h6>
-        <div class="row g-3">
-          <div class="col-12 col-md-4">
-            <label for="id_producto_lst" class="form-label">Producto</label>
-            <select id="id_producto_lst" class="form-select"></select>
-          </div>
-          <div class="col-12 col-md-4">
-            <label for="descripcion_txt" class="form-label">Descripción</label>
-            <input type="text" id="descripcion_txt" class="form-control" readonly>
-          </div>
-          <div class="col-6 col-md-2">
-            <label for="cantidad_txt" class="form-label">Cantidad</label>
-            <input type="number" id="cantidad_txt" class="form-control text-end" min="1" placeholder="0">
-          </div>
-          <div class="col-6 col-md-2">
-            <label for="precio_unitario_txt" class="form-label">Precio Unitario</label>
-            <div class="input-group">
-              <span class="input-group-text">Gs.</span>
-              <input type="text" id="precio_unitario_txt" class="form-control text-end" placeholder="0">
-            </div>
-          </div>
-        </div>
-
-        <div class="row g-3 mt-1">
-          <div class="col-6 col-md-2">
-            <label for="subtotal_txt" class="form-label">Subtotal</label>
-            <div class="input-group">
-              <span class="input-group-text">Gs.</span>
-              <input type="text" id="subtotal_txt" class="form-control text-end" readonly>
-            </div>
-          </div>
-          <div class="col-12 col-md-5">
-            <label for="motivo_item_txt" class="form-label">Motivo</label>
-            <input type="text" id="motivo_item_txt" class="form-control" placeholder="Motivo específico del ítem">
-          </div>
-          <div class="col-12 col-md-4">
-            <label for="observacion_txt" class="form-label">Observación</label>
-            <input type="text" id="observacion_txt" class="form-control" placeholder="Observaciones adicionales">
-          </div>
-          <div class="col-12 col-md-1 d-grid align-items-end">
-            <button class="btn btn-primary mt-4" onclick="agregarDetalleNotaCredito(); return false;">
-              <i class="bi bi-plus-lg"></i> Agregar
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Footer pegajoso con acciones -->
-    <div class="card-footer bg-light rounded-bottom-4 position-sticky bottom-0">
-      <div class="d-flex justify-content-end gap-2">
-        <button class="btn btn-success" onclick="guardarNotaCredito(); return false;">
-          <i class="bi bi-save me-1"></i> Guardar
-        </button>
-        <button class="btn btn-danger" onclick="mostrarListarNotaCredito(); return false;">
-          <i class="bi bi-x-circle me-1"></i> Cancelar
-        </button>
-      </div>
     </div>
   </div>
-</div>
 
-<!-- Tabla de detalles -->
-<div class="container mt-4">
-  <div class="card shadow-sm rounded-4 border-0">
-    <div class="card-body">
+  <!-- Card 2: DETALLE (Agregar ítem + Tabla + Footer con acciones/total) -->
+  <div class="card shadow rounded-4 border-0">
+    <div class="card-header bg-light rounded-top-4">
+      <h6 class="mb-0 text-secondary d-flex align-items-center">
+        <i class="bi bi-list-ul me-2"></i>Detalle de ítems
+      </h6>
+    </div>
+
+    <!-- Fila de carga -->
+    <div class="card-body p-4 pb-3">
+      <h6 class="mb-3 text-secondary d-flex align-items-center">
+        <i class="bi bi-plus-square me-2"></i>Agregar ítem
+      </h6>
+      <div class="row g-4 align-items-end">
+        <div class="col-12 col-md-4">
+          <label for="id_producto_lst" class="form-label fw-semibold">Producto</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-box-seam"></i></span>
+            <select id="id_producto_lst" class="form-select"></select>
+          </div>
+        </div>
+        <div class="col-12 col-md-4">
+          <label for="descripcion_txt" class="form-label fw-semibold">Descripción</label>
+          <input type="text" id="descripcion_txt" class="form-control bg-light" readonly>
+        </div>
+        <div class="col-6 col-md-2">
+          <label for="cantidad_txt" class="form-label fw-semibold">Cantidad</label>
+          <input type="number" id="cantidad_txt" class="form-control text-end" min="1" placeholder="0" inputmode="numeric">
+        </div>
+        <div class="col-6 col-md-2">
+          <label for="precio_unitario_txt" class="form-label fw-semibold">Precio Unitario</label>
+          <div class="input-group">
+            <span class="input-group-text">Gs.</span>
+            <input type="text" id="precio_unitario_txt" class="form-control text-end" placeholder="0" inputmode="decimal">
+          </div>
+        </div>
+      </div>
+
+      <div class="row g-4 mt-1 align-items-end">
+        <div class="col-6 col-md-2">
+          <label for="subtotal_txt" class="form-label fw-semibold">Subtotal</label>
+          <div class="input-group">
+            <span class="input-group-text">Gs.</span>
+            <input type="text" id="subtotal_txt" class="form-control bg-light text-end" readonly>
+          </div>
+        </div>
+        <div class="col-12 col-md-5">
+          <label for="motivo_item_txt" class="form-label fw-semibold">Motivo</label>
+          <input type="text" id="motivo_item_txt" class="form-control" placeholder="Motivo específico del ítem">
+        </div>
+        <div class="col-12 col-md-4">
+          <label for="observacion_txt" class="form-label fw-semibold">Observación</label>
+          <input type="text" id="observacion_txt" class="form-control" placeholder="Observaciones adicionales">
+        </div>
+        <div class="col-12 col-md-1 d-grid">
+          <button class="btn btn-outline-primary" onclick="agregarDetalleNotaCredito(); return false;">
+            <i class="bi bi-plus-lg me-1"></i> Agregar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabla -->
+    <div class="card-body pt-0 px-4">
       <div class="table-responsive">
-        <table class="table table-sm table-striped table-hover align-middle text-center mb-0">
-          <thead class="table-light">
+        <table class="table table-striped table-hover align-middle text-center mb-0">
+          <thead class="table-primary position-sticky top-0" style="z-index:1;">
             <tr>
               <th>Producto</th>
               <th>Descripción</th>
@@ -131,5 +155,42 @@
         </table>
       </div>
     </div>
+
+    <!-- Footer: Total + Acciones -->
+    <div class="card-footer bg-white rounded-bottom-4">
+      <div class="row g-3 align-items-center">
+        <div class="col-md-6">
+          <div class="text-start small text-muted">
+            <i class="bi bi-info-circle me-1"></i>La suma del total se actualiza automáticamente según el detalle.
+          </div>
+        </div>
+        <div class="col-md-3 ms-auto">
+          <label for="total_general_txt" class="form-label fw-semibold mb-1">Total de la nota</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-cash-coin"></i></span>
+            <input type="text" id="total_general_txt" class="form-control bg-light fw-bold text-end" readonly value="0">
+          </div>
+        </div>
+        <div class="col-12 col-md-3 d-flex justify-content-end gap-2">
+          <button class="btn btn-danger" onclick="mostrarListarNotaCredito(); return false;">
+            <i class="bi bi-x-circle me-1"></i> Cancelar
+          </button>
+          <button class="btn btn-success" onclick="guardarNotaCredito(); return false;">
+            <i class="bi bi-save me-1"></i> Guardar
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
+
+<!-- Ajustes finos coherentes con el diseño base -->
+<style>
+  .card { overflow: hidden; }
+  .form-label { margin-bottom: .35rem; }
+  .table thead th { white-space: nowrap; }
+  .text-end { text-align: end !important; }
+  input[type=number]::-webkit-outer-spin-button,
+  input[type=number]::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  input[type=number] { -moz-appearance: textfield; }
+</style>

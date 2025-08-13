@@ -28,7 +28,7 @@
                     <select id="estado_filtro" class="form-select">
                         <option value="">Todos</option>
                         <option value="EMITIDO">Emitido</option>
-                        <option value="APROBADO">Aprobado</option>
+
                         <option value="ANULADO">Anulado</option>
                     </select>
                 </div>

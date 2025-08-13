@@ -34,9 +34,9 @@
           <label for="estado_filtro" class="form-label fw-semibold">Estado</label>
           <select id="estado_filtro" class="form-select">
             <option value="">Todos</option>
-            <option value="ACTIVO">Activo</option>
-            <option value="ANULADO">Anulado</option>
-            <option value="CERRADO">Cerrado</option>
+            <option value="PENDIENTE">Pendiente</option>
+            <option value="DIAGNOSTICADO">Diagnostico</option>
+            <option value="CERRADA">Cerrada</option>
           </select>
         </div>
 
