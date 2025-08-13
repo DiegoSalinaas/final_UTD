@@ -470,7 +470,8 @@ ALTER TABLE `cliente`
 -- Indices de la tabla `conductor`
 --
 ALTER TABLE `conductor`
-  ADD PRIMARY KEY (`id_conductor`);
+  ADD PRIMARY KEY (`id_conductor`),
+  ADD UNIQUE KEY `cedula` (`cedula`);
 
 --
 -- Indices de la tabla `resenas`
