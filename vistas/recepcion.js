@@ -44,7 +44,8 @@ function renderListaClientes(arr, selectedId = "") {
   arr.forEach(c => {
     const id  = c.id_cliente ?? c.cod_cliente ?? c.id;
     const nom = c.nombre_apellido ?? c.nombre_cliente ?? c.nombre;
-    $sel.append(`<option value="${id}">${nom}</option>`);
+    const ruc = c.ruc ?? c.ruc_cliente ?? '';
+    $sel.append(`<option value="${id}">${nom} | ruc: ${ruc}</option>`);
   });
   if (selectedId) $sel.val(selectedId).trigger('change'); // prellena al editar
 }
