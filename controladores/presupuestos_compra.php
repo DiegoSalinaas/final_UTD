@@ -7,7 +7,7 @@ if (isset($_POST['guardar'])) {
     $db = new DB();
     $cn = $db->conectar();
     $query = $cn->prepare(
-        "INSERT INTO presupuestos_compra (fecha, id_proveedor, total_estimado, estado) VALUES (:fecha, :id_proveedor, :total_estimado, 'PENDIENTE')"
+        "INSERT INTO presupuestos_compra (fecha, id_proveedor, total_estimado, validez, estado) VALUES (:fecha, :id_proveedor, :total_estimado, :validez, 'PENDIENTE')"
     );
     $query->execute($datos);
     echo $cn->lastInsertId();
@@ -18,7 +18,7 @@ if (isset($_POST['actualizar'])) {
     $datos = json_decode($_POST['actualizar'], true);
     $db = new DB();
     $query = $db->conectar()->prepare(
-        "UPDATE presupuestos_compra SET fecha = :fecha, id_proveedor = :id_proveedor, total_estimado = :total_estimado WHERE id_presupuesto = :id_presupuesto"
+        "UPDATE presupuestos_compra SET fecha = :fecha, id_proveedor = :id_proveedor, total_estimado = :total_estimado, validez = :validez WHERE id_presupuesto = :id_presupuesto"
     );
     $query->execute($datos);
 }
@@ -41,7 +41,7 @@ if (isset($_POST['anular'])) {
 if (isset($_POST['leer'])) {
     $db = new DB();
     $query = $db->conectar()->prepare(
-        "SELECT p.id_presupuesto, p.fecha, p.id_proveedor, pr.razon_social AS proveedor, p.total_estimado, p.estado FROM presupuestos_compra p LEFT JOIN proveedor pr ON p.id_proveedor = pr.id_proveedor ORDER BY p.id_presupuesto DESC"
+        "SELECT p.id_presupuesto, p.fecha, p.id_proveedor, pr.razon_social AS proveedor, p.total_estimado, p.validez, p.estado FROM presupuestos_compra p LEFT JOIN proveedor pr ON p.id_proveedor = pr.id_proveedor ORDER BY p.id_presupuesto DESC"
     );
     $query->execute();
     if ($query->rowCount()) {
@@ -55,7 +55,7 @@ if (isset($_POST['leer'])) {
 if (isset($_POST['leerPendiente'])) {
     $db = new DB();
     $query = $db->conectar()->prepare(
-        "SELECT p.id_presupuesto, p.fecha, p.id_proveedor, pr.razon_social AS proveedor, p.total_estimado, p.estado FROM presupuestos_compra p LEFT JOIN proveedor pr ON p.id_proveedor = pr.id_proveedor WHERE p.estado = 'PENDIENTE' ORDER BY p.id_presupuesto DESC"
+        "SELECT p.id_presupuesto, p.fecha, p.id_proveedor, pr.razon_social AS proveedor, p.total_estimado, p.validez, p.estado FROM presupuestos_compra p LEFT JOIN proveedor pr ON p.id_proveedor = pr.id_proveedor WHERE p.estado = 'PENDIENTE' ORDER BY p.id_presupuesto DESC"
     );
     $query->execute();
     if ($query->rowCount()) {
@@ -69,7 +69,7 @@ if (isset($_POST['leerPendiente'])) {
 if (isset($_POST['leer_id'])) {
     $db = new DB();
     $query = $db->conectar()->prepare(
-        "SELECT p.id_presupuesto, p.fecha, p.id_proveedor, pr.razon_social AS proveedor, p.total_estimado, p.estado " .
+        "SELECT p.id_presupuesto, p.fecha, p.id_proveedor, pr.razon_social AS proveedor, p.total_estimado, p.validez, p.estado " .
         "FROM presupuestos_compra p LEFT JOIN proveedor pr ON p.id_proveedor = pr.id_proveedor " .
         "WHERE p.id_presupuesto = :id"
     );
@@ -86,7 +86,7 @@ if (isset($_POST['leer_descripcion'])) {
     $f = '%' . $_POST['leer_descripcion'] . '%';
     $estado = $_POST['estado'] ?? '';
     $db = new DB();
-    $sql = "SELECT p.id_presupuesto, p.fecha, p.id_proveedor, pr.razon_social AS proveedor, p.total_estimado, p.estado FROM presupuestos_compra p LEFT JOIN proveedor pr ON p.id_proveedor = pr.id_proveedor WHERE CONCAT(p.id_presupuesto, pr.razon_social) LIKE :filtro";
+    $sql = "SELECT p.id_presupuesto, p.fecha, p.id_proveedor, pr.razon_social AS proveedor, p.total_estimado, p.validez, p.estado FROM presupuestos_compra p LEFT JOIN proveedor pr ON p.id_proveedor = pr.id_proveedor WHERE CONCAT(p.id_presupuesto, pr.razon_social) LIKE :filtro";
     if ($estado !== '') {
         $sql .= " AND p.estado = :estado";
     }

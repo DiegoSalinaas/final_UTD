@@ -56,11 +56,12 @@
           <thead class="table-primary position-sticky top-0" style="z-index:1;">
             <tr>
               <th style="width: 6%">#</th>
-              <th style="width: 30%">Proveedor</th>
-              <th style="width: 16%">Fecha</th>
-              <th class="text-end" style="width: 16%">Total Estimado</th>
+              <th style="width: 26%">Proveedor</th>
+              <th style="width: 14%">Fecha</th>
+              <th style="width: 12%">Validez (días)</th>
+              <th class="text-end" style="width: 14%">Total Estimado</th>
               <th style="width: 14%">Estado</th>
-              <th style="width: 18%">Operaciones</th>
+              <th style="width: 14%">Operaciones</th>
             </tr>
           </thead>
           <tbody id="datos_tb">

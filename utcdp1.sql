@@ -267,6 +267,7 @@ CREATE TABLE `presupuestos_compra` (
   `fecha` date NOT NULL,
   `id_proveedor` int(11) NOT NULL,
   `total_estimado` decimal(10,2) NOT NULL,
+  `validez` int(11) NOT NULL,
   `estado` varchar(20) NOT NULL DEFAULT 'REALIZADO'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
