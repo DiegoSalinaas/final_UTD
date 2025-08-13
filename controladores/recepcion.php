@@ -41,18 +41,38 @@ if (isset($_POST['eliminar'])) {
     $query->execute(['id' => $_POST['eliminar']]);
 }
 
-// LISTAR RECEPCIONES
+// LISTAR RECEPCIONES (CON FILTROS OPCIONALES)
 if (isset($_POST['leer'])) {
     $db = new DB();
     $cn = $db->conectar();
-    $query = $cn->prepare(
-        "SELECT r.id_recepcion, r.fecha_recepcion, r.nombre_cliente, r.telefono, r.direccion, r.estado, r.observaciones, IFNULL(COUNT(d.id_detalle),0) AS equipos
-         FROM recepcion r
-         LEFT JOIN recepcion_detalle d ON r.id_recepcion = d.id_recepcion
-         GROUP BY r.id_recepcion, r.fecha_recepcion, r.nombre_cliente, r.telefono, r.direccion, r.estado, r.observaciones
-         ORDER BY r.id_recepcion DESC"
-    );
-    $query->execute();
+    $sql = "SELECT r.id_recepcion, r.fecha_recepcion, r.nombre_cliente, r.telefono, r.direccion, r.estado, r.observaciones, IFNULL(COUNT(d.id_detalle),0) AS equipos
+            FROM recepcion r
+            LEFT JOIN recepcion_detalle d ON r.id_recepcion = d.id_recepcion
+            WHERE 1=1";
+    $params = [];
+
+    if (!empty($_POST['buscar'])) {
+        $sql .= " AND CONCAT(r.nombre_cliente, r.telefono, r.direccion, r.estado, r.observaciones) LIKE :buscar";
+        $params['buscar'] = '%' . $_POST['buscar'] . '%';
+    }
+    if (!empty($_POST['estado'])) {
+        $sql .= " AND r.estado = :estado";
+        $params['estado'] = $_POST['estado'];
+    }
+    if (!empty($_POST['desde'])) {
+        $sql .= " AND r.fecha_recepcion >= :desde";
+        $params['desde'] = $_POST['desde'];
+    }
+    if (!empty($_POST['hasta'])) {
+        $sql .= " AND r.fecha_recepcion <= :hasta";
+        $params['hasta'] = $_POST['hasta'];
+    }
+
+    $sql .= " GROUP BY r.id_recepcion, r.fecha_recepcion, r.nombre_cliente, r.telefono, r.direccion, r.estado, r.observaciones
+              ORDER BY r.id_recepcion DESC";
+
+    $query = $cn->prepare($sql);
+    $query->execute($params);
     echo $query->rowCount() ? json_encode($query->fetchAll(PDO::FETCH_OBJ)) : '0';
 }
 
@@ -83,20 +103,5 @@ if (isset($_POST['leer_id'])) {
     echo $query->rowCount() ? json_encode($query->fetch(PDO::FETCH_OBJ)) : '0';
 }
 
-// BUSCAR POR DESCRIPCION (NOMBRE CLIENTE)
-if (isset($_POST['leer_descripcion'])) {
-    $f = '%' . $_POST['leer_descripcion'] . '%';
-    $db = new DB();
-    $cn = $db->conectar();
-    $query = $cn->prepare(
-        "SELECT r.id_recepcion, r.fecha_recepcion, r.nombre_cliente, r.telefono, r.direccion, r.estado, r.observaciones, IFNULL(COUNT(d.id_detalle),0) AS equipos
-         FROM recepcion r
-         LEFT JOIN recepcion_detalle d ON r.id_recepcion = d.id_recepcion
-         WHERE CONCAT(r.nombre_cliente, r.telefono, r.direccion, r.estado, r.observaciones) LIKE :filtro
-         GROUP BY r.id_recepcion, r.fecha_recepcion, r.nombre_cliente, r.telefono, r.direccion, r.estado, r.observaciones
-         ORDER BY r.id_recepcion DESC"
-    );
-    $query->execute(['filtro' => $f]);
-    echo $query->rowCount() ? json_encode($query->fetchAll(PDO::FETCH_OBJ)) : '0';
-}
+// la búsqueda específica por descripción se maneja con los filtros anteriores
 ?>
