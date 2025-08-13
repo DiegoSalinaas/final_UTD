@@ -363,13 +363,13 @@ window.imprimirDiagnostico = imprimirDiagnostico;
 
 
 function cargarTablaDiagnostico(){
-  const filtros={
-    leer:1,
-    buscar:$("#b_diagnostico").val(),
-    estado:$("#estado_filtro").val(),
-    desde:$("#f_desde").val(),
-    hasta:$("#f_hasta").val()
-  };
+  const filtros = $.param({
+    leer: 1,
+    buscar: $("#b_diagnostico").val() || "",
+    estado: $("#estado_filtro").val() || "",
+    desde: $("#f_desde").val() || "",
+    hasta: $("#f_hasta").val() || ""
+  });
   let datos=ejecutarAjax("controladores/diagnostico.php",filtros),$tb=$("#diagnostico_datos_tb");
   if(datos==="0"){$tb.html("NO HAY REGISTROS");$("#diagnostico_count").text(0);}else{let js=JSON.parse(datos);$tb.html('');js.forEach(it=>$tb.append(`<tr><td>${it.id_diagnostico}</td><td>${it.id_recepcion} - ${it.nombre_cliente}</td><td>${it.fecha_inicio}</td><td>${badgeEstado(it.estado)}</td><td><button class="btn btn-secondary btn-sm imprimir-diagnostico" data-id="${it.id_diagnostico}"><i class="bi bi-printer"></i></button> <button class="btn btn-warning btn-sm editar-diagnostico" data-id="${it.id_diagnostico}"><i class="bi bi-pencil-square"></i></button> <button class="btn btn-danger btn-sm eliminar-diagnostico" data-id="${it.id_diagnostico}"><i class="bi bi-trash"></i></button></td></tr>`));$("#diagnostico_count").text(js.length);}}
 

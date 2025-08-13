@@ -33,10 +33,10 @@ if(isset($_POST['eliminar'])){
 if(isset($_POST['leer'])){
  $sql="SELECT d.id_diagnostico,d.id_recepcion,r.nombre_cliente,d.fecha_inicio,d.estado FROM diagnostico d JOIN recepcion r ON d.id_recepcion=r.id_recepcion WHERE 1=1";
  $p=[];
- if(!empty($_POST['buscar'])){$sql.=" AND CONCAT(d.id_diagnostico,d.id_recepcion,r.nombre_cliente,d.fecha_inicio,d.estado) LIKE :buscar";$p['buscar']='%'.$_POST['buscar'].'%';}
- if(!empty($_POST['estado'])){$sql.=" AND d.estado=:estado";$p['estado']=$_POST['estado'];}
- if(!empty($_POST['desde'])){$sql.=" AND DATE(d.fecha_inicio)>=:desde";$p['desde']=$_POST['desde'];}
- if(!empty($_POST['hasta'])){$sql.=" AND DATE(d.fecha_inicio)<=:hasta";$p['hasta']=$_POST['hasta'];}
+ if(!empty($_POST['buscar'])){$sql.=" AND CONCAT(d.id_diagnostico,d.id_recepcion,r.nombre_cliente,d.fecha_inicio,d.estado) LIKE :buscar";$p['buscar']='%'.trim($_POST['buscar']).'%';}
+ if(isset($_POST['estado']) && $_POST['estado']!==''){$sql.=" AND d.estado=:estado";$p['estado']=trim($_POST['estado']);}
+ if(!empty($_POST['desde'])){$sql.=" AND DATE(d.fecha_inicio)>=:desde";$p['desde']=trim($_POST['desde']);}
+ if(!empty($_POST['hasta'])){$sql.=" AND DATE(d.fecha_inicio)<=:hasta";$p['hasta']=trim($_POST['hasta']);}
  $sql.=" ORDER BY d.id_diagnostico DESC";
  $q=$cn->prepare($sql);
  $q->execute($p);echo $q->rowCount()?json_encode($q->fetchAll(PDO::FETCH_OBJ)):'0';
