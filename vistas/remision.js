@@ -27,6 +27,10 @@ function mostrarAgregarRemision(){
   cargarListaConductores();
   cargarListaPuntos();
 
+  $("#factura_relacionada_txt").on("input", function(){
+    this.value = this.value.replace(/[^0-9]/g, "");
+  });
+
   detallesRemision = [];
   renderDetallesRemision();
 }
@@ -248,6 +252,12 @@ function guardarRemision() {
   if ($("#tipo_transporte_lst").val() === "") {
     mensaje_dialogo_info_ERROR("Debe seleccionar el tipo de transporte", "ERROR"); return;
   }
+  if ($("#factura_relacionada_txt").val().trim().length === 0) {
+    mensaje_dialogo_info_ERROR("Debe ingresar el número de factura relacionada", "ERROR"); return;
+  }
+  if(!/^\d+$/.test($("#factura_relacionada_txt").val().trim())){
+    mensaje_dialogo_info_ERROR("El número de factura solo puede contener dígitos", "ERROR"); return;
+  }
   if (detallesRemision.length === 0) {
     mensaje_dialogo_info_ERROR("Debe agregar al menos un producto", "ERROR"); return;
   }
@@ -262,7 +272,7 @@ function guardarRemision() {
     id_punto_salida: $("#punto_salida_lst").val(),
     id_punto_llegada: $("#punto_llegada_lst").val(),
     tipo_transporte: $("#tipo_transporte_lst").val(),
-    factura_relacionada: $("#factura_relacionada_txt").val()
+    factura_relacionada: parseInt($("#factura_relacionada_txt").val(), 10)
   };
 
   let idRemision = $("#id_remision").val();
