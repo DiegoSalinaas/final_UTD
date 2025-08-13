@@ -9,13 +9,19 @@ if (isset($_POST['guardar'])) {
     $db = new DB();
     $cn = $db->conectar();
     $query = $cn->prepare(
-        "INSERT INTO remision (id_cliente, fecha_remision, observacion, estado) VALUES (:id_cliente, :fecha_remision, :observacion, :estado)"
+        "INSERT INTO remision (id_cliente, fecha_remision, observacion, estado, id_conductor, movil, id_punto_salida, id_punto_llegada, tipo_transporte, factura_relacionada) VALUES (:id_cliente, :fecha_remision, :observacion, :estado, :id_conductor, :movil, :id_punto_salida, :id_punto_llegada, :tipo_transporte, :factura_relacionada)"
     );
     $query->execute([
         'id_cliente' => $datos['id_cliente'],
         'fecha_remision' => $datos['fecha_remision'],
         'observacion' => $datos['observacion'],
-        'estado' => $datos['estado']
+        'estado' => $datos['estado'],
+        'id_conductor' => $datos['id_conductor'],
+        'movil' => $datos['movil'],
+        'id_punto_salida' => $datos['id_punto_salida'],
+        'id_punto_llegada' => $datos['id_punto_llegada'],
+        'tipo_transporte' => $datos['tipo_transporte'],
+        'factura_relacionada' => $datos['factura_relacionada']
     ]);
     echo $cn->lastInsertId();
 }
@@ -26,7 +32,7 @@ if (isset($_POST['actualizar'])) {
     $db = new DB();
     $cn = $db->conectar();
     $query = $cn->prepare(
-        "UPDATE remision SET id_cliente = :id_cliente, fecha_remision = :fecha_remision, observacion = :observacion, estado = :estado WHERE id_remision = :id_remision"
+        "UPDATE remision SET id_cliente = :id_cliente, fecha_remision = :fecha_remision, observacion = :observacion, estado = :estado, id_conductor = :id_conductor, movil = :movil, id_punto_salida = :id_punto_salida, id_punto_llegada = :id_punto_llegada, tipo_transporte = :tipo_transporte, factura_relacionada = :factura_relacionada WHERE id_remision = :id_remision"
     );
     $query->execute($datos);
 }
@@ -44,11 +50,9 @@ if (isset($_POST['leer'])) {
     $db = new DB();
     $cn = $db->conectar();
     $query = $cn->prepare(
-        "SELECT r.id_remision, r.fecha_remision, r.id_cliente, c.nombre_apellido AS cliente, r.observacion, r.estado, IFNULL(SUM(d.subtotal),0) AS total
+        "SELECT r.id_remision, r.fecha_remision, r.id_cliente, c.nombre_apellido AS cliente, r.observacion, r.estado
          FROM remision r
          LEFT JOIN clientes c ON r.id_cliente = c.id_cliente
-         LEFT JOIN detalle_remision d ON r.id_remision = d.id_remision
-         GROUP BY r.id_remision, r.fecha_remision, r.id_cliente, c.nombre_apellido, r.observacion, r.estado
          ORDER BY r.id_remision DESC"
     );
     $query->execute();
@@ -66,17 +70,20 @@ if (isset($_POST['leer_id'])) {
     $db = new DB();
     $cn = $db->conectar();
     $query = $cn->prepare(
-        "SELECT r.id_remision, r.fecha_remision, r.id_cliente, c.nombre_apellido AS cliente, r.observacion, r.estado, IFNULL(SUM(d.subtotal),0) AS total
+        "SELECT r.id_remision, r.fecha_remision, r.id_cliente, c.nombre_apellido AS cliente, r.observacion, r.estado,
+                r.id_conductor, co.nombre AS conductor, r.movil,
+                r.id_punto_salida, ps.nombre AS punto_salida,
+                r.id_punto_llegada, pl.nombre AS punto_llegada,
+                r.tipo_transporte, r.factura_relacionada
          FROM remision r
          LEFT JOIN clientes c ON r.id_cliente = c.id_cliente
-         LEFT JOIN detalle_remision d ON r.id_remision = d.id_remision
-         WHERE r.id_remision = :id
-         GROUP BY r.id_remision, r.fecha_remision, r.id_cliente, c.nombre_apellido, r.observacion, r.estado"
+         LEFT JOIN conductor co ON r.id_conductor = co.id_conductor
+         LEFT JOIN puntos ps ON r.id_punto_salida = ps.id_punto
+         LEFT JOIN puntos pl ON r.id_punto_llegada = pl.id_punto
+         WHERE r.id_remision = :id"
     );
     $query->execute(['id' => $_POST['leer_id']]);
     if ($query->rowCount()) {
-       
-
         echo json_encode($query->fetch(PDO::FETCH_OBJ));
     } else {
         echo '0';
@@ -93,10 +100,9 @@ if (isset($_POST['leer_descripcion'])) {
     $db = new DB();
     $cn = $db->conectar();
 
-    $sql = "SELECT r.id_remision, r.fecha_remision, r.id_cliente, c.nombre_apellido AS cliente, r.observacion, r.estado, IFNULL(SUM(d.subtotal),0) AS total
+    $sql = "SELECT r.id_remision, r.fecha_remision, r.id_cliente, c.nombre_apellido AS cliente, r.observacion, r.estado
             FROM remision r
             LEFT JOIN clientes c ON r.id_cliente = c.id_cliente
-            LEFT JOIN detalle_remision d ON r.id_remision = d.id_remision
             WHERE CONCAT(r.id_remision, c.nombre_apellido) LIKE :filtro";
 
     if ($estado !== '') {
@@ -113,8 +119,7 @@ if (isset($_POST['leer_descripcion'])) {
         }
     }
 
-    $sql .= " GROUP BY r.id_remision, r.fecha_remision, r.id_cliente, c.nombre_apellido, r.observacion, r.estado
-              ORDER BY r.id_remision DESC";
+    $sql .= " ORDER BY r.id_remision DESC";
 
     $query = $cn->prepare($sql);
     $params = ['filtro' => $f];
