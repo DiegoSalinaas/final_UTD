@@ -216,15 +216,25 @@ window.guardarRecepcion = guardarRecepcion;
 
 // ========================= Tabla / Búsqueda =========================
 function cargarTablaRecepcion(){
-  let datos = ejecutarAjax("controladores/recepcion.php","leer=1");
+  const filtros = {
+    leer: 1,
+    buscar: $("#b_recepcion").val(),
+    estado: $("#estado_filtro").val(),
+    desde: $("#f_desde").val(),
+    hasta: $("#f_hasta").val()
+  };
+
+  let datos = ejecutarAjax("controladores/recepcion.php", filtros);
+  const $tb = $("#recepcion_datos_tb");
   if(datos === "0"){
-    $("#recepcion_datos_tb").html("NO HAY REGISTROS");
+    $tb.html("NO HAY REGISTROS");
+    $("#recepcion_count").text(0);
   }else{
     let json = JSON.parse(datos);
-    $("#recepcion_datos_tb").html('');
-    json.map(function(it){
+    $tb.html('');
+    json.forEach(function(it){
       const acciones = renderAccionesRecepcion(it.estado);
-      $("#recepcion_datos_tb").append(`
+      $tb.append(`
         <tr>
           <td>${it.id_recepcion}</td>
           <td>${it.fecha_recepcion}</td>
@@ -235,33 +245,20 @@ function cargarTablaRecepcion(){
           <td>${acciones}</td>
         </tr>`);
     });
+    $("#recepcion_count").text(json.length);
   }
 }
 
-function buscarRecepcion(){
-  let b = $("#b_recepcion").val();
-  let datos = ejecutarAjax("controladores/recepcion.php","leer_descripcion="+b);
-  if(datos === "0"){
-    $("#recepcion_datos_tb").html("NO HAY REGISTROS");
-  }else{
-    let json = JSON.parse(datos);
-    $("#recepcion_datos_tb").html('');
-    json.map(function(it){
-      const acciones = renderAccionesRecepcion(it.estado);
-      $("#recepcion_datos_tb").append(`
-        <tr>
-          <td>${it.id_recepcion}</td>
-          <td>${it.fecha_recepcion}</td>
-          <td>${it.nombre_cliente}</td>
-          <td>${it.telefono}</td>
-          <td>${it.direccion}</td>
-          <td>${badgeEstado(it.estado)}</td>
-          <td>${acciones}</td>
-        </tr>`);
-    });
-  }
-}
-window.buscarRecepcion = buscarRecepcion;
+// Eventos de filtros
+$(document).on('input', '#b_recepcion', cargarTablaRecepcion);
+$(document).on('change', '#estado_filtro, #f_desde, #f_hasta', cargarTablaRecepcion);
+$(document).on('click', '#limpiar_busqueda_btn', function(){
+  $('#b_recepcion').val('');
+  $('#estado_filtro').val('');
+  $('#f_desde').val('');
+  $('#f_hasta').val('');
+  cargarTablaRecepcion();
+});
 
 // ========================= Impresión =========================
 function imprimirRecepcion(id){
