@@ -13,23 +13,15 @@ if (isset($_POST['guardar'])) {
         return;
     }
 
-    if (floatval($datos['precio_unitario']) <= 0) {
-        echo 'PRECIO_INVALIDO';
-        return;
-    }
-
     $query = $cn->prepare(
-        "INSERT INTO detalle_remision
-        (id_remision, id_producto, cantidad, precio_unitario, subtotal)
-        VALUES (:id_remision, :id_producto, :cantidad, :precio_unitario, :subtotal)"
+        "INSERT INTO detalle_remision (id_remision, id_producto, cantidad, precio_unitario, subtotal)
+        VALUES (:id_remision, :id_producto, :cantidad, 0, 0)"
     );
 
     $query->execute([
         'id_remision' => $datos['id_remision'],
         'id_producto' => $datos['id_producto'],
-        'cantidad' => $datos['cantidad'],
-        'precio_unitario' => $datos['precio_unitario'],
-        'subtotal' => $datos['subtotal']
+        'cantidad' => $datos['cantidad']
     ]);
 
     echo "OK";
@@ -42,12 +34,8 @@ if (isset($_POST['actualizar'])) {
         echo 'CANTIDAD_INVALIDA';
         return;
     }
-    if (floatval($datos['precio_unitario']) <= 0) {
-        echo 'PRECIO_INVALIDO';
-        return;
-    }
     $query = $cn->prepare(
-        "UPDATE detalle_remision SET id_remision = :id_remision, id_producto = :id_producto, cantidad = :cantidad, precio_unitario = :precio_unitario, subtotal = :subtotal WHERE id_detalle_remision = :id_detalle_remision"
+        "UPDATE detalle_remision SET id_remision = :id_remision, id_producto = :id_producto, cantidad = :cantidad, precio_unitario = 0, subtotal = 0 WHERE id_detalle_remision = :id_detalle_remision"
     );
     $query->execute($datos);
 }
@@ -67,7 +55,7 @@ if (isset($_POST['eliminar_por_remision'])) {
 // LISTAR DETALLES
 if (isset($_POST['leer'])) {
     $sql =
-        "SELECT d.id_detalle_remision, d.id_remision, d.id_producto, p.nombre AS producto, d.cantidad, d.precio_unitario, d.subtotal FROM detalle_remision d LEFT JOIN productos p ON d.id_producto = p.producto_id";
+        "SELECT d.id_detalle_remision, d.id_remision, d.id_producto, p.nombre AS producto, d.cantidad FROM detalle_remision d LEFT JOIN productos p ON d.id_producto = p.producto_id";
     $params = [];
     if (!empty($_POST['id_remision'])) {
         $sql .= " WHERE d.id_remision = :id_remision";
@@ -82,7 +70,7 @@ if (isset($_POST['leer'])) {
 // LEER POR ID
 if (isset($_POST['leer_id'])) {
     $query = $cn->prepare(
-        "SELECT id_detalle_remision, id_remision, id_producto, cantidad, precio_unitario, subtotal FROM detalle_remision WHERE id_detalle_remision = :id"
+        "SELECT id_detalle_remision, id_remision, id_producto, cantidad FROM detalle_remision WHERE id_detalle_remision = :id"
     );
     $query->execute(['id' => $_POST['leer_id']]);
     echo $query->rowCount() ? json_encode($query->fetch(PDO::FETCH_OBJ)) : '0';
@@ -92,7 +80,7 @@ if (isset($_POST['leer_id'])) {
 if (isset($_POST['leer_descripcion'])) {
     $filtro = '%' . $_POST['leer_descripcion'] . '%';
     $sql =
-        "SELECT d.id_detalle_remision, d.id_remision, d.id_producto, p.nombre AS producto, d.cantidad, d.precio_unitario, d.subtotal FROM detalle_remision d LEFT JOIN productos p ON d.id_producto = p.producto_id WHERE CONCAT(d.id_detalle_remision, p.nombre, d.id_remision) LIKE :filtro";
+        "SELECT d.id_detalle_remision, d.id_remision, d.id_producto, p.nombre AS producto, d.cantidad FROM detalle_remision d LEFT JOIN productos p ON d.id_producto = p.producto_id WHERE CONCAT(d.id_detalle_remision, p.nombre, d.id_remision) LIKE :filtro";
     $params = ['filtro' => $filtro];
     if (!empty($_POST['id_remision'])) {
         $sql .= " AND d.id_remision = :id_remision";
