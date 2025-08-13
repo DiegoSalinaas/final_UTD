@@ -48,10 +48,9 @@ function renderListaClientes(arr, selectedId = ""){
   arr.forEach(c => {
     const nombre = c.nombre_apellido;
     const ruc = c.ruc;
-    const full = `${nombre} | ruc: ${ruc}`;
     $select.append(`
-      <option value="${c.id_cliente}" data-ruc="${ruc}" data-nombre="${nombre}" data-full="${full}">
-        ${full}
+      <option value="${c.id_cliente}" data-ruc="${ruc}" data-nombre="${nombre}">
+        ${nombre}
       </option>
     `);
   });
@@ -348,13 +347,6 @@ function initFiltrosRemision(){
   `);
 }
 
-/* Badge visual coherente */
-function badgeEstado(estado){
-  const e = String(estado || "").toUpperCase();
-  if (e.includes("ANUL")) return '<span class="badge bg-danger">ANULADO</span>';
-  if (e.includes("EMIT")) return '<span class="badge bg-primary">EMITIDO</span>';
-  return `<span class="badge bg-secondary">${estado || "-"}</span>`;
-}
 
 function cargarTablaRemision(){
   buscarRemision();

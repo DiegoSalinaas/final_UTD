@@ -34,8 +34,8 @@ function cargarListaClientes(selectedId = ""){
         let select = $("#id_cliente_lst");
         select.html('<option value="">-- Seleccione un cliente --</option>');
         listaClientes.forEach(c => select.append(`
-          <option value="${c.id_cliente}" data-ruc="${c.ruc}" data-nombre="${c.nombre_apellido}" data-full="${c.nombre_apellido} | ruc: ${c.ruc}">
-            ${c.nombre_apellido} | ruc: ${c.ruc}
+          <option value="${c.id_cliente}" data-ruc="${c.ruc}" data-nombre="${c.nombre_apellido}">
+            ${c.nombre_apellido}
           </option>`));
         if(selectedId){ select.val(selectedId).trigger('change'); }
     }

@@ -142,9 +142,7 @@ function badgeEstado(estado) {
   let cls = 'text-bg-secondary'; // fallback (gris)
   if (est === 'PENDIENTE')                 cls = 'text-bg-warning text-dark';
   else if (est === 'DIAGNOSTICADO' || est === 'DIAGNOSTICADA') cls = 'text-bg-info';
-  else if (est === 'CERRADA' || est === 'CERRADO' || est === 'EMITIDO' || est === 'EMITIDA') cls = 'text-bg-primary';
-  else if (est === 'APROBADO' || est === 'APROBADA' || est === 'APROBADO' || est === 'APROBADA') cls = 'text-bg-success';
-  else if (est === 'ANULADO' || est === 'ANULADA' || est === 'INACTIVO' || est === 'RECHAZADO' || est === 'RECHAZADA') cls = 'text-bg-danger';
+
 
   return `<span class="badge ${cls}">${estado}</span>`;
 }
@@ -800,16 +798,3 @@ function cargarDataTable(componente, lista) {
     }
 }
 
-// Restaurar texto completo en los combos al enfocar
-$(document).on('focus', 'select', function(){
-  $(this).find('option[data-full]').each(function(){
-    $(this).text($(this).data('full'));
-  });
-});
-
-// Al seleccionar, mostrar solo el nombre
-$(document).on('change', 'select', function(){
-  const $opt = $(this).find('option:selected');
-  const nombre = $opt.data('nombre');
-  if(nombre){ $opt.text(nombre); }
-});
