@@ -427,6 +427,7 @@ function cargarTablaNotaCredito(){
         $("#nota_credito_datos_tb").html("");
         $("#nota_credito_count").text(json.length);
         json.map(function(it){
+            const disabled = it.estado === 'ANULADO' ? 'disabled' : '';
             $("#nota_credito_datos_tb").append(`
                 <tr>
                     <td>${it.id_nota_credito}</td>
@@ -437,8 +438,8 @@ function cargarTablaNotaCredito(){
                     <td>${badgeEstado(it.estado)}</td>
                     <td>
                         <button class="btn btn-info btn-sm imprimir-nota" title="Imprimir"><i class="bi bi-printer"></i></button>
-                        <button class="btn btn-warning btn-sm editar-nota" title="Editar"><i class="bi bi-pencil-square"></i></button>
-                        <button class="btn btn-danger btn-sm anular-nota" title="Anular"><i class="bi bi-x-circle"></i></button>
+                        <button class="btn btn-warning btn-sm editar-nota" ${disabled} title="Editar"><i class="bi bi-pencil-square"></i></button>
+                        <button class="btn btn-danger btn-sm anular-nota" ${disabled} title="Anular"><i class="bi bi-x-circle"></i></button>
                     </td>
                 </tr>`);
         });
