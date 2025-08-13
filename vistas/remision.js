@@ -1,13 +1,14 @@
-
+(function(){
 let detallesRemision = [];
 let listaClientes = [];
 let listaProductos = [];
 let listaConductores = [];
 let listaPuntos = [];
 
-/* ==========
-   Navegación
-   ========== */
+
+})();
+
+
 function mostrarListarRemision(){
   const contenido = dameContenido("paginas/referenciales/remision/listar.php");
   $("#contenido-principal").html(contenido);
