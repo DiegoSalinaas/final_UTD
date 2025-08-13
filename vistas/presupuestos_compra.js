@@ -354,37 +354,43 @@ function guardarPresupuesto(){
 /* =========================
    Listado / búsqueda
    ========================= */
-function cargarTablaPresupuesto(){
-  let datos = ejecutarAjax("controladores/presupuestos_compra.php","leer=1");
+function renderTablaPresupuestos(datos){
   if(datos === "0"){
     $("#datos_tb").html("NO HAY REGISTROS");
-  }else{
-    $("#datos_tb").html("");
-    let json = JSON.parse(datos);
-    json.map(function(it){
-      const disabled = it.estado === 'ANULADO' ? 'disabled' : '';
-      $("#datos_tb").append(`
-        <tr>
-          <td>${it.id_presupuesto}</td>
-          <td class="text-start">${it.proveedor}</td>
-          <td>${it.fecha}</td>
-          <td>${it.validez}</td>
-          <td class="text-end">${fmt0(toNumberPY(it.total_estimado))}</td>
-          <td>${badgeEstado(it.estado)}</td>
-          <td>
-            <button class="btn btn-info ver-detalle" title="Imprimir">
-              <i class="bi bi-printer"></i>
-            </button>
-            <button class="btn btn-warning editar-presupuesto" ${disabled} title="Editar">
-              <i class="bi bi-pencil-square"></i>
-            </button>
-            <button class="btn btn-danger anular-presupuesto" ${disabled} title="Anular">
-              <i class="bi bi-x-circle"></i>
-            </button>
-          </td>
-        </tr>`);
-    });
+    $("#presupuesto_count").text("0");
+    return;
   }
+  const json = JSON.parse(datos);
+  $("#presupuesto_count").text(json.length);
+  $("#datos_tb").html("");
+  json.map(function(it){
+    const disabled = it.estado === 'ANULADO' ? 'disabled' : '';
+    $("#datos_tb").append(`
+      <tr>
+        <td>${it.id_presupuesto}</td>
+        <td class="text-start">${it.proveedor}</td>
+        <td>${it.fecha}</td>
+        <td>${it.validez}</td>
+        <td class="text-end">${fmt0(toNumberPY(it.total_estimado))}</td>
+        <td>${badgeEstado(it.estado)}</td>
+        <td>
+          <button class="btn btn-info ver-detalle" title="Imprimir">
+            <i class="bi bi-printer"></i>
+          </button>
+          <button class="btn btn-warning editar-presupuesto" ${disabled} title="Editar">
+            <i class="bi bi-pencil-square"></i>
+          </button>
+          <button class="btn btn-danger anular-presupuesto" ${disabled} title="Anular">
+            <i class="bi bi-x-circle"></i>
+          </button>
+        </td>
+      </tr>`);
+  });
+}
+
+function cargarTablaPresupuesto(){
+  const datos = ejecutarAjax("controladores/presupuestos_compra.php","leer=1");
+  renderTablaPresupuestos(datos);
 }
 
 $(document).on("click",".editar-presupuesto",function(){
@@ -453,43 +459,29 @@ $(document).on("change","#estado_filtro",function(){
   buscarPresupuesto();
 });
 
+$(document).on("change","#f_desde, #f_hasta", function(){
+  buscarPresupuesto();
+});
+
 function buscarPresupuesto(){
-  const desc = encodeURIComponent($("#b_presupuesto").val() || "");
-  const est  = encodeURIComponent($("#estado_filtro").val() || "");
-  let datos = ejecutarAjax(
+  const desc   = encodeURIComponent($("#b_presupuesto").val() || "");
+  const est    = encodeURIComponent($("#estado_filtro").val() || "");
+  const fDesde = encodeURIComponent($("#f_desde").val() || "");
+  const fHasta = encodeURIComponent($("#f_hasta").val() || "");
+  const datos = ejecutarAjax(
     "controladores/presupuestos_compra.php",
-    "leer_descripcion="+desc+"&estado="+est
+    "leer_descripcion="+desc+"&estado="+est+"&f_desde="+fDesde+"&f_hasta="+fHasta
   );
-  if(datos === "0"){
-    $("#datos_tb").html("NO HAY REGISTROS");
-  }else{
-    $("#datos_tb").html("");
-    let json = JSON.parse(datos);
-    json.map(function(it){
-      const disabled = it.estado === 'ANULADO' ? 'disabled' : '';
-      $("#datos_tb").append(`
-        <tr>
-          <td>${it.id_presupuesto}</td>
-          <td class="text-start">${it.proveedor}</td>
-          <td>${it.fecha}</td>
-          <td>${it.validez}</td>
-          <td class="text-end">${fmt0(toNumberPY(it.total_estimado))}</td>
-          <td>${badgeEstado(it.estado)}</td>
-          <td>
-            <button class="btn btn-info ver-detalle" ${disabled} title="Imprimir">
-              <i class="bi bi-printer"></i>
-            </button>
-            <button class="btn btn-warning editar-presupuesto" ${disabled} title="Editar">
-              <i class="bi bi-pencil-square"></i>
-            </button>
-            <button class="btn btn-danger anular-presupuesto" ${disabled} title="Anular">
-              <i class="bi bi-x-circle"></i>
-            </button>
-          </td>
-        </tr>`);
-    });
-  }
+  renderTablaPresupuestos(datos);
 }
+
+$(document).on("click", "#limpiar_busqueda_btn", function(){
+  $("#b_presupuesto").val("");
+  $("#estado_filtro").val("");
+  $("#f_desde").val("");
+  $("#f_hasta").val("");
+  buscarPresupuesto();
+});
 
 function imprimirPresupuesto(id){
   let presupuestoData = ejecutarAjax("controladores/presupuestos_compra.php", "leer_id=" + id);
