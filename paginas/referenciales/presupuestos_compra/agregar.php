@@ -33,11 +33,20 @@
         </div>
 
         <!-- Fecha -->
-        <div class="col-md-6">
+        <div class="col-md-3">
           <label class="form-label fw-semibold" for="fecha_txt">Fecha</label>
           <div class="input-group">
             <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
             <input type="date" id="fecha_txt" class="form-control" placeholder="Fecha">
+          </div>
+        </div>
+
+        <!-- Validez en días -->
+        <div class="col-md-3">
+          <label class="form-label fw-semibold" for="validez_txt">Validez (días)</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-hourglass-split"></i></span>
+            <input type="number" id="validez_txt" class="form-control text-end" placeholder="0" min="0">
           </div>
         </div>
       </div>
@@ -211,11 +220,20 @@
         </div>
 
         <!-- Fecha -->
-        <div class="col-md-6">
+        <div class="col-md-3">
           <label class="form-label fw-semibold" for="fecha_txt">Fecha</label>
           <div class="input-group">
             <span class="input-group-text"><i class="bi bi-calendar3"></i></span>
             <input type="date" id="fecha_txt" class="form-control" placeholder="Fecha">
+          </div>
+        </div>
+
+        <!-- Validez en días -->
+        <div class="col-md-3">
+          <label class="form-label fw-semibold" for="validez_txt">Validez (días)</label>
+          <div class="input-group">
+            <span class="input-group-text"><i class="bi bi-hourglass-split"></i></span>
+            <input type="number" id="validez_txt" class="form-control text-end" placeholder="0" min="0">
           </div>
         </div>
       </div>

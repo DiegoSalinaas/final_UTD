@@ -285,6 +285,11 @@ function guardarPresupuesto(){
     mensaje_dialogo_info_ERROR("Debe ingresar la fecha", "ERROR");
     return;
   }
+  const validez = parseInt($("#validez_txt").val(),10);
+  if(isNaN(validez) || validez <= 0){
+    mensaje_dialogo_info_ERROR("Debe ingresar la validez en días", "ERROR");
+    return;
+  }
   if(detalles.length === 0){
     mensaje_dialogo_info_ERROR("Debe agregar al menos un producto", "ERROR");
     return;
@@ -298,7 +303,8 @@ function guardarPresupuesto(){
   let datos = {
     id_proveedor: idProv,
     fecha: $("#fecha_txt").val(),
-    total_estimado: totalNum
+    total_estimado: totalNum,
+    validez: validez
   };
 
   if($("#id_presupuesto").val() === "0"){
@@ -362,6 +368,7 @@ function cargarTablaPresupuesto(){
           <td>${it.id_presupuesto}</td>
           <td class="text-start">${it.proveedor}</td>
           <td>${it.fecha}</td>
+          <td>${it.validez}</td>
           <td class="text-end">${fmt0(toNumberPY(it.total_estimado))}</td>
           <td>${badgeEstado(it.estado)}</td>
           <td>
@@ -390,6 +397,7 @@ $(document).on("click",".editar-presupuesto",function(){
   $("#id_presupuesto").val(json.id_presupuesto);
   $("#id_proveedor_lst").val(json.id_proveedor);
   $("#fecha_txt").val(json.fecha);
+  $("#validez_txt").val(json.validez);
   $("#total_txt").val(fmt0(toNumberPY(json.total_estimado)));
 
   let det = ejecutarAjax("controladores/detalle_presupuesto.php","leer=1&id_presupuesto="+id);
@@ -464,6 +472,7 @@ function buscarPresupuesto(){
           <td>${it.id_presupuesto}</td>
           <td class="text-start">${it.proveedor}</td>
           <td>${it.fecha}</td>
+          <td>${it.validez}</td>
           <td class="text-end">${fmt0(toNumberPY(it.total_estimado))}</td>
           <td>${badgeEstado(it.estado)}</td>
           <td>
@@ -546,6 +555,7 @@ function imprimirPresupuesto(id){
           Proveedor: <strong>${presupuesto.proveedor || presupuesto.id_proveedor}</strong>
           &nbsp;·&nbsp; Estado: <span class="badge ${estadoBadge}">${presupuesto.estado || "PENDIENTE"}</span>
           &nbsp;·&nbsp; Fecha: <strong>${formatearFechaDMA(presupuesto.fecha)}</strong>
+          &nbsp;·&nbsp; Validez: <strong>${presupuesto.validez} días</strong>
         </div>
       </div>
     </div>
@@ -601,6 +611,7 @@ function limpiarPresupuesto(){
   $("#id_detalle").val("0");
   $("#id_proveedor_lst").val("");
   $("#fecha_txt").val("");
+  $("#validez_txt").val("");
   $("#total_txt").val("");
   $("#id_producto_lst").val("");
   $("#cantidad_txt").val("");
