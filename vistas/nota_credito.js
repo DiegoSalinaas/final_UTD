@@ -27,13 +27,14 @@ function mostrarAgregarNotaCredito(){
 
 window.mostrarAgregarNotaCredito = mostrarAgregarNotaCredito;
 
-function cargarListaClientes(){
+function cargarListaClientes(selectedId = ""){
     let datos = ejecutarAjax("controladores/cliente.php","leer=1");
     if(datos !== "0"){
         listaClientes = JSON.parse(datos);
         let select = $("#id_cliente_lst");
         select.html('<option value="">-- Seleccione un cliente --</option>');
         listaClientes.forEach(c => select.append(`<option value="${c.id_cliente}" data-ruc="${c.ruc}">${c.nombre_apellido}</option>`));
+        if(selectedId){ select.val(selectedId).trigger('change'); }
     }
 }
 
@@ -41,6 +42,60 @@ $(document).on('change','#id_cliente_lst',function(){
     let ruc = $("#id_cliente_lst option:selected").data('ruc') || '';
     $('#ruc_cliente_txt').val(ruc);
 });
+
+// Abrir modal para agregar nuevo cliente
+$(document).on('click', '#nuevo_cliente_btn', function(){
+    const contenido = dameContenido('paginas/referenciales/cliente/agregar.php');
+    const $modal = $('#modal_nuevo_cliente');
+    $modal.find('.modal-body').html(contenido);
+    $modal.find('.btn-success').attr('onclick','guardarClienteDesdeModal(); return false;');
+    $modal.find('.btn-danger').attr('onclick',"$('#modal_nuevo_cliente').modal('hide'); return false;");
+    cargarListaCiudad('#modal_nuevo_cliente #ciudad_lst');
+    $modal.modal('show');
+});
+
+function guardarClienteDesdeModal(){
+    const $m = $('#modal_nuevo_cliente');
+    const nombre = $m.find('#nombre_txt').val().trim();
+    const ruc = $m.find('#ruc_txt').val().trim();
+    const dir = $m.find('#direccion_txt').val().trim();
+    const tel = $m.find('#telefono_txt').val().trim();
+    const ciudad = $m.find('#ciudad_lst').val();
+    const estado = $m.find('#estado_lst').val();
+
+    if(nombre.length===0){ mensaje_dialogo_info_ERROR('Debes ingresar el nombre y apellido', 'ATENCION'); return; }
+    if(ruc.length===0){ mensaje_dialogo_info_ERROR('Debes ingresar el RUC', 'ATENCION'); return; }
+    if(dir.length===0){ mensaje_dialogo_info_ERROR('Debes ingresar la Direccion', 'ATENCION'); return; }
+    if(tel.length===0){ mensaje_dialogo_info_ERROR('Debes ingresar el Telefono', 'ATENCION'); return; }
+    if(ciudad==="0" || ciudad===""){ mensaje_dialogo_info_ERROR('Debes ingresar la ciudad', 'ATENCION'); return; }
+    if(!/^[0-9\-]+$/.test(ruc)){ mensaje_dialogo_info_ERROR('El RUC solo puede contener números y guiones (-)', 'ATENCIÓN'); return; }
+    if(!/^[0-9+]+$/.test(tel)){ mensaje_dialogo_info_ERROR('El teléfono solo puede contener números y el símbolo +', 'ATENCIÓN'); return; }
+
+    let datos={
+        nombre_apellido:nombre,
+        ruc:ruc,
+        direccion:dir,
+        id_ciudad:ciudad,
+        telefono:tel,
+        estado:estado
+    };
+
+    let res = ejecutarAjax('controladores/cliente.php','guardar='+JSON.stringify(datos));
+    if(res === 'duplicado'){ mensaje_dialogo_info_ERROR('El RUC ya esta registrado con otro cliente', 'ATENCION'); return; }
+    mensaje_confirmacion('Guardado correctamente');
+
+    let nuevoId = '';
+    let consulta = ejecutarAjax('controladores/cliente.php','leer_descripcion='+ruc);
+    if(consulta !== '0'){
+        let js = JSON.parse(consulta);
+        let found = js.find(c=>c.ruc===ruc);
+        if(found) nuevoId = found.id_cliente;
+    }
+
+    $m.modal('hide');
+    cargarListaClientes(nuevoId);
+}
+window.guardarClienteDesdeModal = guardarClienteDesdeModal;
 
 function cargarListaProductos(){
     let datos = ejecutarAjax("controladores/productos.php","leerActivo=1");

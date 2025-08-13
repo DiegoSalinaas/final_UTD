@@ -32,6 +32,9 @@
             <div class="input-group">
               <span class="input-group-text"><i class="bi bi-people"></i></span>
               <select id="id_cliente_lst" class="form-select"></select>
+              <button id="nuevo_cliente_btn" class="btn btn-outline-primary" type="button" title="Agregar cliente">
+                <i class="bi bi-plus-lg"></i>
+              </button>
             </div>
           </div>
           <div class="col-6 col-md-3">
@@ -180,6 +183,19 @@
           </button>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Agregar Cliente -->
+<div class="modal fade" id="modal_nuevo_cliente" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Agregar Cliente</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body p-0"></div>
     </div>
   </div>
 </div>
