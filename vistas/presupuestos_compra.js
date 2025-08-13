@@ -83,7 +83,11 @@ function renderListaProveedores(arr){
   let select = $("#id_proveedor_lst");
   select.html('<option value="">-- Seleccione un proveedor --</option>');
   arr.forEach(function(p){
-    select.append(`<option value="${p.id_proveedor}">${p.razon_social}</option>`);
+    select.append(`
+      <option value="${p.id_proveedor}" data-ruc="${p.ruc}">
+        ${p.razon_social} | ruc: ${p.ruc}
+      </option>
+    `);
   });
 }
 

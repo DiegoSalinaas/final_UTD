@@ -45,7 +45,13 @@ function cargarListaClientes(selectedId = ""){
 function renderListaClientes(arr, selectedId = ""){
   const $select = $("#id_cliente_lst");
   $select.html('<option value="">-- Seleccione un cliente --</option>');
-  arr.forEach(c => $select.append(`<option value="${c.id_cliente}">${c.nombre_apellido}</option>`));
+  arr.forEach(c => {
+    $select.append(`
+      <option value="${c.id_cliente}" data-ruc="${c.ruc}">
+        ${c.nombre_apellido} | ruc: ${c.ruc}
+      </option>
+    `);
+  });
   if(selectedId) $select.val(selectedId).trigger('change');
 }
 
