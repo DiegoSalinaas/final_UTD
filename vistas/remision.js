@@ -115,7 +115,7 @@ function renderListaProductos(arr){
   const $select = $("#id_producto_lst");
   $select.html('<option value="">-- Seleccione un producto --</option>');
   arr
-    .filter(p => p.tipo !== 'SERVICIO')
+    .filter(p => p.tipo === 'PRODUCTO')
     .forEach(p => $select.append(`<option value="${p.producto_id}">${p.nombre}</option>`));
 }
 
