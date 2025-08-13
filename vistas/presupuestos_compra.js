@@ -614,3 +614,4 @@ function limpiarPresupuesto(){
   detalles = [];
   renderDetalles();
 }
+//h
