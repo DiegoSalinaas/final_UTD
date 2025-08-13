@@ -341,43 +341,122 @@ window.guardarOrden = guardarOrden;
 // -----------------------------
 // Imprimir
 // -----------------------------
-function imprimirOrden(id, auto = true){
-  let ordenData = ejecutarAjax("controladores/orden_compra.php","leer=1");
-  if(ordenData === "0"){ alert("No se encontró la orden"); return; }
-  let orden = JSON.parse(ordenData).find(o => String(o.id_orden) === String(id));
-  if(!orden){ alert("No se encontró la orden"); return; }
+function imprimirOrden(id, auto = true, copias = 2) {
+  // Traer cabecera por ID (mejor que leer=1 y filtrar)
+  const ordenJson = ejecutarAjax("controladores/orden_compra.php", "leer_id=" + id);
+  if (ordenJson === "0") { alert("No se encontró la orden"); return; }
+  const orden = JSON.parse(ordenJson);
 
-  let detalleData = ejecutarAjax("controladores/detalle_orden_compra.php","leer=1&id_orden="+id);
-  let filas = "";
-  if(detalleData !== "0"){
-    JSON.parse(detalleData).forEach(function(d, i){
-      const cant = parseFloat(d.cantidad) || 0;
-      const precio = typeof d.precio_unitario === 'number'
-        ? d.precio_unitario
-        : quitarDecimalesConvertir(String(d.precio_unitario || '0'));
-      const sub = typeof d.subtotal === 'number'
-        ? d.subtotal
-        : (cant * precio);
+  // Detalles
+  const detData = ejecutarAjax("controladores/detalle_orden_compra.php", "leer=1&id_orden=" + id);
+  const detalles = detData !== "0" ? JSON.parse(detData) : [];
 
-      filas += `
-        <tr>
-          <td>${i + 1}</td>
-          <td>${d.producto || d.id_producto}</td>
-          <td>${cant}</td>
-          <td>${formatearPY(precio)}</td>
-          <td>${formatearPY(sub)}</td>
-        </tr>`;
-    });
-  } else {
-    filas = `<tr><td colspan="5">Sin ítems</td></tr>`;
-  }
+  // Helpers locales por si faltan
+  const toNumPY = (v) => {
+    if (typeof v === "number") return v;
+    if (v == null) return 0;
+    const s = String(v).trim();
+    if (!s) return 0;
+    // usa tu helper si lo tenés
+    try { return quitarDecimalesConvertir ? quitarDecimalesConvertir(s) : Number(s.replace(/\./g, "").replace(",", ".")) || 0; } catch { return Number(s.replace(/\./g, "").replace(",", ".")) || 0; }
+  };
+  const fmtPY = (n) => (typeof formatearPY === "function" ? formatearPY(n) : new Intl.NumberFormat("es-PY",{maximumFractionDigits:0}).format(Math.round(n||0)));
+  const fDMA  = (f) => (typeof formatearFechaDMA === "function" ? formatearFechaDMA(f) : f);
 
-  const estadoTxt = (orden.estado || "GENERADA");
-  const estadoUC = String(estadoTxt).toUpperCase();
+  // Estados
+  const est = (orden.estado || "EMITIDA");
+  const estUC = est.toUpperCase();
   const estadoBadge =
-      estadoUC === "APROBADA" || estadoUC === "APROBADO" ? "bg-success" :
-      estadoUC === "ANULADA"  || estadoUC === "ANULADO"  ? "bg-danger"  :
-      "bg-warning text-dark";
+    estUC.includes("APROB") ? "bg-success" :
+    estUC.includes("ANUL")  ? "bg-danger"  :
+    "bg-warning text-dark";
+
+  // Filas y total calculado si hace falta
+  let totalCalc = 0;
+  const filas = detalles.length ? detalles.map((d, i) => {
+    const cant   = toNumPY(d.cantidad);
+    const precio = toNumPY(d.precio_unitario);
+    const sub    = d.subtotal != null ? toNumPY(d.subtotal) : (cant * precio);
+    totalCalc   += sub;
+    return `
+      <tr>
+        <td class="text-center">${i + 1}</td>
+        <td class="text-start">${d.producto || d.id_producto || ""}</td>
+        <td class="text-end">${cant}</td>
+        <td class="text-end">${fmtPY(precio)}</td>
+        <td class="text-end">${fmtPY(sub)}</td>
+      </tr>`;
+  }).join("") : `<tr><td colspan="5" class="text-center">Sin ítems</td></tr>`;
+
+  const totalMostrar = toNumPY(orden.total) > 0 ? toNumPY(orden.total) : totalCalc;
+
+  // Datos empresa (ajusta)
+  const EMPRESA = {
+    nombre: "HARD INFORMATICA S.A.",
+    ruc: "84945944-4",
+    dir: "Av. Siempre Viva 123 - Asunción",
+    tel: "(021) 376-548",
+    email: "ventas@hardinformatica.com"
+  };
+
+  // Copias
+  const etiquetas = ["ORIGINAL", "DUPLICADO", "TRIPLICADO", "COPIA 4"];
+  const bloques = [];
+  for (let i = 0; i < Math.max(1, copias); i++) {
+    const etiqueta = etiquetas[i] || `COPIA ${i+1}`;
+    bloques.push(`
+      <section class="doc">
+        ${estUC.includes("ANUL") ? `<div class="watermark">ANULADO</div>` : ""}
+        <header class="doc-header">
+          <div class="doc-logo"><img src="images/logo.png" alt="Logo" onerror="this.style.display='none'"></div>
+          <div class="doc-empresa">
+            <h1>${EMPRESA.nombre}</h1>
+            <div class="emp-meta">
+              RUC: ${EMPRESA.ruc} &nbsp;•&nbsp; ${EMPRESA.dir}<br>
+              Tel.: ${EMPRESA.tel} &nbsp;•&nbsp; ${EMPRESA.email}
+            </div>
+          </div>
+          <div class="doc-right">
+            <div class="doc-tipo">ORDEN DE COMPRA</div>
+            <div class="doc-num">#${orden.id_orden}</div>
+            <span class="badge ${estadoBadge}">${est}</span>
+            <div class="doc-fecha">${fDMA(orden.fecha_emision)}</div>
+            <span class="copia">${etiqueta}</span>
+          </div>
+        </header>
+
+        <div class="doc-info">
+          <div class="pair"><span class="lbl">Proveedor:</span> <span class="val">${orden.proveedor || orden.id_proveedor || ""}</span></div>
+          <div class="pair"><span class="lbl">Moneda:</span> <span class="val">PYG</span></div>
+          ${orden.condicion ? `<div class="pair"><span class="lbl">Condición:</span> <span class="val">${orden.condicion}</span></div>` : ""}
+          ${orden.observacion ? `<div class="observ"><span class="lbl">Obs.:</span> <span class="val">${orden.observacion}</span></div>` : ""}
+        </div>
+
+        <table class="tabla">
+          <thead>
+            <tr>
+              <th class="text-center" style="width:60px">#</th>
+              <th class="text-start">Producto</th>
+              <th class="text-end" style="width:90px">Cantidad</th>
+              <th class="text-end" style="width:110px">Precio Unit.</th>
+              <th class="text-end" style="width:120px">Subtotal</th>
+            </tr>
+          </thead>
+          <tbody>${filas}</tbody>
+        </table>
+
+        <div class="total">Total General: ${fmtPY(totalMostrar)}</div>
+
+        <div class="firmas">
+          <div class="fbox"><div class="linea"></div><div class="ftxt">Solicitado por</div></div>
+          <div class="fbox"><div class="linea"></div><div class="ftxt">Aprobado por</div></div>
+          <div class="fbox"><div class="linea"></div><div class="ftxt">Proveedor</div></div>
+        </div>
+
+        <footer class="doc-footer">Documento generado automáticamente — ${new Date().toLocaleString()}</footer>
+      </section>
+    `);
+  }
 
   const v = window.open('', '', 'width=1024,height=720');
   v.document.write(`
@@ -386,83 +465,98 @@ function imprimirOrden(id, auto = true){
     <title>Orden de Compra #${orden.id_orden}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-      @page { size: A4; margin: 16mm; }
+      @page { size: A4; margin: 14mm; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       body { color:#111; font-family: "Segoe UI", Arial, sans-serif; }
-      .doc-header { display:flex; align-items:center; border-bottom:2px solid #0d6efd; padding-bottom:10px; margin-bottom:18px; }
-      .doc-logo { flex:0 0 auto; }
-      .doc-logo img { height:110px; }
-      .doc-info { flex:1; padding-left:20px; display:flex; flex-direction:column; justify-content:flex-end; }
-      .doc-title { margin:0; font-weight:800; letter-spacing:.3px; font-size:26px; }
-      .meta { font-size:14px; color:#555; margin-top:6px; }
-      .kpi-grid { display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; margin-bottom:20px; }
-      .kpi { border:1px solid #e9ecef; border-radius:12px; padding:14px; background:#f8f9fa; }
-      .kpi .lbl { font-size:12px; color:#6c757d; margin-bottom:4px; text-transform:uppercase; letter-spacing:.3px; }
-      .kpi .val { font-size:15px; font-weight:600; }
-      table { width:100%; border-collapse:collapse; }
-      thead th { background:#e9f2ff; border-bottom:1px solid #cfe2ff !important; font-weight:700; }
-      th, td { border:1px solid #e9ecef; padding:8px; font-size:12.5px; vertical-align:top; text-align:center; }
-      .total { margin-top:20px; font-size:16px; font-weight:700; text-align:right; }
-      .footer { margin-top:20px; font-size:11px; color:#6c757d; text-align:right; }
-      @media print { .no-print { display:none !important; } }
+      .doc { position: relative; page-break-after: always; }
+      .doc:last-of-type { page-break-after: auto; }
+
+      /* Header alineado */
+      .doc-header{
+        display:grid;
+        grid-template-columns: auto 1fr auto; /* logo | empresa | OC */
+        align-items:center;
+        gap:16px;
+        border-bottom:2px solid #0d6efd;
+        padding-bottom:10px;
+        margin-bottom:14px;
+      }
+      .doc-logo img{ height:70px; display:block; }
+      .doc-empresa{ display:flex; flex-direction:column; justify-content:center; }
+      .doc-empresa h1{ font-size:20px; font-weight:800; margin:0 0 4px 0; letter-spacing:.2px; text-align:center; }
+      .emp-meta{ font-size:12px; color:#555; line-height:1.35; text-align:center; }
+
+      .doc-right{ text-align:right; display:flex; flex-direction:column; gap:6px; align-items:flex-end; }
+      .doc-right .doc-tipo{ font-size:14px; font-weight:700; color:#0d6efd; letter-spacing:1.2px; }
+      .doc-right .doc-num{ font-size:18px; font-weight:800; }
+      .doc-right .doc-fecha{ font-size:12px; color:#555; }
+      .doc-right .badge{ font-size:12px; }
+      .doc-right .copia{
+        background:#f1f3f5; border:1px solid #dee2e6; padding:2px 8px; border-radius:12px; font-size:11px;
+      }
+
+      /* Info en pares */
+      .doc-info{
+        display:grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap:6px 12px;
+        margin-bottom:10px;
+        font-size:13px;
+        align-items:center;
+      }
+      .doc-info .pair{ display:flex; align-items:center; gap:6px; white-space:nowrap; }
+      .doc-info .lbl{ color:#6c757d; min-width:90px; font-weight:600; }
+      .doc-info .val{ font-weight:600; }
+      .doc-info .observ{ grid-column: 1 / -1; }
+
+      /* Tabla */
+      table.tabla{ width:100%; border-collapse:collapse; margin-top:10px; }
+      .tabla thead th{
+        background:#e9f2ff;
+        border:1px solid #cfe2ff !important;
+        font-weight:700;
+        padding:6px 8px;
+      }
+      .tabla td{
+        border:1px solid #e9ecef;
+        padding:7px 8px;
+        font-size:12.5px;
+        vertical-align:top;
+      }
+      .text-center{text-align:center;} .text-start{text-align:left;} .text-end{text-align:right;}
+
+      /* Repetir encabezado/pie en cada página */
+      thead{ display: table-header-group; }
+      tfoot{ display: table-footer-group; }
+
+      /* Total y firmas */
+      .total{ margin-top:14px; font-size:16px; font-weight:700; text-align:right; }
+      .firmas{ display:grid; grid-template-columns: repeat(3, 1fr); gap:22px; margin-top:18px; }
+      .firmas .linea{ border-bottom:1px solid #000; height:28px; }
+      .firmas .ftxt{ text-align:center; font-size:12px; color:#444; margin-top:6px; }
+
+      .doc-footer{ margin-top:10px; font-size:11px; color:#6c757d; text-align:right; }
+
+      /* Watermark ANULADO */
+      .watermark{
+        position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+        font-size:100px; opacity:0.07; transform: rotate(-22deg); font-weight:900; color:#dc3545;
+        pointer-events:none; user-select:none;
+      }
+
+      @media print { .no-print{ display:none !important; } }
     </style>
   </head>
   <body>
-    <div class="doc-header">
-      <div class="doc-logo">
-        <img src="images/logo.png" alt="Logo">
-      </div>
-      <div class="doc-info">
-        <h2 class="doc-title">Orden de Compra #${orden.id_orden}</h2>
-        <div class="meta">
-          Proveedor: <strong>${orden.proveedor || orden.id_proveedor}</strong>
-          &nbsp;·&nbsp; Estado: <span class="badge ${estadoBadge}">${estadoTxt}</span>
-          &nbsp;·&nbsp; Fecha: <strong>${formatearFechaDMA(orden.fecha_emision)}</strong>
-        </div>
-      </div>
-    </div>
-
-    <div class="kpi-grid">
-      <div class="kpi">
-        <div class="lbl">Total</div>
-        <div class="val">${formatearPY(orden.total)}</div>
-      </div>
-      <div class="kpi">
-        <div class="lbl">Moneda</div>
-        <div class="val">PYG</div>
-      </div>
-    </div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Producto</th>
-          <th>Cantidad</th>
-          <th>Precio Unitario</th>
-          <th>Subtotal</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${filas}
-      </tbody>
-    </table>
-
-    <div class="total">
-      Total General: ${formatearPY(orden.total)}
-    </div>
-
-    <div class="footer">
-      Documento generado automáticamente.
-    </div>
-
+    ${bloques.join("")}
     <script>${auto ? "window.print();" : ""}</script>
   </body>
-  </html>
-  `);
+  </html>`);
   v.document.close();
   v.focus();
 }
 window.imprimirOrden = imprimirOrden;
+
 
 // -----------------------------
 // Utilidades de pantalla

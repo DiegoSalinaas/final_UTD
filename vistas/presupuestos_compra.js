@@ -483,32 +483,33 @@ $(document).on("click", "#limpiar_busqueda_btn", function(){
   buscarPresupuesto();
 });
 
-function imprimirPresupuesto(id){
-  let presupuestoData = ejecutarAjax("controladores/presupuestos_compra.php", "leer_id=" + id);
+function imprimirPresupuesto(id) {
+  const presupuestoData = ejecutarAjax("controladores/presupuestos_compra.php", "leer_id=" + id);
   if (presupuestoData === "0") {
     alert("No se encontró el presupuesto");
     return;
   }
+  const presupuesto = JSON.parse(presupuestoData);
 
-  let presupuesto = JSON.parse(presupuestoData);
+  const detalleData = ejecutarAjax("controladores/detalle_presupuesto.php", "leer=1&id_presupuesto=" + id);
+  const detalles = detalleData !== "0" ? JSON.parse(detalleData) : [];
 
-  let detalleData = ejecutarAjax("controladores/detalle_presupuesto.php", "leer=1&id_presupuesto=" + id);
-  let filas = "";
-  if (detalleData !== "0") {
-    JSON.parse(detalleData).forEach(function(d, i) {
-      filas += `
-        <tr>
-          <td>${i + 1}</td>
-          <td>${d.producto || d.id_producto}</td>
-          <td>${fmt0(toNumberPY(d.cantidad))}</td>
-          <td>${fmt2(toNumberPY(d.precio_unitario))}</td>
-          <td>${fmt0(toNumberPY(d.subtotal))}</td>
-        </tr>`;
-    });
-  }
+  const estadoTxt = presupuesto.estado || "PENDIENTE";
+  const estUC = estadoTxt.toUpperCase();
+  const estadoBadge =
+    estUC === "APROBADO" ? "bg-success" :
+    estUC === "ANULADO"  ? "bg-danger" :
+    "bg-warning text-dark";
 
-  const estadoBadge = (String(presupuesto.estado || "").toUpperCase() === "APROBADO") ? "bg-success" :
-                      (String(presupuesto.estado || "").toUpperCase() === "ANULADO") ? "bg-danger" : "bg-warning text-dark";
+  const filas = detalles.length ? detalles.map((d,i) => `
+    <tr>
+      <td class="text-center">${i+1}</td>
+      <td class="text-start">${d.producto || d.id_producto || ""}</td>
+      <td class="text-end">${fmt0(toNumberPY(d.cantidad))}</td>
+      <td class="text-end">${fmt2(toNumberPY(d.precio_unitario))}</td>
+      <td class="text-end">${fmt0(toNumberPY(d.subtotal))}</td>
+    </tr>
+  `).join("") : `<tr><td colspan="5" class="text-center">Sin productos</td></tr>`;
 
   const v = window.open('', '', 'width=1024,height=720');
   v.document.write(`
@@ -517,24 +518,71 @@ function imprimirPresupuesto(id){
     <title>Presupuesto #${presupuesto.id_presupuesto}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-      @page { size: A4; margin: 16mm; }
+      @page { size: A4; margin: 14mm; }
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
       body { color:#111; font-family: "Segoe UI", Arial, sans-serif; }
-      .doc-header { display:flex; align-items:center; border-bottom:2px solid #0d6efd; padding-bottom:10px; margin-bottom:18px; }
-      .doc-logo { flex:0 0 auto; }
-      .doc-logo img { height:110px; }
-      .doc-info { flex:1; padding-left:20px; display:flex; flex-direction:column; justify-content:flex-end; }
-      .doc-title { margin:0; font-weight:800; letter-spacing:.3px; font-size:26px; }
-      .meta { font-size:14px; color:#555; margin-top:6px; }
-      .kpi-grid { display:grid; grid-template-columns: repeat(3, 1fr); gap:12px; margin-bottom:20px; }
-      .kpi { border:1px solid #e9ecef; border-radius:12px; padding:14px; background:#f8f9fa; }
-      .kpi .lbl { font-size:12px; color:#6c757d; margin-bottom:4px; text-transform:uppercase; letter-spacing:.3px; }
-      .kpi .val { font-size:15px; font-weight:600; }
-      table { width:100%; border-collapse:collapse; }
-      thead th { background:#e9f2ff; border-bottom:1px solid #cfe2ff !important; font-weight:700; }
-      th, td { border:1px solid #e9ecef; padding:8px; font-size:12.5px; vertical-align:top; text-align:center; }
+
+      .doc-header {
+        display:grid;
+        grid-template-columns: auto 1fr auto;
+        align-items:center;
+        gap:16px;
+        border-bottom:2px solid #0d6efd;
+        padding-bottom:10px;
+        margin-bottom:14px;
+      }
+      .doc-logo img { height:70px; }
+      .doc-empresa { display:flex; flex-direction:column; justify-content:center; }
+      .doc-empresa h1 { font-size:20px; font-weight:800; margin:0 0 4px 0; }
+      .emp-meta { font-size:12px; color:#555; line-height:1.35; }
+      .doc-right { text-align:right; }
+      .doc-right .doc-tipo { font-size:14px; font-weight:700; color:#0d6efd; }
+      .doc-right .doc-num { font-size:18px; font-weight:800; }
+      .doc-right .doc-fecha { font-size:12px; color:#555; }
+
+      .doc-info {
+        display:grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap:6px 12px;
+        margin-bottom:10px;
+        font-size:13px;
+      }
+      .doc-info .pair { display:flex; align-items:center; gap:6px; white-space:nowrap; }
+      .doc-info .lbl { color:#6c757d; min-width:90px; font-weight:600; }
+      .doc-info .val { font-weight:600; }
+      .doc-info .observ { grid-column: 1 / -1; }
+
+      table { width:100%; border-collapse:collapse; margin-top:10px; }
+      thead th {
+        background:#e9f2ff;
+        border:1px solid #cfe2ff !important;
+        font-weight:700;
+        padding:6px 8px;
+      }
+      td {
+        border:1px solid #e9ecef;
+        padding:7px 8px;
+        font-size:12.5px;
+        vertical-align:top;
+      }
+      .text-center { text-align:center; }
+      .text-start { text-align:left; }
+      .text-end { text-align:right; }
+
+      thead { display: table-header-group; }
+      tfoot { display: table-footer-group; }
+
       .total { margin-top:20px; font-size:16px; font-weight:700; text-align:right; }
-      .footer { margin-top:20px; font-size:11px; color:#6c757d; text-align:right; }
-      @media print { .no-print { display:none !important; } }
+      .firmas {
+        display:grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap:22px;
+        margin-top:18px;
+      }
+      .firmas .linea { border-bottom:1px solid #000; height:28px; }
+      .firmas .ftxt { text-align:center; font-size:12px; color:#444; margin-top:6px; }
+
+      .doc-footer { margin-top:10px; font-size:11px; color:#6c757d; text-align:right; }
     </style>
   </head>
   <body>
@@ -542,43 +590,39 @@ function imprimirPresupuesto(id){
       <div class="doc-logo">
         <img src="images/logo.png" alt="Logo">
       </div>
-      <div class="doc-info">
-        <h2 class="doc-title">Presupuesto #${presupuesto.id_presupuesto}</h2>
-        <div class="meta">
-          Proveedor: <strong>${presupuesto.proveedor || presupuesto.id_proveedor}</strong>
-          &nbsp;·&nbsp; Estado: <span class="badge ${estadoBadge}">${presupuesto.estado || "PENDIENTE"}</span>
-          &nbsp;·&nbsp; Fecha: <strong>${formatearFechaDMA(presupuesto.fecha)}</strong>
+      <div class="doc-empresa">
+        <h1>HARD INFORMATICA S.A.</h1>
+        <div class="emp-meta">
+          RUC: 84945944-4 &nbsp;•&nbsp; Av. Siempre Viva 123 - Asunción<br>
+          Tel.: (021) 376-548 &nbsp;•&nbsp; ventas@hardinformatica.com
         </div>
+      </div>
+      <div class="doc-right">
+        <div class="doc-tipo">PRESUPUESTO</div>
+        <div class="doc-num">#${presupuesto.id_presupuesto}</div>
+        <div class="doc-fecha">${formatearFechaDMA(presupuesto.fecha)}</div>
       </div>
     </div>
 
-    <div class="kpi-grid">
-      <div class="kpi">
-        <div class="lbl">Total Estimado</div>
-        <div class="val">${fmt0(toNumberPY(presupuesto.total_estimado))}</div>
-      </div>
-      <div class="kpi">
-        <div class="lbl">Moneda</div>
-        <div class="val">PYG</div>
-      </div>
-      <div class="kpi">
-        <div class="lbl">Validez</div>
-        <div class="val">${presupuesto.validez} días</div>
-      </div>
+    <div class="doc-info">
+      <div class="pair"><span class="lbl">Proveedor:</span> <span class="val">${presupuesto.proveedor || presupuesto.id_proveedor}</span></div>
+      <div class="pair"><span class="lbl">Estado:</span> <span class="val badge ${estadoBadge}">${estadoTxt}</span></div>
+      <div class="pair"><span class="lbl">Moneda:</span> <span class="val">PYG</span></div>
+      <div class="pair"><span class="lbl">Validez:</span> <span class="val">${presupuesto.validez} días</span></div>
     </div>
 
     <table>
       <thead>
         <tr>
-          <th>#</th>
-          <th>Producto</th>
-          <th>Cantidad</th>
-          <th>Costo Unitario</th>
-          <th>Subtotal</th>
+          <th class="text-center" style="width:50px">#</th>
+          <th class="text-start">Producto</th>
+          <th class="text-end" style="width:90px">Cantidad</th>
+          <th class="text-end" style="width:110px">Costo Unitario</th>
+          <th class="text-end" style="width:110px">Subtotal</th>
         </tr>
       </thead>
       <tbody>
-        ${filas || `<tr><td colspan="5">Sin productos</td></tr>`}
+        ${filas}
       </tbody>
     </table>
 
@@ -586,7 +630,13 @@ function imprimirPresupuesto(id){
       Total Estimado: ${fmt0(toNumberPY(presupuesto.total_estimado))}
     </div>
 
-    <div class="footer">
+    <div class="firmas">
+      <div><div class="linea"></div><div class="ftxt">Preparado por</div></div>
+      <div><div class="linea"></div><div class="ftxt">Aprobado por</div></div>
+      <div><div class="linea"></div><div class="ftxt">Proveedor</div></div>
+    </div>
+
+    <div class="doc-footer">
       Documento generado automáticamente.
     </div>
 
@@ -597,7 +647,7 @@ function imprimirPresupuesto(id){
   v.document.close();
   v.focus();
 }
-window.imprimirPresupuesto = imprimirPresupuesto;
+
 
 
 function limpiarPresupuesto(){

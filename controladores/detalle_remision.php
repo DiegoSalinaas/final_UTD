@@ -14,9 +14,9 @@ if (isset($_POST['guardar'])) {
     }
 
     $query = $cn->prepare(
-        "INSERT INTO detalle_remision (id_remision, id_producto, cantidad, precio_unitario, subtotal)
-        VALUES (:id_remision, :id_producto, :cantidad, 0, 0)"
-    );
+    "INSERT INTO detalle_remision (id_remision, id_producto, cantidad)
+     VALUES (:id_remision, :id_producto, :cantidad)"
+);
 
     $query->execute([
         'id_remision' => $datos['id_remision'],
@@ -35,8 +35,12 @@ if (isset($_POST['actualizar'])) {
         return;
     }
     $query = $cn->prepare(
-        "UPDATE detalle_remision SET id_remision = :id_remision, id_producto = :id_producto, cantidad = :cantidad, precio_unitario = 0, subtotal = 0 WHERE id_detalle_remision = :id_detalle_remision"
-    );
+    "UPDATE detalle_remision 
+     SET id_remision = :id_remision, 
+         id_producto = :id_producto, 
+         cantidad = :cantidad
+     WHERE id_detalle_remision = :id_detalle_remision"
+);
     $query->execute($datos);
 }
 

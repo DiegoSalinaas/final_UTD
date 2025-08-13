@@ -288,10 +288,11 @@ function imprimirRecepcion(id){
   const estadoTxt = rec.estado || "ACTIVO";
   const estadoUC  = String(estadoTxt).toUpperCase();
   const estadoBadge =
-      estadoUC === "ACTIVO"      ? "bg-primary" :
-      estadoUC === "ANULADO"     ? "bg-danger"  :
-      estadoUC === "PENDIENTE"   ? "bg-warning text-dark" :
-                                   "bg-secondary";
+      estadoUC === "ACTIVO"        ? "bg-primary" :
+      estadoUC === "ANULADO"       ? "bg-danger"  :
+      estadoUC === "PENDIENTE"     ? "bg-warning text-dark" :
+      estadoUC === "DIAGNOSTICADO" ? "bg-info text-dark" :
+                                     "bg-secondary";
 
   const v = window.open('', '', 'width=1024,height=720');
   v.document.write(`
@@ -382,6 +383,7 @@ function imprimirRecepcion(id){
   v.focus();
 }
 window.imprimirRecepcion = imprimirRecepcion;
+
 
 // ========================= Acciones tabla =========================
 $(document).on("click",".editar-recepcion",function(){
