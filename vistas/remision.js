@@ -52,7 +52,9 @@ function cargarListaProductos(){
 function renderListaProductos(arr){
     let select = $("#id_producto_lst");
     select.html('<option value="">-- Seleccione un producto --</option>');
-    arr.forEach(p => select.append(`<option value="${p.producto_id}">${p.nombre}</option>`));
+    arr
+        .filter(p => p.tipo !== 'SERVICIO')
+        .forEach(p => select.append(`<option value="${p.producto_id}">${p.nombre}</option>`));
 }
 
 function cargarListaConductores(){
