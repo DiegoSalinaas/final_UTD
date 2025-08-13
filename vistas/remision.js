@@ -46,9 +46,12 @@ function renderListaClientes(arr, selectedId = ""){
   const $select = $("#id_cliente_lst");
   $select.html('<option value="">-- Seleccione un cliente --</option>');
   arr.forEach(c => {
+    const nombre = c.nombre_apellido;
+    const ruc = c.ruc;
+    const full = `${nombre} | ruc: ${ruc}`;
     $select.append(`
-      <option value="${c.id_cliente}" data-ruc="${c.ruc}">
-        ${c.nombre_apellido} | ruc: ${c.ruc}
+      <option value="${c.id_cliente}" data-ruc="${ruc}" data-nombre="${nombre}" data-full="${full}">
+        ${full}
       </option>
     `);
   });
