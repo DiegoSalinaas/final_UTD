@@ -42,7 +42,7 @@ function renderListaClientes(arr){
 }
 
 function cargarListaProductos(){
-    let datos = ejecutarAjax("controladores/productos.php","leerActivo=1");
+    let datos = ejecutarAjax("controladores/productos.php","leerActivo=1&tipo=PRODUCTO");
     if(datos !== "0"){
         listaProductos = JSON.parse(datos);
         renderListaProductos(listaProductos);
