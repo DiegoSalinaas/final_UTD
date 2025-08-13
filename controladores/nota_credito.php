@@ -1,4 +1,6 @@
 <?php
+ini_set('display_errors', 0); // evita que HTML de warnings rompa el JSON
+header('Content-Type: application/json; charset=utf-8');
 require_once '../conexion/db.php';
 
 // GUARDAR NOTA DE CREDITO
@@ -76,7 +78,9 @@ if (isset($_POST['leer'])) {
 
     $query = $cn->prepare($sql);
     $query->execute($params);
-    echo $query->rowCount() ? json_encode($query->fetchAll(PDO::FETCH_OBJ)) : '0';
+   $rows = $query->fetchAll(PDO::FETCH_OBJ);
+echo json_encode($rows ?: []);
+
 }
 
 // LEER POR ID
@@ -90,11 +94,60 @@ if (isset($_POST['leer_id'])) {
 
 // BUSCAR
 if (isset($_POST['leer_descripcion'])) {
-    $f = '%' . $_POST['leer_descripcion'] . '%';
+    $filtro = '%'.($_POST['leer_descripcion'] ?? '').'%';
+    $estado = $_POST['estado'] ?? '';
+    $desde  = $_POST['desde']  ?? '';
+    $hasta  = $_POST['hasta']  ?? '';
+
     $db = new DB();
     $cn = $db->conectar();
-    $query = $cn->prepare("SELECT n.id_nota_credito, n.fecha_emision, n.numero_nota, n.id_cliente, c.nombre_apellido AS cliente, n.motivo_general, n.estado, IFNULL(SUM(d.total_linea),0) AS total FROM nota_credito n LEFT JOIN clientes c ON n.id_cliente = c.id_cliente LEFT JOIN detalle_nota_credito d ON n.id_nota_credito = d.id_nota_credito WHERE c.nombre_apellido LIKE :filtro OR n.numero_nota LIKE :filtro GROUP BY n.id_nota_credito, n.fecha_emision, n.numero_nota, n.id_cliente, c.nombre_apellido, n.motivo_general, n.estado ORDER BY n.id_nota_credito DESC");
-    $query->execute(['filtro' => $f]);
-    echo $query->rowCount() ? json_encode($query->fetchAll(PDO::FETCH_OBJ)) : '0';
+
+    $sql = "SELECT n.id_nota_credito, n.numero_nota, n.fecha_emision, n.total, n.estado,
+                   c.nombre_apellido AS cliente
+            FROM nota_credito n
+            LEFT JOIN clientes c ON n.id_cliente = c.id_cliente
+            WHERE CONCAT(n.id_nota_credito, c.nombre_apellido) LIKE :filtro";
+
+    $params = ['filtro' => $filtro];
+
+    if ($estado !== '') {
+        // limitar a valores válidos
+        if (!in_array($estado, ['EMITIDO','ANULADO'], true)) { echo json_encode([]); exit; }
+        $sql .= " AND n.estado = :estado";
+        $params['estado'] = $estado;
+    }
+
+    if ($desde !== '' && $hasta !== '') {
+        $sql .= " AND n.fecha_emision BETWEEN :desde AND :hasta";
+        $params['desde'] = $desde;
+        $params['hasta'] = $hasta;
+    } else {
+        if ($desde !== '') { $sql .= " AND n.fecha_emision >= :desde"; $params['desde'] = $desde; }
+        if ($hasta !== '') { $sql .= " AND n.fecha_emision <= :hasta"; $params['hasta'] = $hasta; }
+    }
+
+    $sql .= " ORDER BY n.id_nota_credito DESC";
+
+    try {
+        $q = $cn->prepare($sql);
+        $q->execute($params);
+        $rows = $q->fetchAll(PDO::FETCH_OBJ);
+       echo json_encode($rows ?: []);
+
+    } catch (Throwable $e) {
+        http_response_code(500);
+        echo json_encode(['error'=>true,'message'=>'DB error en leer_descripcion']);
+    }
+    exit;
+}
+$desde  = $_POST['desde'] ?? '';
+$hasta  = $_POST['hasta'] ?? '';
+
+$fmt = 'Y-m-d';
+$valida = fn($s) => $s !== '' && DateTime::createFromFormat($fmt, $s)?->format($fmt) === $s;
+
+if ($valida($desde) && $valida($hasta) && $desde > $hasta) {
+    // si invierten los campos, los intercambio para que no falle
+    [$desde, $hasta] = [$hasta, $desde];
 }
 ?>

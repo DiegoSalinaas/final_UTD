@@ -469,54 +469,115 @@ if(motivoGeneral.length === 0){
 
 window.guardarNotaCredito = guardarNotaCredito;
 
-function cargarTablaNotaCredito(){
-    const buscar = $("#b_nota_credito").val();
-    const estado = $("#estado_filtro").val();
-    const fDesde = $("#f_desde").val();
-    const fHasta = $("#f_hasta").val();
+function cargarTablaNotaCredito() {
+  // Leer filtros
+  const desc  = $("#b_nota_credito").val() || "";
+  const est   = $("#estado_filtro").val() || "";
+  let   desde = $("#f_desde").val() || "";
+  let   hasta = $("#f_hasta").val() || "";
 
-    let datos = ejecutarAjax("controladores/nota_credito.php", `leer=1&buscar=${encodeURIComponent(buscar)}&estado=${estado}&f_desde=${fDesde}&f_hasta=${fHasta}`);
+  // Si ambos están cargados y el rango está invertido, lo corrijo en el front
+  if (desde && hasta && desde > hasta) {
+    [desde, hasta] = [hasta, desde];
+    $("#f_desde").val(desde);
+    $("#f_hasta").val(hasta);
+  }
 
-    if(datos === "0"){
-        $("#nota_credito_datos_tb").html("NO HAY REGISTROS");
-        $("#nota_credito_count").text("0");
-    }else{
-        let json = JSON.parse(datos);
-        $("#nota_credito_datos_tb").html("");
-        $("#nota_credito_count").text(json.length);
-        json.map(function(it){
-            const disabled = it.estado === 'ANULADO' ? 'disabled' : '';
-            $("#nota_credito_datos_tb").append(`
-                <tr>
-                    <td>${it.id_nota_credito}</td>
-                    <td>${it.numero_nota}</td>
-                    <td>${it.fecha_emision}</td>
-                    <td>${it.cliente}</td>
-                    <td>${formatearPY(it.total)}</td>
-                    <td>${badgeEstado(it.estado)}</td>
-                    <td>
-                        <button class="btn btn-info btn-sm imprimir-nota" title="Imprimir"><i class="bi bi-printer"></i></button>
-                        <button class="btn btn-warning btn-sm editar-nota" ${disabled} title="Editar"><i class="bi bi-pencil-square"></i></button>
-                        <button class="btn btn-danger btn-sm anular-nota" ${disabled} title="Anular"><i class="bi bi-x-circle"></i></button>
-                    </td>
-                </tr>`);
-        });
-    }
+  // Llamada al backend
+  const qs =
+    "leer_descripcion=" + encodeURIComponent(desc) +
+    "&estado=" + encodeURIComponent(est) +
+    "&desde="  + desde +
+    "&hasta="  + hasta;
+
+  const resp = ejecutarAjax("controladores/nota_credito.php", qs);
+
+  // Log de depuración
+  try {
+    console.log("🔎 RAW listar NC:", typeof resp === "string" ? resp.slice(0, 400) : resp);
+  } catch (_) {}
+
+  // Si el servidor devolvió HTML (error PHP), abrir visor y abortar
+  if (typeof resp === "string" && resp.trim().startsWith("<")) {
+    const w = window.open("", "", "width=900,height=600");
+    w.document.write(resp);
+    w.document.close();
+    mensaje_dialogo_info_ERROR("El servidor devolvió HTML (posible warning/error). Revisá la ventana.", "ERROR");
+    return;
+  }
+
+  // Parseo seguro
+  let json;
+  try {
+    json = JSON.parse(resp);
+  } catch (e) {
+    console.error("⚠️ Respuesta NO-JSON:", resp);
+    $("#nota_credito_datos_tb").html("<tr><td colspan='7'>Error al leer datos</td></tr>");
+    $("#nota_credito_count").text("0");
+    return;
+  }
+
+  // Si vino un objeto de error
+  if (json && typeof json === "object" && !Array.isArray(json) && json.error) {
+    console.warn("⚠️ Error del servidor:", json.message);
+    $("#nota_credito_datos_tb").html("<tr><td colspan='7'>Error del servidor</td></tr>");
+    $("#nota_credito_count").text("0");
+    return;
+  }
+
+  // Asegurar que sea un array
+  if (!Array.isArray(json)) {
+    console.warn("⚠️ La respuesta no es un array:", json);
+    $("#nota_credito_datos_tb").html("<tr><td colspan='7'>SIN REGISTROS</td></tr>");
+    $("#nota_credito_count").text("0");
+    return;
+  }
+
+  // Render
+  const $tb = $("#nota_credito_datos_tb");
+  $tb.empty();
+  $("#nota_credito_count").text(json.length);
+
+  if (json.length === 0) {
+    $tb.html("<tr><td colspan='7'>SIN REGISTROS</td></tr>");
+    return;
+  }
+
+  json.forEach(it => {
+    const disabled = (String(it.estado || "").toUpperCase() === "ANULADO") ? "disabled" : "";
+    $tb.append(`
+      <tr>
+        <td>${it.id_nota_credito ?? ""}</td>
+        <td>${it.numero_nota ?? ""}</td>
+        <td>${it.fecha_emision ?? ""}</td>
+        <td class="text-start">${it.cliente ?? ""}</td>
+        <td class="text-end">${typeof formatearPY === "function" ? formatearPY(it.total) : (it.total ?? 0)}</td>
+        <td>${typeof badgeEstado === "function" ? badgeEstado(it.estado) : (it.estado ?? "")}</td>
+        <td>
+          <button class="btn btn-info btn-sm imprimir-nota" title="Imprimir"><i class="bi bi-printer"></i></button>
+          <button class="btn btn-warning btn-sm editar-nota" ${disabled} title="Editar"><i class="bi bi-pencil-square"></i></button>
+          <button class="btn btn-danger btn-sm anular-nota" ${disabled} title="Anular"><i class="bi bi-x-circle"></i></button>
+        </td>
+      </tr>
+    `);
+  });
 }
-window.cargarTablaNotaCredito = cargarTablaNotaCredito;
 
-// Filtros
-$(document).on('input', '#b_nota_credito', cargarTablaNotaCredito);
-$(document).on('change', '#estado_filtro', cargarTablaNotaCredito);
+
+
+
+$(document).on('input',  '#b_nota_credito', cargarTablaNotaCredito);
+$(document).on('change', '#estado_filtro',  cargarTablaNotaCredito);
 $(document).on('change', '#f_desde, #f_hasta', cargarTablaNotaCredito);
 
 $(document).on('click', '#limpiar_busqueda_btn', function(){
-    $('#b_nota_credito').val('');
-    $('#estado_filtro').val('');
-    $('#f_desde').val('');
-    $('#f_hasta').val('');
-    cargarTablaNotaCredito();
+  $('#b_nota_credito').val('');
+  $('#estado_filtro').val(''); // '', 'EMITIDO', 'ANULADO'
+  $('#f_desde').val('');
+  $('#f_hasta').val('');
+  cargarTablaNotaCredito();
 });
+
 
 $(document).on("click",".imprimir-nota",function(){
     let id=$(this).closest("tr").find("td:eq(0)").text();
