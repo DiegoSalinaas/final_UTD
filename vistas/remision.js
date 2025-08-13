@@ -120,7 +120,7 @@ function renderListaProductos(arr){
 }
 
 function cargarListaConductores(){
-  const datos = ejecutarAjax("controladores/conductor.php","leer=1");
+  const datos = ejecutarAjax("controladores/conductor.php","leerActivo=1");
   if(datos !== "0"){
     listaConductores = JSON.parse(datos);
     renderListaConductores(listaConductores);
@@ -129,7 +129,9 @@ function cargarListaConductores(){
 function renderListaConductores(arr){
   const $select = $("#id_conductor_lst");
   $select.html('<option value="">-- Seleccione un conductor --</option>');
-  arr.forEach(c => $select.append(`<option value="${c.id_conductor}">${c.nombre}</option>`));
+  arr
+    .filter(c => c.estado === 'ACTIVO')
+    .forEach(c => $select.append(`<option value="${c.id_conductor}">${c.nombre}</option>`));
 }
 
 function cargarListaPuntos(){
