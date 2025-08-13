@@ -8,6 +8,9 @@
       <span class="badge text-bg-light border shadow-sm">
         Total: <strong id="diagnostico_count" class="ms-1">0</strong>
       </span>
+      <span class="badge bg-warning text-dark border shadow-sm">
+        Pendientes: <strong id="recepcion_pendiente_count" class="ms-1">0</strong>
+      </span>
       <button class="btn btn-primary" onclick="mostrarAgregarDiagnostico(); return false;">
         <i class="bi bi-plus-circle me-1"></i> Agregar
       </button>
