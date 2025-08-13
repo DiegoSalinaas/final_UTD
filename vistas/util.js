@@ -142,8 +142,8 @@ function badgeEstado(estado) {
   let cls = 'text-bg-secondary'; // fallback (gris)
   if (est === 'PENDIENTE')                 cls = 'text-bg-warning text-dark';
   else if (est === 'DIAGNOSTICADO' || est === 'DIAGNOSTICADA') cls = 'text-bg-info';
-  else if (est === 'CERRADA' || est === 'CERRADO' || est === 'EMITIDO' || est === 'EMITIDA') cls = 'text-bg-primary';
-  else if (est === 'APROBADO' || est === 'APROBADA' || est === 'APROBADO' || est === 'APROBADA') cls = 'text-bg-success';
+  else if (est === 'CERRADA' || est === 'CERRADO' || est === 'EMITIDO') cls = 'text-bg-secondary';
+  else if (est === 'APROBADO' || est === 'APROBADA' || est === 'ACTIVO' || est === 'APROBADO' || est === 'APROBADA') cls = 'text-bg-success';
   else if (est === 'ANULADO' || est === 'ANULADA' || est === 'INACTIVO') cls = 'text-bg-danger';
 
   return `<span class="badge ${cls}">${estado}</span>`;

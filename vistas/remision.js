@@ -348,13 +348,6 @@ function initFiltrosRemision(){
   `);
 }
 
-/* Badge visual coherente */
-function badgeEstado(estado){
-  const e = String(estado || "").toUpperCase();
-  if (e.includes("ANUL")) return '<span class="badge bg-danger">ANULADO</span>';
-  if (e.includes("EMIT")) return '<span class="badge bg-primary">EMITIDO</span>';
-  return `<span class="badge bg-secondary">${estado || "-"}</span>`;
-}
 
 function cargarTablaRemision(){
   buscarRemision();
