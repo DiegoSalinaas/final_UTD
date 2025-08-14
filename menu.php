@@ -82,9 +82,7 @@
                 
               </a>
             </li>
-            <li class="nav-item d-none d-md-block">
-  <a href="#" class="nav-link" onclick="mostrarDashboard(); return false;">Inicio</a>
-</li>
+            <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Inicio</a></li>
             <li class="nav-item d-none d-md-block"><a href="#" class="nav-link">Contacto</a></li>
           </ul>
           <!--end::Start Navbar Links-->
@@ -503,9 +501,7 @@
         <!--begin::App Content-->
         <div class="app-content" id="contenido-principal">
           <!--begin::Container-->
-         $(document).ready(function(){
-  mostrarDashboard();
-});
+         
           <!--end::Container-->
         </div>
         <!--end::App Content-->
