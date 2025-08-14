@@ -431,13 +431,36 @@ $(document).on("click",".ver-detalle",function(){
   imprimirPresupuesto(id);
 });
 
-$(document).on("click",".anular-presupuesto",function(){
-  if($(this).prop('disabled')) return;
-  let id = $(this).closest("tr").find("td:eq(0)").text();
-  ejecutarAjax("controladores/presupuestos_compra.php","anular="+id);
-  mensaje_confirmacion("Realizado","Presupuesto Anulado");
-  cargarTablaPresupuesto();
+$(document).on("click", ".anular-presupuesto", function () {
+  if ($(this).prop('disabled')) return;
+
+  const id = $(this).closest("tr").find("td:eq(0)").text();
+
+  Swal.fire({
+    title: '¿Estás seguro?',
+    text: "Esta acción anulará el presupuesto y no se podrá revertir.",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#6c757d',
+    confirmButtonText: 'Sí, anular',
+    cancelButtonText: 'Cancelar'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      ejecutarAjax("controladores/presupuestos_compra.php", "anular=" + id);
+      cargarTablaPresupuesto();
+
+      Swal.fire({
+        title: 'Anulado',
+        text: 'El presupuesto ha sido anulado correctamente.',
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      });
+    }
+  });
 });
+
 
 $(document).on("click",".quitar-detalle",function(){
   if(detalles.length <= 1){

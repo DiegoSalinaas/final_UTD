@@ -408,7 +408,35 @@ function cargarDiagnostico(id){
   }
 }
 $(document).on("click",".editar-diagnostico",function(){cargarDiagnostico($(this).data('id'));});
-$(document).on("click",".anular-diagnostico",function(){if(confirm("¿Anular?")){ejecutarAjax("controladores/diagnostico.php","anular="+$(this).data('id'));cargarTablaDiagnostico();cargarPendientesDiagnostico();}});
+$(document).on("click", ".anular-diagnostico", function () {
+  const id = $(this).data('id');
+
+  Swal.fire({
+    title: '¿Estás seguro?',
+    text: "Esta acción anulará el diagnóstico y no se podrá revertir.",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#6c757d',
+    confirmButtonText: 'Sí, anular',
+    cancelButtonText: 'Cancelar'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      ejecutarAjax("controladores/diagnostico.php", "anular=" + id);
+      cargarTablaDiagnostico();
+      cargarPendientesDiagnostico();
+
+      Swal.fire({
+        title: 'Anulado',
+        text: 'El diagnóstico ha sido anulado correctamente.',
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      });
+    }
+  });
+});
+
 $(document).on("click",".imprimir-diagnostico",function(){imprimirDiagnostico($(this).data('id'));});
 $(document).on('input','#b_diagnostico',cargarTablaDiagnostico);
 $(document).on('change','#estado_filtro, #f_desde, #f_hasta',cargarTablaDiagnostico);

@@ -653,14 +653,36 @@ $(document).on('click','.editar-orden',function(){
   }
 });
 
-$(document).on('click','.anular-orden',function(){
-  if($(this).prop('disabled')) return;
-  if(confirm('¿Desea anular?')){
-    let id = $(this).data('id');
-    ejecutarAjax("controladores/orden_compra.php","anular="+id);
-    cargarTablaOrden();
-  }
+$(document).on('click', '.anular-orden', function () {
+  if ($(this).prop('disabled')) return;
+
+  const id = $(this).data('id');
+
+  Swal.fire({
+    title: '¿Estás seguro?',
+    text: "Esta acción anulará la orden de compra y no se podrá revertir.",
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#6c757d',
+    confirmButtonText: 'Sí, anular',
+    cancelButtonText: 'Cancelar'
+  }).then((result) => {
+    if (result.isConfirmed) {
+      ejecutarAjax("controladores/orden_compra.php", "anular=" + id);
+      cargarTablaOrden();
+
+      Swal.fire({
+        title: 'Anulado',
+        text: 'La orden de compra ha sido anulada correctamente.',
+        icon: 'success',
+        timer: 2000,
+        showConfirmButton: false
+      });
+    }
+  });
 });
+
 
 $(document).on('click','.imprimir-orden',function(){
   if($(this).prop('disabled')) return;
