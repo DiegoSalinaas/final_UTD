@@ -153,23 +153,26 @@ function badgeEstado(estado) {
 
   let cls = "";
   switch (est) {
-    case "PENDIENTE":
-      cls = "bg-warning text-dark";
-      break;
-    case "APROBADO":
-      cls = "bg-success";
-      break;
-    case "ANULADO":
-      cls = "bg-danger";
-      break;
     case "ACTIVO":
-      cls = "bg-primary";
+    case "APROBADO":
+      cls = "bg-success"; // Verde
+      break;
+    case "EMITIDO":
+    case "CERRADA":
+      cls = "bg-secondary"; // Gris
+      break;
+    case "PENDIENTE":
+      cls = "bg-warning text-dark"; // Amarillo
       break;
     case "INACTIVO":
-      cls = "bg-secondary";
+    case "ANULADO":
+      cls = "bg-danger"; // Rojo
+      break;
+    case "DIAGNOSTICADO":
+      cls = "bg-info text-dark"; // Celeste
       break;
     default:
-      cls = "bg-light text-dark border";
+      cls = "bg-light text-dark border"; // Por defecto
   }
 
   return `<span class="badge ${cls}">${estado}</span>`;
