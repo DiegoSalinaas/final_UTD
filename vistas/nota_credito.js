@@ -578,7 +578,7 @@ $(document).on('change', '#f_desde, #f_hasta', cargarTablaNotaCredito);
 
 $(document).on('click', '#limpiar_busqueda_btn', function(){
   $('#b_nota_credito').val('');
-  $('#estado_filtro').val(''); // '', 'EMITIDO', 'ANULADO'
+  $('#estado_filtro').val(''); 
   $('#f_desde').val('');
   $('#f_hasta').val('');
   cargarTablaNotaCredito();
