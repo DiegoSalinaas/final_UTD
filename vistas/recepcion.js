@@ -292,7 +292,7 @@ function cargarTablaRecepcion(){
     json.forEach(function(it){
       const acciones = renderAccionesRecepcion(it.estado);
       $tb.append(`
-        <tr>
+        <tr data-id="${it.id_recepcion}" data-estado="${it.estado}">
           <td>${it.id_recepcion}</td>
           <td>${it.fecha_recepcion}</td>
           <td>${it.nombre_cliente}</td>
@@ -521,8 +521,10 @@ window.imprimirRecepcion = imprimirRecepcion;
 
 
 // ========================= Acciones tabla =========================
-$(document).on("click",".editar-recepcion",function(){
-  const estado = $(this).closest("tr").find("td:eq(5)").text().trim().toUpperCase();
+$(document).on("click",".editar-recepcion",function(e){
+  e.preventDefault();
+  const $tr = $(this).closest("tr");
+  const estado = ($tr.data("estado") || "").toString().toUpperCase();
   if(estado === "DIAGNOSTICADO" || estado === "CERRADA"){
     const msg = estado === "CERRADA"
       ? "La recepción ya está cerrada y no se puede editar ni cerrar."
@@ -530,7 +532,7 @@ $(document).on("click",".editar-recepcion",function(){
     Swal.fire("Atención",msg,"info");
     return;
   }
-  let id=$(this).closest("tr").find("td:eq(0)").text();
+  const id = $tr.data("id");
   mostrarAgregarRecepcion();
   setTimeout(function(){
     let datos = ejecutarAjax("controladores/recepcion.php","leer_id="+id);
@@ -539,7 +541,10 @@ $(document).on("click",".editar-recepcion",function(){
     $("#fecha_txt").val(json.fecha_recepcion);
     $("#observaciones_txt").val(json.observaciones);
     $("#estado_lst").val(json.estado);
+    $("#estado_txt").text(json.estado);
     cargarListaClientes(json.id_cliente);
+    $("#telefono_txt").val(json.telefono);
+    $("#direccion_txt").val(json.direccion);
     let det = ejecutarAjax("controladores/detalle_recepcion.php","leer=1&id_recepcion="+id);
     if(det !== "0"){
       detallesRecepcion = JSON.parse(det);
@@ -551,13 +556,15 @@ $(document).on("click",".editar-recepcion",function(){
   },100);
 });
 
-$(document).on("click",".imprimir-recepcion",function(){
-  let id=$(this).closest("tr").find("td:eq(0)").text();
-  imprimirRecepcion(id);
+$(document).on("click",".imprimir-recepcion",function(e){
+  e.preventDefault();
+  const id = $(this).closest("tr").data("id");
+  if(id) imprimirRecepcion(id);
 });
 
 $(document).on("click",".cerrar-recepcion",function(){
-  const estado = $(this).closest("tr").find("td:eq(5)").text().trim().toUpperCase();
+  const $tr = $(this).closest("tr");
+  const estado = ($tr.data("estado") || "").toString().toUpperCase();
   if(estado === "DIAGNOSTICADO" || estado === "CERRADA"){
     const msg = estado === "CERRADA"
       ? "La recepción ya está cerrada y no se puede editar ni cerrar."
@@ -565,7 +572,7 @@ $(document).on("click",".cerrar-recepcion",function(){
     Swal.fire("Atención",msg,"info");
     return;
   }
-  let id=$(this).closest("tr").find("td:eq(0)").text();
+  const id = $tr.data("id");
   Swal.fire({
     title:"¿Cerrar recepción?",
     text:"Esta acción marcará la recepción como cerrada.",

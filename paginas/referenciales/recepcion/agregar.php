@@ -9,7 +9,7 @@
       <i class="bi bi-clipboard-check me-2"></i> Agregar / Editar Recepción
     </h3>
     <span class="badge text-bg-light border shadow-sm">
-      Estado: <strong class="ms-1">Pendiente</strong>
+      Estado: <strong id="estado_txt" class="ms-1">Pendiente</strong>
     </span>
   </div>
 
