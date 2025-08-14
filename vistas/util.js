@@ -134,19 +134,16 @@ function formatearPY(numero) {
 
 // Devuelve un badge coloreado según el estado proporcionado
 function badgeEstado(estado) {
-  const est = (estado ?? '')
+  const est = (estado ?? "")
     .toString().trim()
-    .normalize('NFD').replace(/\p{Diacritic}/gu, '')
+    .normalize("NFD").replace(/\p{Diacritic}/gu, "")
     .toUpperCase();
 
-  let cls = 'text-bg-secondary'; // fallback (gris)
-  if (est === 'PENDIENTE')                 cls = 'text-bg-warning text-dark';
-  else if (est === 'DIAGNOSTICADO' || est === 'DIAGNOSTICADA') cls = 'text-bg-info';
-  else if (est === 'ANULADO' || est === 'ANULADA') cls = 'text-bg-danger';
 
 
   return `<span class="badge ${cls}">${estado}</span>`;
 }
+
 
 
 

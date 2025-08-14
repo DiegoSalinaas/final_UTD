@@ -470,20 +470,17 @@ if(motivoGeneral.length === 0){
 window.guardarNotaCredito = guardarNotaCredito;
 
 function cargarTablaNotaCredito() {
-  // Leer filtros
   const desc  = $("#b_nota_credito").val() || "";
   const est   = $("#estado_filtro").val() || "";
   let   desde = $("#f_desde").val() || "";
   let   hasta = $("#f_hasta").val() || "";
 
-  // Si ambos están cargados y el rango está invertido, lo corrijo en el front
   if (desde && hasta && desde > hasta) {
     [desde, hasta] = [hasta, desde];
     $("#f_desde").val(desde);
     $("#f_hasta").val(hasta);
   }
 
-  // Llamada al backend
   const qs =
     "leer_descripcion=" + encodeURIComponent(desc) +
     "&estado=" + encodeURIComponent(est) +
@@ -492,12 +489,10 @@ function cargarTablaNotaCredito() {
 
   const resp = ejecutarAjax("controladores/nota_credito.php", qs);
 
-  // Log de depuración
-  try {
-    console.log("🔎 RAW listar NC:", typeof resp === "string" ? resp.slice(0, 400) : resp);
-  } catch (_) {}
+  // Log útil: tipo + valor
+  console.log("🔎 RAW listar NC typeof:", typeof resp, "valor:", resp);
 
-  // Si el servidor devolvió HTML (error PHP), abrir visor y abortar
+  // Si el servidor devolvió HTML (warning/error)
   if (typeof resp === "string" && resp.trim().startsWith("<")) {
     const w = window.open("", "", "width=900,height=600");
     w.document.write(resp);
@@ -506,15 +501,28 @@ function cargarTablaNotaCredito() {
     return;
   }
 
-  // Parseo seguro
+  // Normalizar a array JS
   let json;
-  try {
-    json = JSON.parse(resp);
-  } catch (e) {
-    console.error("⚠️ Respuesta NO-JSON:", resp);
-    $("#nota_credito_datos_tb").html("<tr><td colspan='7'>Error al leer datos</td></tr>");
-    $("#nota_credito_count").text("0");
-    return;
+  if (resp === "0" || resp == null) {
+    json = [];
+  } else if (typeof resp === "string") {
+    // Vino texto: intento parsear
+    try {
+      json = JSON.parse(resp);
+    } catch (e) {
+      console.error("⚠️ Respuesta NO-JSON (string):", resp);
+      $("#nota_credito_datos_tb").html("<tr><td colspan='7'>Error al leer datos</td></tr>");
+      $("#nota_credito_count").text("0");
+      return;
+    }
+  } else if (Array.isArray(resp)) {
+    // Ya vino como array (dataType:'json' o tu ejecutarAjax lo parsea)
+    json = resp;
+  } else if (typeof resp === "object") {
+    // Podría ser {error:...} o un objeto suelto
+    json = resp;
+  } else {
+    json = [];
   }
 
   // Si vino un objeto de error
@@ -525,7 +533,7 @@ function cargarTablaNotaCredito() {
     return;
   }
 
-  // Asegurar que sea un array
+  // Asegurar array
   if (!Array.isArray(json)) {
     console.warn("⚠️ La respuesta no es un array:", json);
     $("#nota_credito_datos_tb").html("<tr><td colspan='7'>SIN REGISTROS</td></tr>");
@@ -533,7 +541,6 @@ function cargarTablaNotaCredito() {
     return;
   }
 
-  // Render
   const $tb = $("#nota_credito_datos_tb");
   $tb.empty();
   $("#nota_credito_count").text(json.length);
@@ -562,7 +569,6 @@ function cargarTablaNotaCredito() {
     `);
   });
 }
-
 
 
 
