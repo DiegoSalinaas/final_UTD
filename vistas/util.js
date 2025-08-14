@@ -139,36 +139,7 @@ function badgeEstado(estado) {
     .normalize("NFD").replace(/\p{Diacritic}/gu, "")
     .toUpperCase();
 
-  let cls = "text-bg-secondary"; // fallback gris
 
-  switch (est) {
-    case "ACTIVO":
-      cls = "text-bg-success"; // verde
-      break;
-    case "INACTIVO":
-      cls = "text-bg-dark"; // gris oscuro
-      break;
-    case "EMITIDO":
-      cls = "text-bg-primary"; // azul
-      break;
-    case "ANULADO":
-      cls = "text-bg-danger"; // rojo
-      break;
-    case "APROBADO":
-      cls = "text-bg-success"; // verde
-      break;
-    case "CERRADA":
-    case "CERRADO":
-      cls = "text-bg-dark"; // gris oscuro
-      break;
-    case "PENDIENTE":
-      cls = "text-bg-warning text-dark"; // amarillo con texto oscuro
-      break;
-    case "DIAGNOSTICADO":
-    case "DIAGNOSTICADA":
-      cls = "text-bg-info"; // celeste
-      break;
-  }
 
   return `<span class="badge ${cls}">${estado}</span>`;
 }
