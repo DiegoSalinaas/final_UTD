@@ -40,7 +40,6 @@
             <option value="PENDIENTE">Pendiente</option>
             <option value="APROBADO">Aprobado</option>
             <option value="RECHAZADO">Rechazado</option>
-            <option value="ANULADO">Anulado</option>
           </select>
         </div>
 
