@@ -105,7 +105,7 @@
           <div class="table-responsive" style="max-height:200px;">
             <table class="table mb-0">
               <thead><tr><th>Fecha</th><th>Proveedor</th><th>Monto</th><th>Estado</th></tr></thead>
-              <tbody>
+              <tbody id="tbody_presupuestos">
                 <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>
               </tbody>
             </table>
@@ -120,7 +120,7 @@
           <div class="table-responsive" style="max-height:200px;">
             <table class="table mb-0">
               <thead><tr><th>Fecha</th><th>Nro</th><th>Proveedor</th><th>Estado</th></tr></thead>
-              <tbody>
+              <tbody id="tbody_ordenes">
                 <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>
               </tbody>
             </table>
@@ -135,7 +135,7 @@
           <div class="table-responsive" style="max-height:200px;">
             <table class="table mb-0">
               <thead><tr><th>Fecha</th><th>Cliente</th><th>Equipo</th><th>Estado</th></tr></thead>
-              <tbody>
+              <tbody id="tbody_recepciones">
                 <tr><td>-</td><td>-</td><td>-</td><td>-</td></tr>
               </tbody>
             </table>
