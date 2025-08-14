@@ -142,6 +142,7 @@ function badgeEstado(estado) {
   let cls = 'text-bg-secondary'; // fallback (gris)
   if (est === 'PENDIENTE')                 cls = 'text-bg-warning text-dark';
   else if (est === 'DIAGNOSTICADO' || est === 'DIAGNOSTICADA') cls = 'text-bg-info';
+  else if (est === 'ANULADO' || est === 'ANULADA') cls = 'text-bg-danger';
 
 
   return `<span class="badge ${cls}">${estado}</span>`;
