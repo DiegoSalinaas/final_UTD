@@ -33,5 +33,21 @@ function cargarDatosDashboard(){
         };
         var chart2 = new ApexCharts(document.querySelector('#chart-ordenes-estado'), opcionesPie);
         chart2.render();
+
+        rellenarTabla('#tbody_presupuestos', data.ultimos_presupuestos, ['fecha','proveedor','monto','estado']);
+        rellenarTabla('#tbody_ordenes', data.ultimas_ordenes, ['fecha','id_orden','proveedor','estado']);
+        rellenarTabla('#tbody_recepciones', data.ultimas_recepciones, ['fecha','cliente','equipos','estado']);
     });
+}
+
+function rellenarTabla(selector, datos, campos){
+    const tbody = $(selector).empty();
+    if (datos.length){
+        datos.forEach(d => {
+            const cols = campos.map(c => `<td>${d[c] ?? ''}</td>`).join('');
+            tbody.append(`<tr>${cols}</tr>`);
+        });
+    } else {
+        tbody.append(`<tr><td colspan="${campos.length}">-</td></tr>`);
+    }
 }

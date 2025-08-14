@@ -54,6 +54,29 @@ if(isset($_POST['dashboard'])){
         $series[] = (int)$row['total'];
     }
 
+    // Últimos registros
+    $ultimosPresupuestos = $cn->query(
+        "SELECT p.fecha, pr.razon_social AS proveedor, p.total_estimado AS monto, p.estado
+         FROM presupuestos_compra p
+         LEFT JOIN proveedor pr ON p.id_proveedor = pr.id_proveedor
+         ORDER BY p.id_presupuesto DESC LIMIT 5"
+    )->fetchAll(PDO::FETCH_ASSOC);
+
+    $ultimasOrdenes = $cn->query(
+        "SELECT o.fecha_emision AS fecha, o.id_orden, pr.razon_social AS proveedor, o.estado
+         FROM orden_compra o
+         LEFT JOIN proveedor pr ON o.id_proveedor = pr.id_proveedor
+         ORDER BY o.id_orden DESC LIMIT 5"
+    )->fetchAll(PDO::FETCH_ASSOC);
+
+    $ultimasRecepciones = $cn->query(
+        "SELECT r.fecha_recepcion AS fecha, r.nombre_cliente AS cliente, IFNULL(COUNT(d.id_detalle),0) AS equipos, r.estado
+         FROM recepcion r
+         LEFT JOIN recepcion_detalle d ON r.id_recepcion = d.id_recepcion
+         GROUP BY r.id_recepcion, r.fecha_recepcion, r.nombre_cliente, r.estado
+         ORDER BY r.id_recepcion DESC LIMIT 5"
+    )->fetchAll(PDO::FETCH_ASSOC);
+
     echo json_encode([
         'totales' => $totales,
         'compras_ventas' => [
@@ -64,7 +87,10 @@ if(isset($_POST['dashboard'])){
         'ordenes_estado' => [
             'labels' => $labels,
             'series' => $series
-        ]
+        ],
+        'ultimos_presupuestos' => $ultimosPresupuestos,
+        'ultimas_ordenes' => $ultimasOrdenes,
+        'ultimas_recepciones' => $ultimasRecepciones
     ]);
 }
 ?>
