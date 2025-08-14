@@ -299,6 +299,12 @@
               role="menu"
               data-accordion="false"
             >
+              <li class="nav-item">
+                <a href="#" class="nav-link" onclick="mostrarDashboard(); return false;">
+                  <i class="nav-icon bi-speedometer2"></i>
+                  <p>Dashboard</p>
+                </a>
+              </li>
               <li class="nav-item menu-open">
                 <a href="#" class="nav-link active">
                   <i class="nav-icon bi-person-lines-fill"></i>
@@ -793,6 +799,10 @@
     <script src="vistas/nota_credito.js"></script>
     <script src="vistas/diagnostico.js"></script>
     <script src="vistas/reportes.js"></script>
+    <script src="vistas/dashboard.js"></script>
+    <script>
+      mostrarDashboard();
+    </script>
     <!--end::Script-->
   </body>
   <!--end::Body-->
