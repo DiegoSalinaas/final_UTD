@@ -218,20 +218,23 @@ function agregarProductoExtra(){
   }
 
   let idProducto = parseInt($("#id_producto_lst").val());
-  if(detallesOC.some(d => d.id_producto === idProducto)){
-    mensaje_dialogo_info_ERROR("El producto ya está cargado","ERROR");
-    return;
+  let idx = detallesOC.findIndex(d => d.id_producto === idProducto);
+
+  if (idx !== -1) {
+    // Si el producto ya estaba cargado, sumar la cantidad y actualizar precio y subtotal
+    detallesOC[idx].cantidad += cantidad;
+    detallesOC[idx].precio_unitario = precio;
+    detallesOC[idx].subtotal = detallesOC[idx].cantidad * precio;
+  } else {
+    let detalle = {
+      id_producto: idProducto,
+      producto: $("#id_producto_lst option:selected").text(),
+      cantidad: cantidad,
+      precio_unitario: precio, // numérico sin puntos
+      subtotal: cantidad * precio
+    };
+    detallesOC.push(detalle);
   }
-
-  let detalle = {
-    id_producto: idProducto,
-    producto: $("#id_producto_lst option:selected").text(),
-    cantidad: cantidad,
-    precio_unitario: precio, // numérico sin puntos
-    subtotal: cantidad * precio
-  };
-
-  detallesOC.push(detalle);
   renderDetallesOC();
   calcularTotalOrdenLocal();
   limpiarDetalleExtraForm(true); // aquí sí enfocamos cantidad para seguir cargando
