@@ -8,7 +8,7 @@
             <i class="bi bi-truck fs-1 me-3"></i>
             <div>
               <h6 class="card-title mb-0">Proveedores</h6>
-              <p class="fs-4 mb-0">0</p>
+              <p class="fs-4 mb-0" id="total_proveedores">0</p>
             </div>
           </div>
         </div>
@@ -21,7 +21,7 @@
             <i class="bi bi-people fs-1 me-3"></i>
             <div>
               <h6 class="card-title mb-0">Clientes</h6>
-              <p class="fs-4 mb-0">0</p>
+              <p class="fs-4 mb-0" id="total_clientes">0</p>
             </div>
           </div>
         </div>
@@ -34,7 +34,7 @@
             <i class="bi bi-clipboard-data fs-1 me-3"></i>
             <div>
               <h6 class="card-title mb-0">Presupuestos</h6>
-              <p class="fs-4 mb-0">0</p>
+              <p class="fs-4 mb-0" id="total_presupuestos">0</p>
             </div>
           </div>
         </div>
@@ -47,7 +47,7 @@
             <i class="bi bi-receipt fs-1 me-3"></i>
             <div>
               <h6 class="card-title mb-0">Órdenes de Compra</h6>
-              <p class="fs-4 mb-0">0</p>
+              <p class="fs-4 mb-0" id="total_ordenes">0</p>
             </div>
           </div>
         </div>
@@ -60,7 +60,7 @@
             <i class="bi bi-truck-front fs-1 me-3"></i>
             <div>
               <h6 class="card-title mb-0">Remisiones</h6>
-              <p class="fs-4 mb-0">0</p>
+              <p class="fs-4 mb-0" id="total_remisiones">0</p>
             </div>
           </div>
         </div>
@@ -73,7 +73,7 @@
             <i class="bi bi-file-earmark-minus fs-1 me-3"></i>
             <div>
               <h6 class="card-title mb-0">Notas de Crédito</h6>
-              <p class="fs-4 mb-0">0</p>
+              <p class="fs-4 mb-0" id="total_notas">0</p>
             </div>
           </div>
         </div>
@@ -96,15 +96,6 @@
       </div>
     </div>
   </div>
-  <div class="row g-3 mb-4">
-    <div class="col-lg-12">
-      <div class="card">
-        <div class="card-header">Servicios abiertos por tipo</div>
-        <div class="card-body"><div id="chart-servicios"></div></div>
-      </div>
-    </div>
-  </div>
-
   <!-- Tables -->
   <div class="row g-3 mb-4">
     <div class="col-lg-4">
@@ -171,32 +162,3 @@
   </div>
 </div>
 
-<script>
-  var opcionesBarra = {
-    chart: {type: 'bar', height: 300},
-    series: [
-      {name: 'Compras', data: [10,20,15,30,25,35]},
-      {name: 'Ventas', data: [5,15,10,25,20,30]}
-    ],
-    xaxis: {categories: ['Ene','Feb','Mar','Abr','May','Jun']}
-  };
-  var chart1 = new ApexCharts(document.querySelector('#chart-compras-ventas'), opcionesBarra);
-  chart1.render();
-
-  var opcionesPie = {
-    chart: {type: 'pie', height: 300},
-    series: [44,33,23],
-    labels: ['Pendiente','Aprobado','Anulado']
-  };
-  var chart2 = new ApexCharts(document.querySelector('#chart-ordenes-estado'), opcionesPie);
-  chart2.render();
-
-  var opcionesHBar = {
-    chart: {type: 'bar', height: 300},
-    plotOptions: {bar: {horizontal: true}},
-    series: [{data: [5,3,4]}],
-    xaxis: {categories: ['Cliente A','Cliente B','Cliente C']}
-  };
-  var chart3 = new ApexCharts(document.querySelector('#chart-servicios'), opcionesHBar);
-  chart3.render();
-</script>
