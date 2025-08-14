@@ -371,7 +371,7 @@ function cargarTablaDiagnostico(){
     hasta: $("#f_hasta").val() || ""
   });
   let datos=ejecutarAjax("controladores/diagnostico.php",filtros),$tb=$("#diagnostico_datos_tb");
-  if(datos==="0"){$tb.html("NO HAY REGISTROS");$("#diagnostico_count").text(0);}else{let js=JSON.parse(datos);$tb.html('');js.forEach(it=>{let btn=`<button class="btn btn-secondary btn-sm imprimir-diagnostico" data-id="${it.id_diagnostico}"><i class="bi bi-printer"></i></button>`;if((it.estado||'').toUpperCase()!=='ANULADO'){btn+=` <button class="btn btn-warning btn-sm editar-diagnostico" data-id="${it.id_diagnostico}"><i class="bi bi-pencil-square"></i></button> <button class="btn btn-danger btn-sm anular-diagnostico" data-id="${it.id_diagnostico}"><i class="bi bi-x-circle"></i></button>`;}$tb.append(`<tr><td>${it.id_diagnostico}</td><td>${it.id_recepcion} - ${it.nombre_cliente}</td><td>${it.fecha_inicio}</td><td>${badgeEstado(it.estado)}</td><td>${btn}</td></tr>`);});$("#diagnostico_count").text(js.length);}}
+  if(datos==="0"){$tb.html("NO HAY REGISTROS");$("#diagnostico_count").text(0);}else{let js=JSON.parse(datos);$tb.html('');js.forEach(it=>$tb.append(`<tr><td>${it.id_diagnostico}</td><td>${it.id_recepcion} - ${it.nombre_cliente}</td><td>${it.fecha_inicio}</td><td>${badgeEstado(it.estado)}</td><td><button class="btn btn-secondary btn-sm imprimir-diagnostico" data-id="${it.id_diagnostico}"><i class="bi bi-printer"></i></button> <button class="btn btn-warning btn-sm editar-diagnostico" data-id="${it.id_diagnostico}"><i class="bi bi-pencil-square"></i></button> <button class="btn btn-danger btn-sm eliminar-diagnostico" data-id="${it.id_diagnostico}"><i class="bi bi-trash"></i></button></td></tr>`));$("#diagnostico_count").text(js.length);}}
 
 function cargarDiagnostico(id){
   // Cargar la vista de edición antes de establecer los datos para evitar
@@ -381,7 +381,6 @@ function cargarDiagnostico(id){
   let d=ejecutarAjax("controladores/diagnostico.php","leer_id="+id);
   if(d!=='0'){
     let j=JSON.parse(d);
-    if((j.estado||'').toUpperCase()==='ANULADO'){alert('Diagnóstico anulado, no se puede editar.');return;}
 
     // Obtener los detalles del diagnóstico ya guardados
     let det=ejecutarAjax("controladores/detalle_diagnostico.php","leer=1&id_diagnostico="+id);
@@ -408,7 +407,7 @@ function cargarDiagnostico(id){
   }
 }
 $(document).on("click",".editar-diagnostico",function(){cargarDiagnostico($(this).data('id'));});
-$(document).on("click",".anular-diagnostico",function(){if(confirm("¿Anular?")){ejecutarAjax("controladores/diagnostico.php","anular="+$(this).data('id'));cargarTablaDiagnostico();cargarPendientesDiagnostico();}});
+$(document).on("click",".eliminar-diagnostico",function(){if(confirm("¿Eliminar?")){ejecutarAjax("controladores/diagnostico.php","eliminar="+$(this).data('id'));cargarTablaDiagnostico();cargarPendientesDiagnostico();}});
 $(document).on("click",".imprimir-diagnostico",function(){imprimirDiagnostico($(this).data('id'));});
 $(document).on('input','#b_diagnostico',cargarTablaDiagnostico);
 $(document).on('change','#estado_filtro, #f_desde, #f_hasta',cargarTablaDiagnostico);
