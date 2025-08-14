@@ -133,18 +133,47 @@ function formatearPY(numero) {
 }
 
 // Devuelve un badge coloreado según el estado proporcionado
+//function badgeEstado(estado) {
+//  const est = (estado ?? "")
+//    .toString().trim()
+//    .normalize("NFD").replace(/\p{Diacritic}/gu, "")
+//    .toUpperCase();
+//
+//
+//
+//  return `<span class="badge ${cls}">${estado}</span>`;
+//}
+
+
 function badgeEstado(estado) {
   const est = (estado ?? "")
     .toString().trim()
     .normalize("NFD").replace(/\p{Diacritic}/gu, "")
     .toUpperCase();
 
-
+  let cls = "";
+  switch (est) {
+    case "PENDIENTE":
+      cls = "bg-warning text-dark";
+      break;
+    case "APROBADO":
+      cls = "bg-success";
+      break;
+    case "ANULADO":
+      cls = "bg-danger";
+      break;
+    case "ACTIVO":
+      cls = "bg-primary";
+      break;
+    case "INACTIVO":
+      cls = "bg-secondary";
+      break;
+    default:
+      cls = "bg-light text-dark border";
+  }
 
   return `<span class="badge ${cls}">${estado}</span>`;
 }
-
-
 
 
 
