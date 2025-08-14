@@ -1,231 +1,284 @@
 (function(){
-    let detallesNota = [];
-    let listaClientes = [];
-    let listaProductos = [];
-    window.detallesNota = detallesNota;
+  let detallesNota = [];
+  let listaClientes = [];
+  let listaProductos = [];
+  window.detallesNota = detallesNota;
 })();
 
+/* =========================
+   Helper: parsear si hace falta
+   ========================= */
+function toObject(resp, {openHtmlWindow=true, label="respuesta"} = {}) {
+  if (resp == null || resp === "0") return null;
+
+  if (typeof resp === "string") {
+    const t = resp.trim();
+
+    // Si el servidor devolvió HTML (warnings/errores PHP)
+    if (openHtmlWindow && t.startsWith("<")) {
+      try {
+        const w = window.open("", "", "width=900,height=600");
+        w.document.write(t);
+        w.document.close();
+      } catch (_) {}
+      console.error(`⚠️ ${label}: el servidor devolvió HTML, revisá la ventana nueva.`);
+      return null;
+    }
+
+    try {
+      return JSON.parse(t);
+    } catch (e) {
+      console.error(`⚠️ ${label}: no es JSON válido`, t, e);
+      return null;
+    }
+  }
+
+  if (typeof resp === "object") return resp; // ya vino como objeto
+  return null;
+}
+
+/* =========================
+   Navegación
+   ========================= */
 function mostrarListarNotaCredito(){
-    let contenido = dameContenido("paginas/referenciales/nota_credito/listar.php");
-    $("#contenido-principal").html(contenido);
-    cargarTablaNotaCredito();
+  let contenido = dameContenido("paginas/referenciales/nota_credito/listar.php");
+  $("#contenido-principal").html(contenido);
+  cargarTablaNotaCredito();
 }
 window.mostrarListarNotaCredito = mostrarListarNotaCredito;
 
 function mostrarAgregarNotaCredito(){
-    let contenido = dameContenido("paginas/referenciales/nota_credito/agregar.php");
-    $("#contenido-principal").html(contenido);
-    cargarListaClientes();
-    cargarListaProductos();
-    detallesNota = [];
-    renderDetallesNota();
-    let hoy = new Date();
-    let fechaFormateada = hoy.toISOString().split('T')[0]; 
-    $("#fecha_txt").val(fechaFormateada);
-    $("#motivo_general_txt").val("");
+  let contenido = dameContenido("paginas/referenciales/nota_credito/agregar.php");
+  $("#contenido-principal").html(contenido);
+  cargarListaClientes();
+  cargarListaProductos();
+  detallesNota = [];
+  renderDetallesNota();
+  let hoy = new Date();
+  let fechaFormateada = hoy.toISOString().split('T')[0]; 
+  $("#fecha_txt").val(fechaFormateada);
+  $("#motivo_general_txt").val("");
 }
-
 window.mostrarAgregarNotaCredito = mostrarAgregarNotaCredito;
 
+/* =========================
+   Clientes
+   ========================= */
 function cargarListaClientes(selectedId = ""){
-    let datos = ejecutarAjax("controladores/cliente.php","leer=1");
-    if(datos !== "0"){
-        listaClientes = JSON.parse(datos);
-        let select = $("#id_cliente_lst");
-        select.html('<option value="">-- Seleccione un cliente --</option>');
-        listaClientes.forEach(c => select.append(`
-          <option value="${c.id_cliente}" data-ruc="${c.ruc}" data-nombre="${c.nombre_apellido}">
-            ${c.nombre_apellido}
-          </option>`));
-        if(selectedId){ select.val(selectedId).trigger('change'); }
-    }
+  let datos = ejecutarAjax("controladores/cliente.php","leer=1");
+  if(datos !== "0"){
+    const js = toObject(datos, {label:"lista_clientes", openHtmlWindow:false}) || [];
+    listaClientes = Array.isArray(js) ? js : [];
+    let select = $("#id_cliente_lst");
+    select.html('<option value="">-- Seleccione un cliente --</option>');
+    listaClientes.forEach(c => select.append(`
+      <option value="${c.id_cliente}" data-ruc="${c.ruc}" data-nombre="${c.nombre_apellido}">
+        ${c.nombre_apellido}
+      </option>`));
+    if(selectedId){ select.val(selectedId).trigger('change'); }
+  }
 }
 
 $(document).on('change','#id_cliente_lst',function(){
-    let ruc = $("#id_cliente_lst option:selected").data('ruc') || '';
-    $('#ruc_cliente_txt').val(ruc);
+  let ruc = $("#id_cliente_lst option:selected").data('ruc') || '';
+  $('#ruc_cliente_txt').val(ruc);
 });
 
 // Abrir modal para agregar nuevo cliente
 $(document).on('click', '#nuevo_cliente_btn', function(){
-    const contenido = dameContenido('paginas/referenciales/cliente/agregar.php');
-    const $modal = $('#modal_nuevo_cliente');
-    $modal.find('.modal-body').html(contenido);
-    $modal.find('.btn-success').attr('onclick','guardarClienteDesdeModal(); return false;');
-    $modal.find('.btn-danger').attr('onclick',"$('#modal_nuevo_cliente').modal('hide'); return false;");
-    cargarListaCiudad('#modal_nuevo_cliente #ciudad_lst');
-    $modal.modal('show');
+  const contenido = dameContenido('paginas/referenciales/cliente/agregar.php');
+  const $modal = $('#modal_nuevo_cliente');
+  $modal.find('.modal-body').html(contenido);
+  $modal.find('.btn-success').attr('onclick','guardarClienteDesdeModal(); return false;');
+  $modal.find('.btn-danger').attr('onclick',"$('#modal_nuevo_cliente').modal('hide'); return false;");
+  cargarListaCiudad('#modal_nuevo_cliente #ciudad_lst');
+  $modal.modal('show');
 });
 
 function guardarClienteDesdeModal(){
-    const $m = $('#modal_nuevo_cliente');
-    const nombre = $m.find('#nombre_txt').val().trim();
-    const ruc = $m.find('#ruc_txt').val().trim();
-    const dir = $m.find('#direccion_txt').val().trim();
-    const tel = $m.find('#telefono_txt').val().trim();
-    const ciudad = $m.find('#ciudad_lst').val();
-    const estado = $m.find('#estado_lst').val();
+  const $m = $('#modal_nuevo_cliente');
+  const nombre = $m.find('#nombre_txt').val().trim();
+  const ruc = $m.find('#ruc_txt').val().trim();
+  const dir = $m.find('#direccion_txt').val().trim();
+  const tel = $m.find('#telefono_txt').val().trim();
+  const ciudad = $m.find('#ciudad_lst').val();
+  const estado = $m.find('#estado_lst').val();
 
-    if(nombre.length===0){ mensaje_dialogo_info_ERROR('Debes ingresar el nombre y apellido', 'ATENCION'); return; }
-    if(ruc.length===0){ mensaje_dialogo_info_ERROR('Debes ingresar el RUC', 'ATENCION'); return; }
-    if(dir.length===0){ mensaje_dialogo_info_ERROR('Debes ingresar la Direccion', 'ATENCION'); return; }
-    if(tel.length===0){ mensaje_dialogo_info_ERROR('Debes ingresar el Telefono', 'ATENCION'); return; }
-    if(ciudad==="0" || ciudad===""){ mensaje_dialogo_info_ERROR('Debes ingresar la ciudad', 'ATENCION'); return; }
-    if(!/^[0-9\-]+$/.test(ruc)){ mensaje_dialogo_info_ERROR('El RUC solo puede contener números y guiones (-)', 'ATENCIÓN'); return; }
-    if(!/^[0-9+]+$/.test(tel)){ mensaje_dialogo_info_ERROR('El teléfono solo puede contener números y el símbolo +', 'ATENCIÓN'); return; }
+  if(nombre.length===0){ mensaje_dialogo_info_ERROR('Debes ingresar el nombre y apellido', 'ATENCION'); return; }
+  if(ruc.length===0){ mensaje_dialogo_info_ERROR('Debes ingresar el RUC', 'ATENCION'); return; }
+  if(dir.length===0){ mensaje_dialogo_info_ERROR('Debes ingresar la Direccion', 'ATENCION'); return; }
+  if(tel.length===0){ mensaje_dialogo_info_ERROR('Debes ingresar el Telefono', 'ATENCION'); return; }
+  if(ciudad==="0" || ciudad===""){ mensaje_dialogo_info_ERROR('Debes ingresar la ciudad', 'ATENCION'); return; }
+  if(!/^[0-9\-]+$/.test(ruc)){ mensaje_dialogo_info_ERROR('El RUC solo puede contener números y guiones (-)', 'ATENCIÓN'); return; }
+  if(!/^[0-9+]+$/.test(tel)){ mensaje_dialogo_info_ERROR('El teléfono solo puede contener números y el símbolo +', 'ATENCIÓN'); return; }
 
-    let datos={
-        nombre_apellido:nombre,
-        ruc:ruc,
-        direccion:dir,
-        id_ciudad:ciudad,
-        telefono:tel,
-        estado:estado
-    };
+  let datos={
+    nombre_apellido:nombre,
+    ruc:ruc,
+    direccion:dir,
+    id_ciudad:ciudad,
+    telefono:tel,
+    estado:estado
+  };
 
-    let res = ejecutarAjax('controladores/cliente.php','guardar='+JSON.stringify(datos));
-    if(res === 'duplicado'){ mensaje_dialogo_info_ERROR('El RUC ya esta registrado con otro cliente', 'ATENCION'); return; }
-    mensaje_confirmacion('Guardado correctamente');
+  let res = ejecutarAjax('controladores/cliente.php','guardar='+JSON.stringify(datos));
+  if(res === 'duplicado'){ mensaje_dialogo_info_ERROR('El RUC ya esta registrado con otro cliente', 'ATENCION'); return; }
+  mensaje_confirmacion('Guardado correctamente');
 
-    let nuevoId = '';
-    let consulta = ejecutarAjax('controladores/cliente.php','leer_descripcion='+ruc);
-    if(consulta !== '0'){
-        let js = JSON.parse(consulta);
-        let found = js.find(c=>c.ruc===ruc);
-        if(found) nuevoId = found.id_cliente;
-    }
+  let nuevoId = '';
+  let consulta = ejecutarAjax('controladores/cliente.php','leer_descripcion='+ruc);
+  if(consulta !== '0'){
+    const js = toObject(consulta, {label:"buscar_cliente_por_ruc", openHtmlWindow:false}) || [];
+    let found = Array.isArray(js) ? js.find(c=>c.ruc===ruc) : null;
+    if(found) nuevoId = found.id_cliente;
+  }
 
-    $m.modal('hide');
-    cargarListaClientes(nuevoId);
+  $m.modal('hide');
+  cargarListaClientes(nuevoId);
 }
 window.guardarClienteDesdeModal = guardarClienteDesdeModal;
 
+/* =========================
+   Productos
+   ========================= */
 function cargarListaProductos(){
-    let datos = ejecutarAjax("controladores/productos.php","leerActivo=1");
-    if(datos !== "0"){
-        listaProductos = JSON.parse(datos);
-        let select = $("#id_producto_lst");
-        select.html('<option value="">-- Seleccione un producto --</option>');
-        listaProductos.forEach(p => select.append(`<option value="${p.producto_id}" data-precio="${p.precio}" data-descripcion="${p.nombre}">${p.nombre}</option>`));
-    }
+  let datos = ejecutarAjax("controladores/productos.php","leerActivo=1");
+  if(datos !== "0"){
+    const js = toObject(datos, {label:"lista_productos", openHtmlWindow:false}) || [];
+    listaProductos = Array.isArray(js) ? js : [];
+    let select = $("#id_producto_lst");
+    select.html('<option value="">-- Seleccione un producto --</option>');
+    listaProductos.forEach(p => select.append(
+      `<option value="${p.producto_id}" data-precio="${p.precio}" data-descripcion="${p.nombre}">
+         ${p.nombre}
+       </option>`));
+  }
 }
 
 $(document).on('change','#id_producto_lst',function(){
-    let desc = $("#id_producto_lst option:selected").data('descripcion') || '';
-    $('#descripcion_txt').val(desc);
+  let desc = $("#id_producto_lst option:selected").data('descripcion') || '';
+  $('#descripcion_txt').val(desc);
 });
 
+/* =========================
+   Cálculos de ítem
+   ========================= */
 function obtenerPrecioUnitario(){
-    return quitarDecimalesConvertir(String($('#precio_unitario_txt').val() || '0')) || 0;
+  return quitarDecimalesConvertir(String($('#precio_unitario_txt').val() || '0')) || 0;
 }
 
 function actualizarSubtotalNC(){
-    const cant = parseFloat($('#cantidad_txt').val()) || 0;
-    const precio = obtenerPrecioUnitario();
-    const subtotal = cant * precio;
-    $('#subtotal_txt').val(formatearPY(subtotal));
+  const cant = parseFloat($('#cantidad_txt').val()) || 0;
+  const precio = obtenerPrecioUnitario();
+  const subtotal = cant * precio;
+  $('#subtotal_txt').val(formatearPY(subtotal));
 }
 
 $(document).on('input','#cantidad_txt', actualizarSubtotalNC);
 
 $(document).on('input','#precio_unitario_txt', function(){
-    const raw = String($(this).val());
-    const digits = raw.replace(/\D/g, '');
-    if (digits.length === 0) {
-        $(this).val('');
-    } else {
-        const n = parseInt(digits,10) || 0;
-        $(this).val(formatearPY(n));
-    }
-    actualizarSubtotalNC();
+  const raw = String($(this).val());
+  const digits = raw.replace(/\D/g, '');
+  if (digits.length === 0) {
+    $(this).val('');
+  } else {
+    const n = parseInt(digits,10) || 0;
+    $(this).val(formatearPY(n));
+  }
+  actualizarSubtotalNC();
 });
 
+/* =========================
+   Detalles en memoria
+   ========================= */
 function agregarDetalleNotaCredito(){
-    if($("#id_producto_lst").val() === ""){mensaje_dialogo_info_ERROR("Debe seleccionar un producto","ERROR");return;}
-    if($("#cantidad_txt").val().trim().length === 0){mensaje_dialogo_info_ERROR("Debe ingresar la cantidad","ERROR");return;}
-    if(parseFloat($("#cantidad_txt").val()) <= 0){mensaje_dialogo_info_ERROR("La cantidad debe ser mayor que 0","ERROR");return;}
-    if($("#precio_unitario_txt").val().trim().length === 0){mensaje_dialogo_info_ERROR("Debe ingresar el precio","ERROR");return;}
-    if(obtenerPrecioUnitario() <= 0){mensaje_dialogo_info_ERROR("El precio debe ser mayor que 0","ERROR");return;}
+  if($("#id_producto_lst").val() === ""){mensaje_dialogo_info_ERROR("Debe seleccionar un producto","ERROR");return;}
+  if($("#cantidad_txt").val().trim().length === 0){mensaje_dialogo_info_ERROR("Debe ingresar la cantidad","ERROR");return;}
+  if(parseFloat($("#cantidad_txt").val()) <= 0){mensaje_dialogo_info_ERROR("La cantidad debe ser mayor que 0","ERROR");return;}
+  if($("#precio_unitario_txt").val().trim().length === 0){mensaje_dialogo_info_ERROR("Debe ingresar el precio","ERROR");return;}
+  if(obtenerPrecioUnitario() <= 0){mensaje_dialogo_info_ERROR("El precio debe ser mayor que 0","ERROR");return;}
 
-    if(detallesNota.some(d => d.id_producto === $("#id_producto_lst").val())){
-        mensaje_dialogo_info_ERROR("El producto ya fue agregado","ERROR");
-        return;
-    }
+  if(detallesNota.some(d => d.id_producto === $("#id_producto_lst").val())){
+    mensaje_dialogo_info_ERROR("El producto ya fue agregado","ERROR");
+    return;
+  }
 
-    const motivoItem = $("#motivo_item_txt").val().trim();
-    if(motivoItem.length === 0){
-        mensaje_dialogo_info_ERROR("Debe ingresar el motivo del ítem","ERROR");
-        $("#motivo_item_txt").focus();
-        return;
-    }
+  const motivoItem = $("#motivo_item_txt").val().trim();
+  if(motivoItem.length === 0){
+    mensaje_dialogo_info_ERROR("Debe ingresar el motivo del ítem","ERROR");
+    $("#motivo_item_txt").focus();
+    return;
+  }
 
-    const cantidad = parseFloat($("#cantidad_txt").val()) || 0;
-    const precio = obtenerPrecioUnitario();
-    const subtotal = cantidad * precio;
-    let detalle = {
-        id_producto: $("#id_producto_lst").val(),
-        producto: $("#id_producto_lst option:selected").text(),
-        descripcion: $("#descripcion_txt").val(),
-        cantidad: cantidad,
-        precio_unitario: precio,
-        subtotal: subtotal,
-        total_linea: subtotal,
-        motivo: motivoItem, // 👈 queda guardado
-        observacion: $("#observacion_txt").val()
-    };
-    detallesNota.push(detalle);
-    renderDetallesNota();
-    limpiarDetalleNotaForm();
+  const cantidad = parseFloat($("#cantidad_txt").val()) || 0;
+  const precio = obtenerPrecioUnitario();
+  const subtotal = cantidad * precio;
+  let detalle = {
+    id_producto: $("#id_producto_lst").val(),
+    producto: $("#id_producto_lst option:selected").text(),
+    descripcion: $("#descripcion_txt").val(),
+    cantidad: cantidad,
+    precio_unitario: precio,
+    subtotal: subtotal,
+    total_linea: subtotal,
+    motivo: motivoItem,
+    observacion: $("#observacion_txt").val()
+  };
+  detallesNota.push(detalle);
+  renderDetallesNota();
+  limpiarDetalleNotaForm();
 }
-
 window.agregarDetalleNotaCredito = agregarDetalleNotaCredito;
 
 function limpiarDetalleNotaForm(){
-    $("#id_producto_lst").val("");
-    $("#descripcion_txt").val("");
-    $("#cantidad_txt").val("");
-    $("#precio_unitario_txt").val("");
-    $("#subtotal_txt").val("");
-    $("#motivo_item_txt").val("");
-    $("#observacion_txt").val("");
+  $("#id_producto_lst").val("");
+  $("#descripcion_txt").val("");
+  $("#cantidad_txt").val("");
+  $("#precio_unitario_txt").val("");
+  $("#subtotal_txt").val("");
+  $("#motivo_item_txt").val("");
+  $("#observacion_txt").val("");
 }
 
 function renderDetallesNota(){
-    let tbody = $("#detalle_nota_tb");
-    tbody.html("");
-    let total = 0;
-    detallesNota.forEach((d,i) => {
-        total += parseFloat(d.total_linea);
-        tbody.append(`<tr>
-            <td>${d.producto}</td>
-            <td>${d.descripcion}</td>
-            <td>${d.cantidad}</td>
-            <td>${formatearPY(d.precio_unitario)}</td>
-            <td>${formatearPY(d.total_linea)}</td>
-            <td>${d.motivo}</td>
-            <td>${d.observacion}</td>
-            <td><button class="btn btn-danger btn-sm" onclick="eliminarDetalleNota(${i}); return false;"><i class="bi bi-trash"></i></button></td>
-        </tr>`);
-    });
-    $("#total_general_txt").val(formatearPY(total));
+  let tbody = $("#detalle_nota_tb");
+  tbody.html("");
+  let total = 0;
+  detallesNota.forEach((d,i) => {
+    total += parseFloat(d.total_linea);
+    tbody.append(`<tr>
+        <td>${d.producto}</td>
+        <td>${d.descripcion}</td>
+        <td>${d.cantidad}</td>
+        <td>${formatearPY(d.precio_unitario)}</td>
+        <td>${formatearPY(d.total_linea)}</td>
+        <td>${d.motivo}</td>
+        <td>${d.observacion}</td>
+        <td><button class="btn btn-danger btn-sm" onclick="eliminarDetalleNota(${i}); return false;"><i class="bi bi-trash"></i></button></td>
+    </tr>`);
+  });
+  $("#total_general_txt").val(formatearPY(total));
 }
 
 function eliminarDetalleNota(index){
-    detallesNota.splice(index,1);
-    renderDetallesNota();
+  detallesNota.splice(index,1);
+  renderDetallesNota();
 }
 window.eliminarDetalleNota = eliminarDetalleNota;
 
+/* =========================
+   Imprimir
+   ========================= */
 function imprimirNotaCredito(id, copias = 1, auto = true) {
-  const ncJson = ejecutarAjax("controladores/nota_credito.php","leer_id="+id);
-  if (ncJson === "0") { alert("No se encontró la nota de crédito"); return; }
-  const nota = JSON.parse(ncJson);
+  const ncRaw = ejecutarAjax("controladores/nota_credito.php","leer_id="+id);
+  const nota   = toObject(ncRaw, {label:"nota_credito"});
+  if (!nota) { mensaje_dialogo_info_ERROR("No se pudo leer la nota de crédito (ver consola).", "ERROR"); return; }
 
-  const detJson = ejecutarAjax("controladores/detalle_nota_credito.php","leer=1&id_nota_credito="+id);
-  const detalles = detJson === "0" ? [] : JSON.parse(detJson);
+  const detRaw = ejecutarAjax("controladores/detalle_nota_credito.php","leer=1&id_nota_credito="+id);
+  const detalles = detRaw === "0" ? [] : (toObject(detRaw, {label:"detalle_nota"}) || []);
 
   const est = (nota.estado || "GENERADA");
-  const estUC = est.toUpperCase();
+  const estUC = String(est).toUpperCase();
   const estadoBadge =
     estUC.includes("APROB") ? "bg-success" :
     estUC.includes("ANUL")  ? "bg-danger"  :
@@ -409,66 +462,64 @@ function imprimirNotaCredito(id, copias = 1, auto = true) {
 }
 window.imprimirNotaCredito = imprimirNotaCredito;
 
-
-
+/* =========================
+   Guardar
+   ========================= */
 function guardarNotaCredito(){
-    if($("#id_cliente_lst").val() === ""){mensaje_dialogo_info_ERROR("Debe seleccionar un cliente","ERROR");return;}
-    if($("#fecha_txt").val().trim().length === 0){mensaje_dialogo_info_ERROR("Debe ingresar la fecha","ERROR");return;}
-    if(detallesNota.length === 0){mensaje_dialogo_info_ERROR("Debe agregar al menos un item","ERROR");return;}
+  if($("#id_cliente_lst").val() === ""){mensaje_dialogo_info_ERROR("Debe seleccionar un cliente","ERROR");return;}
+  if($("#fecha_txt").val().trim().length === 0){mensaje_dialogo_info_ERROR("Debe ingresar la fecha","ERROR");return;}
+  if(detallesNota.length === 0){mensaje_dialogo_info_ERROR("Debe agregar al menos un item","ERROR");return;}
 
-  
-    const motivoGeneral = $("#motivo_general_txt").val().trim();
-if(motivoGeneral.length === 0){
+  const motivoGeneral = $("#motivo_general_txt").val().trim();
+  if(motivoGeneral.length === 0){
     mensaje_dialogo_info_ERROR("Debe ingresar el Motivo General de la nota de crédito","ATENCIÓN");
     return;
+  }
+
+  const faltantes = detallesNota
+    .map((d,i)=>({index:i+1, motivo:(d.motivo||"").trim()}))
+    .filter(x=>x.motivo.length === 0);
+
+  if(faltantes.length > 0){
+    mensaje_dialogo_info_ERROR(`Hay ${faltantes.length} ítem(s) sin motivo. Corrija antes de guardar.`, "ATENCIÓN");
+    return;
+  }
+
+  let total = detallesNota.reduce((acc,d)=>acc+(parseFloat(d.total_linea)||0),0);
+
+  let datos = {
+    fecha_emision: $("#fecha_txt").val(),
+    motivo_general: motivoGeneral,
+    id_cliente: $("#id_cliente_lst").val(),
+    ruc_cliente: $("#ruc_cliente_txt").val(),
+    estado: $("#estado_txt").val(),
+    total: total
+  };
+
+  let idNota = $("#id_nota_credito").val();
+  if(idNota === "0"){
+    idNota = ejecutarAjax("controladores/nota_credito.php","guardar="+JSON.stringify(datos));
+    detallesNota.forEach(function(d){
+      let det = { ...d, id_nota_credito: idNota };
+      ejecutarAjax("controladores/detalle_nota_credito.php","guardar="+JSON.stringify(det));
+    });
+  }else{
+    datos = { ...datos, id_nota_credito: idNota };
+    ejecutarAjax("controladores/nota_credito.php","actualizar="+JSON.stringify(datos));
+    ejecutarAjax("controladores/detalle_nota_credito.php","eliminar_por_nota="+idNota);
+    detallesNota.forEach(function(d){
+      let det = { ...d, id_nota_credito: idNota };
+      ejecutarAjax("controladores/detalle_nota_credito.php","guardar="+JSON.stringify(det));
+    });
+  }
+  mensaje_confirmacion("Guardado correctamente");
+  mostrarListarNotaCredito();
 }
-
-
-    const faltantes = detallesNota
-        .map((d,i)=>({index:i+1, motivo:(d.motivo||"").trim()}))
-        .filter(x=>x.motivo.length === 0);
-
-    if(faltantes.length > 0){
-        mensaje_dialogo_info_ERROR(`Hay ${faltantes.length} ítem(s) sin motivo. Corrija antes de guardar.`, "ATENCIÓN");
-        return;
-    }
-
-    let total = detallesNota.reduce((acc,d)=>acc+(parseFloat(d.total_linea)||0),0);
-
-    let datos = {
-        fecha_emision: $("#fecha_txt").val(),
-        motivo_general: motivoGeneral, // ← usa el valor validado
-        id_cliente: $("#id_cliente_lst").val(),
-        ruc_cliente: $("#ruc_cliente_txt").val(),
-        estado: $("#estado_txt").val(),
-        total: total
-    };
- 
-
-
-
-    let idNota = $("#id_nota_credito").val();
-    if(idNota === "0"){
-        idNota = ejecutarAjax("controladores/nota_credito.php","guardar="+JSON.stringify(datos));
-        detallesNota.forEach(function(d){
-            let det = { ...d, id_nota_credito: idNota };
-            ejecutarAjax("controladores/detalle_nota_credito.php","guardar="+JSON.stringify(det));
-        });
-    }else{
-        datos = { ...datos, id_nota_credito: idNota };
-        ejecutarAjax("controladores/nota_credito.php","actualizar="+JSON.stringify(datos));
-        ejecutarAjax("controladores/detalle_nota_credito.php","eliminar_por_nota="+idNota);
-        detallesNota.forEach(function(d){
-            let det = { ...d, id_nota_credito: idNota };
-            ejecutarAjax("controladores/detalle_nota_credito.php","guardar="+JSON.stringify(det));
-        });
-    }
-    mensaje_confirmacion("Guardado correctamente");
-    mostrarListarNotaCredito();
-}
-
 window.guardarNotaCredito = guardarNotaCredito;
 
+/* =========================
+   Listado / Tabla
+   ========================= */
 function cargarTablaNotaCredito() {
   const desc  = $("#b_nota_credito").val() || "";
   const est   = $("#estado_filtro").val() || "";
@@ -492,65 +543,39 @@ function cargarTablaNotaCredito() {
   // Log útil: tipo + valor
   console.log("🔎 RAW listar NC typeof:", typeof resp, "valor:", resp);
 
-  // Si el servidor devolvió HTML (warning/error)
-  if (typeof resp === "string" && resp.trim().startsWith("<")) {
-    const w = window.open("", "", "width=900,height=600");
-    w.document.write(resp);
-    w.document.close();
-    mensaje_dialogo_info_ERROR("El servidor devolvió HTML (posible warning/error). Revisá la ventana.", "ERROR");
-    return;
-  }
-
-  // Normalizar a array JS
-  let json;
+  // Normalizar a array JS usando helper
+  let jsonArr = [];
   if (resp === "0" || resp == null) {
-    json = [];
-  } else if (typeof resp === "string") {
-    // Vino texto: intento parsear
-    try {
-      json = JSON.parse(resp);
-    } catch (e) {
-      console.error("⚠️ Respuesta NO-JSON (string):", resp);
+    jsonArr = [];
+  } else {
+    const parsed = toObject(resp, {label:"listar_notas"});
+    if (!parsed) {
       $("#nota_credito_datos_tb").html("<tr><td colspan='7'>Error al leer datos</td></tr>");
       $("#nota_credito_count").text("0");
       return;
     }
-  } else if (Array.isArray(resp)) {
-    // Ya vino como array (dataType:'json' o tu ejecutarAjax lo parsea)
-    json = resp;
-  } else if (typeof resp === "object") {
-    // Podría ser {error:...} o un objeto suelto
-    json = resp;
-  } else {
-    json = [];
-  }
-
-  // Si vino un objeto de error
-  if (json && typeof json === "object" && !Array.isArray(json) && json.error) {
-    console.warn("⚠️ Error del servidor:", json.message);
-    $("#nota_credito_datos_tb").html("<tr><td colspan='7'>Error del servidor</td></tr>");
-    $("#nota_credito_count").text("0");
-    return;
-  }
-
-  // Asegurar array
-  if (!Array.isArray(json)) {
-    console.warn("⚠️ La respuesta no es un array:", json);
-    $("#nota_credito_datos_tb").html("<tr><td colspan='7'>SIN REGISTROS</td></tr>");
-    $("#nota_credito_count").text("0");
-    return;
+    if (Array.isArray(parsed)) jsonArr = parsed;
+    else if (parsed.error) {
+      console.warn("⚠️ Error del servidor:", parsed.message);
+      $("#nota_credito_datos_tb").html("<tr><td colspan='7'>Error del servidor</td></tr>");
+      $("#nota_credito_count").text("0");
+      return;
+    } else {
+      // Si vino objeto suelto, muestro 1 fila
+      jsonArr = [parsed];
+    }
   }
 
   const $tb = $("#nota_credito_datos_tb");
   $tb.empty();
-  $("#nota_credito_count").text(json.length);
+  $("#nota_credito_count").text(jsonArr.length);
 
-  if (json.length === 0) {
+  if (jsonArr.length === 0) {
     $tb.html("<tr><td colspan='7'>SIN REGISTROS</td></tr>");
     return;
   }
 
-  json.forEach(it => {
+  jsonArr.forEach(it => {
     const disabled = (String(it.estado || "").toUpperCase() === "ANULADO") ? "disabled" : "";
     $tb.append(`
       <tr>
@@ -570,8 +595,9 @@ function cargarTablaNotaCredito() {
   });
 }
 
-
-
+/* =========================
+   Filtros / Botones listado
+   ========================= */
 $(document).on('input',  '#b_nota_credito', cargarTablaNotaCredito);
 $(document).on('change', '#estado_filtro',  cargarTablaNotaCredito);
 $(document).on('change', '#f_desde, #f_hasta', cargarTablaNotaCredito);
@@ -584,52 +610,59 @@ $(document).on('click', '#limpiar_busqueda_btn', function(){
   cargarTablaNotaCredito();
 });
 
-
+/* =========================
+   Acciones de fila
+   ========================= */
 $(document).on("click",".imprimir-nota",function(){
-    let id=$(this).closest("tr").find("td:eq(0)").text();
-    imprimirNotaCredito(id);
+  let id=$(this).closest("tr").find("td:eq(0)").text();
+  imprimirNotaCredito(id);
 });
 
 $(document).on("click",".editar-nota",function(){
-    let id=$(this).closest("tr").find("td:eq(0)").text();
-    mostrarAgregarNotaCredito();
-    setTimeout(function(){
-        let datos=ejecutarAjax("controladores/nota_credito.php","leer_id="+id);
-        let json=JSON.parse(datos);
-        $("#id_nota_credito").val(json.id_nota_credito);
-        $("#id_cliente_lst").val(json.id_cliente).trigger('change');
-        $("#fecha_txt").val(json.fecha_emision);
-        $("#motivo_general_txt").val(json.motivo_general);
-        $("#numero_nota_txt").val(json.numero_nota);
-        $("#ruc_cliente_txt").val(json.ruc_cliente);
-        $("#estado_txt").val(json.estado);
-        let det=ejecutarAjax("controladores/detalle_nota_credito.php","leer=1&id_nota_credito="+id);
-        if(det !== "0"){
-            detallesNota=JSON.parse(det).map(d=>({id_producto:d.id_producto,producto:d.producto,descripcion:d.descripcion,cantidad:d.cantidad,precio_unitario:d.precio_unitario,subtotal:d.subtotal,total_linea:d.total_linea,motivo:d.motivo,observacion:d.observacion}));
-        }else{
-            detallesNota=[];
-        }
-        renderDetallesNota();
-    },100);
+  let id=$(this).closest("tr").find("td:eq(0)").text();
+  mostrarAgregarNotaCredito();
+  setTimeout(function(){
+    const datosRaw = ejecutarAjax("controladores/nota_credito.php","leer_id="+id);
+    const json = toObject(datosRaw, {label:"nota_credito"});
+    if (!json) { mensaje_dialogo_info_ERROR("No se pudo cargar la nota.", "ERROR"); return; }
+
+    $("#id_nota_credito").val(json.id_nota_credito);
+    $("#id_cliente_lst").val(json.id_cliente).trigger('change');
+    $("#fecha_txt").val(json.fecha_emision);
+    $("#motivo_general_txt").val(json.motivo_general);
+    $("#numero_nota_txt").val(json.numero_nota);
+    $("#ruc_cliente_txt").val(json.ruc_cliente);
+    $("#estado_txt").val(json.estado);
+
+    const detRaw = ejecutarAjax("controladores/detalle_nota_credito.php","leer=1&id_nota_credito="+id);
+    const detArr = detRaw === "0" ? [] : (toObject(detRaw, {label:"detalle_nota"}) || []);
+    window.detallesNota = Array.isArray(detArr) ? detArr.map(d=>({
+      id_producto:d.id_producto, producto:d.producto, descripcion:d.descripcion,
+      cantidad:d.cantidad, precio_unitario:d.precio_unitario,
+      subtotal:d.subtotal, total_linea:d.total_linea,
+      motivo:d.motivo, observacion:d.observacion
+    })) : [];
+    renderDetallesNota();
+  },100);
 });
 
 $(document).on("click",".anular-nota",function(){
-    let id=$(this).closest("tr").find("td:eq(0)").text();
-    Swal.fire({
-        title:"¿Anular nota de crédito?",
-        text:"Esta acción marcará la nota como anulada.",
-        icon:"warning",
-        showCancelButton:true,
-        confirmButtonText:"Sí, anular",
-        cancelButtonText:"Cancelar",
-        confirmButtonColor:"#dc3545",
-        cancelButtonColor:"#6c757d",
-        reverseButtons:true
-    }).then((result)=>{
-        if(result.isConfirmed){
-            ejecutarAjax("controladores/nota_credito.php","anular="+id);
-            mensaje_confirmacion("Anulado correctamente");
-            cargarTablaNotaCredito();
-        }
-    });
+  let id=$(this).closest("tr").find("td:eq(0)").text();
+  Swal.fire({
+    title:"¿Anular nota de crédito?",
+    text:"Esta acción marcará la nota como anulada.",
+    icon:"warning",
+    showCancelButton:true,
+    confirmButtonText:"Sí, anular",
+    cancelButtonText:"Cancelar",
+    confirmButtonColor:"#dc3545",
+    cancelButtonColor:"#6c757d",
+    reverseButtons:true
+  }).then((result)=>{
+    if(result.isConfirmed){
+      ejecutarAjax("controladores/nota_credito.php","anular="+id);
+      mensaje_confirmacion("Anulado correctamente");
+      cargarTablaNotaCredito();
+    }
+  });
 });
