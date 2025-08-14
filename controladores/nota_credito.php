@@ -112,7 +112,7 @@ if (isset($_POST['leer_descripcion'])) {
 
     if ($estado !== '') {
         // limitar a valores válidos
-        if (!in_array($estado, ['EMITIDO','ANULADO'], true)) { echo json_encode([]); exit; }
+        if (!in_array($estado, ['ACTIVO','ANULADO'], true)) { echo json_encode([]); exit; }
         $sql .= " AND n.estado = :estado";
         $params['estado'] = $estado;
     }
